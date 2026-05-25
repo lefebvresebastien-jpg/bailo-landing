@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentions légales & CGV — Bailo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --surface: #13151a;
+      --surface-2: #1a1d24;
+      --border: rgba(255,255,255,.07);
+      --border-2: rgba(255,255,255,.12);
+      --ink: #f0f0f0;
+      --ink-2: #8a8f9a;
+      --ink-3: #4a4f5a;
+      --accent: #e8793a;
+      --accent-dim: rgba(232,121,58,.1);
+      --green: #3ecf8e;
+      --radius: 12px;
+      --font: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,11,13,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .nav-brand {
+      font-size: 20px; font-weight: 600;
+      color: var(--accent); letter-spacing: -.03em;
+      text-decoration: none;
+    }
+    .nav-brand span { color: var(--ink-2); font-weight: 300; font-size: 13px; margin-left: 8px; }
+    .nav-back {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--ink-2); font-size: 13px; text-decoration: none;
+      padding: 6px 12px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: all .15s;
+    }
+    .nav-back:hover { color: var(--ink); border-color: var(--border-2); }
+
+    /* ── LAYOUT ── */
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 32px 96px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 56px 0 48px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent-dim); border: 1px solid rgba(232,121,58,.2);
+      color: var(--accent); font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .1em;
+      padding: 4px 12px; border-radius: 99px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 36px; font-weight: 600; letter-spacing: -.03em;
+      line-height: 1.15; margin-bottom: 12px;
+    }
+    .hero p {
+      color: var(--ink-2); font-size: 14px;
+    }
+    .hero-meta {
+      display: flex; align-items: center; justify-content: center; gap: 24px;
+      margin-top: 24px; flex-wrap: wrap;
+    }
+    .hero-meta-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--ink-3);
+    }
+    .hero-meta-item span { color: var(--green); }
+
+    /* ── TOC ── */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 48px;
+    }
+    .toc-title {
+      font-size: 11px; font-weight: 600; color: var(--ink-3);
+      text-transform: uppercase; letter-spacing: .1em;
+      margin-bottom: 14px;
+    }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .toc-list li { display: flex; align-items: center; gap: 8px; }
+    .toc-list a {
+      color: var(--ink-2); text-decoration: none; font-size: 13px;
+      transition: color .15s;
+    }
+    .toc-list a:hover { color: var(--accent); }
+    .toc-num {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--ink-3); width: 20px; flex-shrink: 0;
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      margin-bottom: 56px;
+      scroll-margin-top: 80px;
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 28px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--accent); background: var(--accent-dim);
+      border: 1px solid rgba(232,121,58,.2);
+      padding: 3px 8px; border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .section h2 {
+      font-size: 22px; font-weight: 600; letter-spacing: -.02em;
+    }
+
+    /* ── ARTICLE ── */
+    .article { margin-bottom: 28px; }
+    .article h3 {
+      font-size: 14px; font-weight: 600;
+      color: var(--ink); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .article h3::before {
+      content: '';
+      width: 3px; height: 14px;
+      background: var(--accent); border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .article p {
+      color: var(--ink-2); font-size: 14px; line-height: 1.75;
+      margin-bottom: 10px;
+    }
+    .article p:last-child { margin-bottom: 0; }
+    .article ul {
+      list-style: none; margin: 10px 0;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .article ul li {
+      display: flex; align-items: flex-start; gap: 8px;
+      color: var(--ink-2); font-size: 14px;
+    }
+    .article ul li::before {
+      content: '—'; color: var(--accent);
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── INFO BOX ── */
+    .info-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+    }
+    .info-box p {
+      color: var(--ink-2); font-size: 13px; line-height: 1.65;
+      margin: 0;
+    }
+    .info-box strong { color: var(--ink); }
+
+    /* ── TABLE ── */
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px; margin: 16px 0;
+    }
+    .data-table th {
+      text-align: left; padding: 10px 14px;
+      background: var(--surface-2);
+      color: var(--ink-3); font-size: 11px;
+      text-transform: uppercase; letter-spacing: .07em;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-2); vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden; margin: 16px 0;
+    }
+
+    /* ── PRICE TABLE ── */
+    .price-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px; margin: 16px 0;
+    }
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px; text-align: center;
+    }
+    .price-card.featured {
+      border-color: rgba(232,121,58,.3);
+      background: var(--accent-dim);
+    }
+    .price-name {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--ink-3); margin-bottom: 8px;
+    }
+    .price-card.featured .price-name { color: var(--accent); }
+    .price-amount {
+      font-size: 22px; font-weight: 600;
+      font-family: var(--mono); color: var(--ink);
+    }
+    .price-period { font-size: 11px; color: var(--ink-3); }
+    .price-desc { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+
+    /* ── CONTACT CARD ── */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-top: 16px;
+    }
+    .contact-item { display: flex; flex-direction: column; gap: 3px; }
+    .contact-label {
+      font-size: 11px; font-weight: 600; color: var(--ink-3);
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    .contact-value { font-size: 13px; color: var(--ink-2); }
+    .contact-value a { color: var(--accent); text-decoration: none; }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+    }
+    .footer p { font-size: 12px; color: var(--ink-3); margin-bottom: 4px; }
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── UPDATE BADGE ── */
+    .update-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--ink-3); font-size: 11px; font-family: var(--mono);
+      padding: 4px 10px; border-radius: 6px; margin-top: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 32px 20px 64px; }
+      .hero h1 { font-size: 26px; }
+      .price-grid { grid-template-columns: 1fr; }
+      .contact-card { grid-template-columns: 1fr; }
+      .nav { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="https://bailo.pro" class="nav-brand">Bailo <span>Pro</span></a>
+  <a href="https://bailo.pro" class="nav-back">← Retour au site</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">⚖️ Informations légales</div>
+    <h1>Mentions légales, CGV<br>& Politique de confidentialité</h1>
+    <p>Conformes au droit français et au Règlement Général sur la Protection des Données (RGPD)</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>✓</span> Droit français applicable</div>
+      <div class="hero-meta-item"><span>✓</span> RGPD conforme</div>
+      <div class="hero-meta-item"><span>✓</span> Données hébergées en Europe</div>
+    </div>
+    <div class="update-badge">Dernière mise à jour : 25 mai 2026</div>
+  </div>
+
+  <!-- TABLE DES MATIÈRES -->
+  <div class="toc">
+    <div class="toc-title">Table des matières</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">01</span><a href="#mentions">Mentions légales</a></li>
+      <li><span class="toc-num">02</span><a href="#cgv">Conditions Générales de Vente</a></li>
+      <li><span class="toc-num">03</span><a href="#rgpd">Politique de confidentialité & RGPD</a></li>
+      <li><span class="toc-num">04</span><a href="#cookies">Cookies</a></li>
+      <li><span class="toc-num">05</span><a href="#contact">Contact & exercice des droits</a></li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 1 — MENTIONS LÉGALES             -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="mentions">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Mentions légales</h2>
+    </div>
+
+    <div class="article">
+      <h3>Éditeur du site</h3>
+      <div class="contact-card">
+        <div class="contact-item">
+          <span class="contact-label">Dénomination</span>
+          <span class="contact-value">BAZIN Céline — Auto-entreprise</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">SIREN</span>
+          <span class="contact-value">104 566 609</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">Adresse</span>
+          <span class="contact-value">2D rue des Annelles<br>62127 Magnicourt-en-Comté, France</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">Statut</span>
+          <span class="contact-value">Auto-entrepreneur — Micro-entreprise</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">TVA</span>
+          <span class="contact-value">Non assujettie à la TVA<br>(art. 293B du CGI)</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">Contact</span>
+          <span class="contact-value"><a href="mailto:contact@bailo.pro">contact@bailo.pro</a></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="article">
+      <h3>Directeur de la publication</h3>
+      <p>BAZIN Céline, en sa qualité de gérante de l'auto-entreprise éditrice du présent site.</p>
+    </div>
+
+    <div class="article">
+      <h3>Hébergement</h3>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Service</th><th>Prestataire</th><th>Localisation</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Site web & fichiers statiques</td>
+              <td>Netlify, Inc. — 512 2nd Street, San Francisco, CA 94107, USA</td>
+              <td>CDN mondial / EU</td>
+            </tr>
+            <tr>
+              <td>Base de données & authentification</td>
+              <td>Supabase, Inc. — infrastructure AWS Frankfurt</td>
+              <td>Europe (Allemagne)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="article">
+      <h3>Propriété intellectuelle</h3>
+      <p>L'ensemble du contenu du site bailo.pro (marque, logo, textes, interfaces, code source, base de données) est la propriété exclusive de BAZIN Céline. Toute reproduction, représentation, modification ou exploitation, totale ou partielle, sans autorisation écrite préalable est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la Propriété Intellectuelle.</p>
+    </div>
+
+    <div class="article">
+      <h3>Responsabilité</h3>
+      <p>BAZIN Céline s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur le site. Toutefois, elle ne peut garantir l'exactitude, la précision ou l'exhaustivité des informations mises à la disposition sur ce site. En conséquence, BAZIN Céline décline toute responsabilité pour toute imprécision, inexactitude ou omission portant sur des informations disponibles sur ce site.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 2 — CGV                          -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="cgv">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Conditions Générales de Vente</h2>
+    </div>
+
+    <div class="info-box">
+      <p><strong>Champ d'application :</strong> Les présentes CGV s'appliquent à tout achat d'abonnement au service Bailo Pro sur le site bailo.pro, entre BAZIN Céline (ci-après « le Prestataire ») et toute personne physique ou morale (ci-après « le Client »).</p>
+    </div>
+
+    <div class="article">
+      <h3>Description du service</h3>
+      <p>Bailo est un logiciel SaaS (Software as a Service) de gestion immobilière destiné aux bailleurs particuliers et professionnels. Il comprend jusqu'à trois modules selon l'abonnement souscrit :</p>
+      <ul>
+        <li><strong>Bailo Chantier</strong> — suivi de chantiers et travaux</li>
+        <li><strong>Bailo Finance</strong> — trésorerie, TVA récupérable, facturation</li>
+        <li><strong>Bailo Gestion</strong> — gestion des baux, locataires et quittances</li>
+      </ul>
+    </div>
+
+    <div class="article">
+      <h3>Tarifs et offres</h3>
+      <p>Les prix sont indiqués en euros TTC. BAZIN Céline n'étant pas assujettie à la TVA (article 293B du CGI), les prix affichés sont nets de toute taxe.</p>
+      <div class="price-grid">
+        <div class="price-card">
+          <div class="price-name">Solo</div>
+          <div class="price-amount">15€</div>
+          <div class="price-period">/mois</div>
+          <div class="price-desc">1 module au choix<br>1 bail actif maximum</div>
+        </div>
+        <div class="price-card featured">
+          <div class="price-name">Duo</div>
+          <div class="price-amount">29€</div>
+          <div class="price-period">/mois</div>
+          <div class="price-desc">2 modules au choix<br>Baux illimités</div>
+        </div>
+        <div class="price-card">
+          <div class="price-name">Pack</div>
+          <div class="price-amount">39€</div>
+          <div class="price-period">/mois</div>
+          <div class="price-desc">3 modules complets<br>Toutes fonctionnalités</div>
+        </div>
+      </div>
+      <p>Les prix peuvent être modifiés à tout moment. Les abonnements en cours sont maintenus au tarif souscrit jusqu'à leur renouvellement. Tout changement de tarif sera notifié par email au moins 30 jours avant son entrée en vigueur.</p>
+    </div>
+
+    <div class="article">
+      <h3>Commande et souscription</h3>
+      <p>La souscription s'effectue en ligne sur bailo.pro. Le Client crée un compte, choisit son offre, puis procède au paiement via Stripe (prestataire de paiement sécurisé). La souscription est effective à réception de la confirmation de paiement par email.</p>
+    </div>
+
+    <div class="article">
+      <h3>Paiement</h3>
+      <p>Le paiement est effectué par carte bancaire via la plateforme sécurisée Stripe. Les données bancaires ne sont jamais stockées par Bailo. L'abonnement est renouvelé automatiquement chaque mois à la date anniversaire de la souscription.</p>
+    </div>
+
+    <div class="article">
+      <h3>Droit de rétractation</h3>
+      <p>Conformément à l'article L.221-28 du Code de la consommation, le droit de rétractation ne peut être exercé pour les contrats de fourniture de contenus numériques non fournis sur un support matériel dont l'exécution a commencé avec l'accord préalable du consommateur.</p>
+      <div class="info-box">
+        <p>En accédant au service après souscription, le Client reconnaît expressément renoncer à son droit de rétractation de 14 jours. <strong>Cependant, par dérogation commerciale, Bailo offre une garantie satisfait ou remboursé de 7 jours</strong> à compter de la première souscription, sur simple demande à <a href="mailto:contact@bailo.pro" style="color:var(--accent)">contact@bailo.pro</a>.</p>
+      </div>
+    </div>
+
+    <div class="article">
+      <h3>Résiliation</h3>
+      <p>Le Client peut résilier son abonnement à tout moment depuis son espace personnel ou en contactant contact@bailo.pro. La résiliation prend effet à la fin de la période d'abonnement en cours, sans remboursement du mois entamé. Après résiliation, les données du Client sont conservées 30 jours avant suppression définitive.</p>
+    </div>
+
+    <div class="article">
+      <h3>Disponibilité du service</h3>
+      <p>Le Prestataire s'engage à assurer la disponibilité du service 24h/24, 7j/7, avec un objectif de disponibilité de 99,5% mensuel. Des interruptions planifiées pour maintenance peuvent survenir, avec notification préalable par email dans la mesure du possible. Le Prestataire ne saurait être tenu responsable des interruptions liées à des tiers (hébergeur, réseau internet, force majeure).</p>
+    </div>
+
+    <div class="article">
+      <h3>Responsabilité et limitation</h3>
+      <p>Bailo est un outil d'aide à la gestion immobilière. Les informations générées (quittances, calculs de loyers, alertes fiscales) ont une valeur indicative et ne sauraient remplacer le conseil d'un professionnel (avocat, expert-comptable, notaire). Le Prestataire ne saurait être tenu responsable des décisions prises par le Client sur la base des données produites par le service.</p>
+      <p>La responsabilité du Prestataire est limitée au montant des sommes effectivement versées par le Client au cours des 3 derniers mois précédant le dommage.</p>
+    </div>
+
+    <div class="article">
+      <h3>Droit applicable et juridiction</h3>
+      <p>Les présentes CGV sont soumises au droit français. En cas de litige, et après tentative de résolution amiable, les tribunaux compétents du ressort de domicile du défendeur seront seuls compétents. Pour les litiges de consommation, le Client peut recourir gratuitement à la médiation via la plateforme européenne de règlement en ligne des litiges : <a href="https://ec.europa.eu/consumers/odr" style="color:var(--accent)" target="_blank">ec.europa.eu/consumers/odr</a>.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 3 — RGPD                         -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="rgpd">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Politique de confidentialité & RGPD</h2>
+    </div>
+
+    <div class="article">
+      <h3>Responsable du traitement</h3>
+      <p>BAZIN Céline, auto-entreprise, SIREN 104 566 609, 2D rue des Annelles, 62127 Magnicourt-en-Comté — <a href="mailto:contact@bailo.pro" style="color:var(--accent)">contact@bailo.pro</a></p>
+    </div>
+
+    <div class="article">
+      <h3>Données collectées et finalités</h3>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Données</th><th>Finalité</th><th>Base légale</th><th>Durée</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Email, mot de passe (hashé)</td>
+              <td>Authentification au service</td>
+              <td>Exécution du contrat</td>
+              <td>Durée du compte + 30 jours</td>
+            </tr>
+            <tr>
+              <td>Informations de paiement</td>
+              <td>Facturation (traitées par Stripe)</td>
+              <td>Exécution du contrat</td>
+              <td>5 ans (obligation comptable)</td>
+            </tr>
+            <tr>
+              <td>Données des baux (locataires, loyers…)</td>
+              <td>Fourniture du service Gestion</td>
+              <td>Exécution du contrat</td>
+              <td>Durée du compte + 30 jours</td>
+            </tr>
+            <tr>
+              <td>Données chantiers & finances</td>
+              <td>Fourniture des services Chantier & Finance</td>
+              <td>Exécution du contrat</td>
+              <td>Durée du compte + 30 jours</td>
+            </tr>
+            <tr>
+              <td>Logs de connexion, adresse IP</td>
+              <td>Sécurité, prévention de la fraude</td>
+              <td>Intérêt légitime</td>
+              <td>12 mois</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="article">
+      <h3>Sous-traitants et transferts de données</h3>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Sous-traitant</th><th>Rôle</th><th>Localisation</th><th>Garanties</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Supabase</td>
+              <td>Base de données, authentification</td>
+              <td>AWS Frankfurt (UE)</td>
+              <td>DPA + Clauses contractuelles types</td>
+            </tr>
+            <tr>
+              <td>Netlify</td>
+              <td>Hébergement du site</td>
+              <td>CDN / UE privilégié</td>
+              <td>DPA + Privacy Shield successeur</td>
+            </tr>
+            <tr>
+              <td>Stripe</td>
+              <td>Paiement en ligne</td>
+              <td>UE (Ireland)</td>
+              <td>Certifié PCI-DSS niveau 1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Aucune donnée n'est vendue à des tiers. Aucune donnée n'est utilisée à des fins publicitaires.</p>
+    </div>
+
+    <div class="article">
+      <h3>Vos droits RGPD</h3>
+      <p>Conformément au Règlement (UE) 2016/679 (RGPD) et à la loi Informatique et Libertés, vous disposez des droits suivants :</p>
+      <ul>
+        <li><strong>Droit d'accès</strong> — obtenir une copie de vos données personnelles</li>
+        <li><strong>Droit de rectification</strong> — corriger des données inexactes</li>
+        <li><strong>Droit à l'effacement</strong> — supprimer vos données (« droit à l'oubli »)</li>
+        <li><strong>Droit à la portabilité</strong> — recevoir vos données dans un format structuré</li>
+        <li><strong>Droit d'opposition</strong> — vous opposer à certains traitements</li>
+        <li><strong>Droit à la limitation</strong> — limiter le traitement de vos données</li>
+      </ul>
+      <p>Pour exercer ces droits, contactez : <a href="mailto:contact@bailo.pro" style="color:var(--accent)">contact@bailo.pro</a>. Réponse sous 30 jours maximum. En cas de réclamation non résolue, vous pouvez saisir la <strong>CNIL</strong> : <a href="https://www.cnil.fr" style="color:var(--accent)" target="_blank">cnil.fr</a> — 3 Place de Fontenoy, 75007 Paris.</p>
+    </div>
+
+    <div class="article">
+      <h3>Sécurité des données</h3>
+      <p>Bailo met en œuvre les mesures techniques et organisationnelles suivantes pour protéger vos données :</p>
+      <ul>
+        <li>Chiffrement des communications via TLS 1.3 (HTTPS)</li>
+        <li>Mots de passe hashés avec bcrypt (jamais stockés en clair)</li>
+        <li>Authentification sécurisée via Supabase Auth (JWT)</li>
+        <li>Row Level Security (RLS) sur toutes les tables de la base de données</li>
+        <li>Accès aux données restreint aux seuls utilisateurs authentifiés</li>
+        <li>Sauvegardes quotidiennes chiffrées</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 4 — COOKIES                      -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="cookies">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Cookies</h2>
+    </div>
+
+    <div class="article">
+      <h3>Cookies utilisés</h3>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Cookie</th><th>Type</th><th>Finalité</th><th>Durée</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>sb-auth-token</td>
+              <td>Strictement nécessaire</td>
+              <td>Maintien de la session utilisateur (Supabase)</td>
+              <td>Session / 1 semaine</td>
+            </tr>
+            <tr>
+              <td>bailo-plan</td>
+              <td>Fonctionnel</td>
+              <td>Mémorisation du plan souscrit</td>
+              <td>30 jours</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box">
+        <p>Bailo <strong>n'utilise aucun cookie publicitaire, aucun cookie de tracking tiers</strong> (Google Analytics, Facebook Pixel, etc.). Seuls des cookies strictement nécessaires au fonctionnement du service sont déposés.</p>
+      </div>
+    </div>
+
+    <div class="article">
+      <h3>Gestion des cookies</h3>
+      <p>Vous pouvez configurer votre navigateur pour refuser les cookies. Toutefois, la désactivation des cookies strictement nécessaires empêchera l'accès au service (impossible de maintenir une session). Pour gérer vos cookies : paramètres de votre navigateur → Confidentialité → Cookies.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 5 — CONTACT                      -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section" id="contact">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Contact & exercice des droits</h2>
+    </div>
+
+    <div class="article">
+      <h3>Nous contacter</h3>
+      <p>Pour toute question relative aux présentes mentions légales, CGV, ou pour exercer vos droits RGPD :</p>
+      <div class="contact-card">
+        <div class="contact-item">
+          <span class="contact-label">Email</span>
+          <span class="contact-value"><a href="mailto:contact@bailo.pro">contact@bailo.pro</a></span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">Courrier</span>
+          <span class="contact-value">BAZIN Céline<br>2D rue des Annelles<br>62127 Magnicourt-en-Comté</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">Délai de réponse</span>
+          <span class="contact-value">Sous 72h ouvrées pour les questions générales, sous 30 jours pour les demandes RGPD.</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">Autorité de contrôle</span>
+          <span class="contact-value"><a href="https://www.cnil.fr" target="_blank">CNIL — cnil.fr</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>© 2026 Bailo — BAZIN Céline, Auto-entreprise, SIREN 104 566 609</p>
+  <p>2D rue des Annelles, 62127 Magnicourt-en-Comté — <a href="mailto:contact@bailo.pro">contact@bailo.pro</a></p>
+  <p style="margin-top:12px"><a href="https://bailo.pro">← Retour à bailo.pro</a></p>
+</footer>
+
+</body>
+</html>
