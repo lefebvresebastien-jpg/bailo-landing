@@ -1,9 +1,9 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const PRICE_IDS = {
-  solo: 'price_1TaucaE1PLuNhyeZWQ6mUlnu',
-  duo:  'price_1TaueFE1PLuNhyeZ7NIceNVJ',
-  pro:  'price_1Taug6E1PLuNhyeZOOS3tpb6'
+  solo: 'price_1TayxuCayy0ySKyoIu9xY4rB',
+  duo:  'price_1TayxtCayy0ySKyoRDAVwGZJ',
+  pro:  'price_1TayxtCayy0ySKyomIKPSoP0'
 };
 
 const MODULE_URLS = {
