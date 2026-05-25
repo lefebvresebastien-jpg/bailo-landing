@@ -10,40 +10,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #09090b;
-      --surface: #111113;
-      --surface-2: #18181c;
-      --surface-3: #1f1f25;
-      --border: rgba(255,255,255,.07);
-      --border-2: rgba(255,255,255,.12);
-      --ink: #f4f3ef;
-      --ink-2: #8a8880;
-      --ink-3: #4a4845;
-      --accent: #e8793a;
-      --accent-2: #f09050;
-      --accent-dim: rgba(232,121,58,.1);
-      --green: #3ecf8e;
-      --green-dim: rgba(62,207,142,.1);
-      --blue: #5b8ef0;
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'DM Sans', sans-serif;
+      --bg: #09090b; --surface: #111113; --surface-2: #18181c; --surface-3: #1f1f25;
+      --border: rgba(255,255,255,.07); --border-2: rgba(255,255,255,.12);
+      --ink: #f4f3ef; --ink-2: #8a8880; --ink-3: #4a4845;
+      --accent: #e8793a; --accent-2: #f09050; --accent-dim: rgba(232,121,58,.1);
+      --green: #3ecf8e; --green-dim: rgba(62,207,142,.1); --blue: #5b8ef0;
+      --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font-body);
-      font-size: 15px;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; padding: 0 40px; height: 60px;
-      background: rgba(9,9,11,.85); backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
+    body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; padding: 0 40px; height: 60px; background: rgba(9,9,11,.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
     .nav-brand { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--accent); letter-spacing: -.02em; text-decoration: none; }
     .nav-brand span { color: var(--ink-2); font-weight: 400; font-size: 13px; margin-left: 6px; }
     .nav-links { display: flex; gap: 28px; margin-left: 40px; }
@@ -100,7 +77,7 @@
     .collab-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
     .collab-feature span:first-child { font-size: 14px; }
     .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-    .plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 0; position: relative; transition: transform .2s; }
+    .plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; position: relative; transition: transform .2s; }
     .plan-card:hover { transform: translateY(-2px); }
     .plan-card.featured { border-color: var(--accent); background: linear-gradient(160deg, rgba(232,121,58,.08) 0%, var(--surface) 60%); }
     .plan-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: .05em; }
@@ -155,7 +132,6 @@
     .btn-signup:hover { opacity: .9; transform: translateY(-1px); }
     .btn-signup:disabled { opacity: .5; cursor: not-allowed; transform: none; }
     .form-note { font-size: 12px; color: var(--ink-3); text-align: center; }
-    /* ── FOOTER ── */
     footer { border-top: 1px solid var(--border); padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .footer-top { width: 100%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
     .footer-brand { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--accent); }
@@ -167,12 +143,10 @@
     .footer-legal a:hover { color: var(--accent); }
     .footer-copy { font-size: 12px; color: var(--ink-3); text-align: center; }
     @media (max-width: 768px) {
-      nav { padding: 0 20px; }
-      .nav-links { display: none; }
+      nav { padding: 0 20px; } .nav-links { display: none; }
       .modules-grid, .pricing-grid, .upsell-grid { grid-template-columns: 1fr; }
       .collab-grid, .invest-grid, .signup-wrap { grid-template-columns: 1fr; gap: 32px; }
-      .signup-wrap { padding: 32px 24px; }
-      section { padding: 60px 20px; }
+      .signup-wrap { padding: 32px 24px; } section { padding: 60px 20px; }
       .trust-bar { gap: 24px; padding: 24px 20px; }
     }
   </style>
@@ -187,9 +161,7 @@
     <a href="#investisseur">Investisseurs</a>
     <a href="#inscription">S'inscrire</a>
   </div>
-  <div class="nav-cta">
-    <a href="#inscription" class="btn-nav">Commencer — 15€/mois</a>
-  </div>
+  <div class="nav-cta"><a href="#inscription" class="btn-nav">Commencer — 15€/mois</a></div>
 </nav>
 
 <div class="hero">
@@ -199,7 +171,7 @@
   <h1>Gérez votre patrimoine<br>de la <em>rénovation</em> à la <em>location</em></h1>
   <p class="hero-sub">Bailo Pro centralise chantiers, finances et gestion locative dans une suite conçue pour l'investisseur immobilier sérieux.</p>
   <div class="hero-actions">
-    <a href="#inscription" class="btn-primary">Démarrer gratuitement →</a>
+    <a href="#inscription" class="btn-primary">Démarrer maintenant →</a>
     <a href="#modules" class="btn-ghost">Découvrir les modules</a>
   </div>
   <p class="hero-price-hint">À partir de <strong>15€/mois</strong> · Sans engagement · Résiliable à tout moment</p>
@@ -266,12 +238,8 @@
   <p class="section-sub">Inclus dans tous les plans. Accès via lien sécurisé, sans compte ni application à installer.</p>
   <div class="collab-grid">
     <div class="collab-card">
-      <div class="collab-header">
-        <div class="collab-icon">👷</div>
-        <div class="collab-title">Espace artisan</div>
-        <div class="collab-badge">INCLUS</div>
-      </div>
-      <p class="collab-desc">Envoyez un lien à vos artisans. Ils accèdent à leur espace de suivi depuis leur téléphone, sans créer de compte.</p>
+      <div class="collab-header"><div class="collab-icon">👷</div><div class="collab-title">Espace artisan</div><div class="collab-badge">INCLUS</div></div>
+      <p class="collab-desc">Envoyez un lien à vos artisans. Ils accèdent à leur espace depuis leur téléphone, sans créer de compte.</p>
       <div class="collab-features">
         <div class="collab-feature"><span>📷</span> Upload photos d'avancement</div>
         <div class="collab-feature"><span>✅</span> Mise à jour des jalons</div>
@@ -280,11 +248,7 @@
       </div>
     </div>
     <div class="collab-card">
-      <div class="collab-header">
-        <div class="collab-icon">🏡</div>
-        <div class="collab-title">Espace locataire</div>
-        <div class="collab-badge">INCLUS</div>
-      </div>
+      <div class="collab-header"><div class="collab-icon">🏡</div><div class="collab-title">Espace locataire</div><div class="collab-badge">INCLUS</div></div>
       <p class="collab-desc">Votre locataire dispose d'un espace personnel accessible depuis son smartphone, en connexion directe avec vous.</p>
       <div class="collab-features">
         <div class="collab-feature"><span>📄</span> Consultation du bail & annexes</div>
@@ -332,7 +296,7 @@
       <a href="#inscription" class="btn-plan btn-plan-accent" onclick="selectPlan('duo')">Choisir Duo</a>
     </div>
     <div class="plan-card">
-      <div class="plan-name">Pack</div>
+      <div class="plan-name">Pro</div>
       <div class="plan-price">39€<span>/mois</span></div>
       <div class="plan-sub">Les 3 modules</div>
       <div class="plan-divider"></div>
@@ -344,7 +308,7 @@
         <div class="plan-feature"><span class="check">✓</span> Simulateur rentabilité</div>
         <div class="plan-feature"><span class="check">✓</span> Priorité support</div>
       </div>
-      <a href="#inscription" class="btn-plan btn-plan-ghost" onclick="selectPlan('pack')">Choisir le Pack</a>
+      <a href="#inscription" class="btn-plan btn-plan-ghost" onclick="selectPlan('pro')">Choisir le Pro</a>
     </div>
   </div>
 </section>
@@ -360,21 +324,21 @@
           <div class="invest-point-icon">💰</div>
           <div>
             <div class="invest-point-title">Déductible comme charge de gestion</div>
-            <div class="invest-point-desc">Selon votre régime fiscal (réel, LMNP, SCI), Bailo Pro est déductible de vos revenus fonciers. Moins qu'un repas d'affaires par mois.</div>
+            <div class="invest-point-desc">Selon votre régime fiscal (réel, LMNP, SCI), Bailo Pro est déductible de vos revenus fonciers.</div>
           </div>
         </div>
         <div class="invest-point">
           <div class="invest-point-icon">📋</div>
           <div>
             <div class="invest-point-title">Conforme réforme 2026</div>
-            <div class="invest-point-desc">Export Factur-X natif, compatible Sage, Cegid, EBP et Pennylane. Anticipez la facturation électronique obligatoire dès maintenant.</div>
+            <div class="invest-point-desc">Export Factur-X natif, compatible Sage, Cegid, EBP et Pennylane.</div>
           </div>
         </div>
         <div class="invest-point">
           <div class="invest-point-icon">🏦</div>
           <div>
             <div class="invest-point-title">Dossier banquier clé en main</div>
-            <div class="invest-point-desc">Générez un dossier PDF professionnel avec composition de l'immeuble, rendement locatif et simulation de financement pour convaincre votre banque.</div>
+            <div class="invest-point-desc">Générez un dossier PDF professionnel pour convaincre votre banque.</div>
           </div>
         </div>
       </div>
@@ -388,13 +352,13 @@
         </div>
         <div style="height:1px;background:var(--border);margin:20px 0"></div>
         <div class="invest-stat">
-          <div class="invest-stat-label">Coût mensuel Pack complet</div>
+          <div class="invest-stat-label">Coût mensuel Pro complet</div>
           <div class="invest-stat-val">39€</div>
           <div class="invest-stat-sub">soit 468€/an — déductible fiscalement</div>
         </div>
         <div style="height:1px;background:var(--border);margin:20px 0"></div>
         <div style="background:var(--accent-dim);border:1px solid rgba(232,121,58,.2);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--ink-2);line-height:1.55">
-          💡 <strong style="color:var(--ink)">En LMNP au réel</strong>, Bailo Pro est une charge déductible du résultat imposable. Consultez votre comptable pour confirmation.
+          💡 <strong style="color:var(--ink)">En LMNP au réel</strong>, Bailo Pro est une charge déductible. Consultez votre comptable pour confirmation.
         </div>
       </div>
     </div>
@@ -404,7 +368,7 @@
 <section style="padding-top:0">
   <div class="section-label">Comment ça fonctionne</div>
   <h2>Des suggestions au bon moment</h2>
-  <p class="section-sub">Bailo Pro vous guide naturellement vers les fonctionnalités dont vous avez besoin, sans vous bloquer.</p>
+  <p class="section-sub">Bailo Pro vous guide naturellement vers les fonctionnalités dont vous avez besoin.</p>
   <div class="upsell-grid">
     <div class="upsell-item">
       <div class="upsell-trigger">Depuis Bailo Chantier</div>
@@ -419,7 +383,7 @@
     <div class="upsell-item">
       <div class="upsell-trigger">Après vos travaux</div>
       <div class="upsell-msg">Votre bien est rénové — gérez la location directement depuis Bailo Gestion</div>
-      <div class="upsell-pill">Passer au Pack →</div>
+      <div class="upsell-pill">Passer au Pro →</div>
     </div>
   </div>
 </section>
@@ -429,12 +393,13 @@
     <div class="signup-left">
       <div class="section-label">Inscription</div>
       <h2>Commencez aujourd'hui</h2>
-      <p>Créez votre compte en 30 secondes. Accédez immédiatement à votre module. Sans carte bancaire pour démarrer.</p>
+      <p>Créez votre compte en 30 secondes. Paiement sécurisé par Stripe. Accès immédiat après paiement.</p>
       <div class="signup-perks">
-        <div class="signup-perk"><span>✓</span> Accès immédiat après inscription</div>
+        <div class="signup-perk"><span>✓</span> Accès immédiat après paiement</div>
         <div class="signup-perk"><span>✓</span> Sans engagement, résiliable à tout moment</div>
         <div class="signup-perk"><span>✓</span> Données hébergées en France</div>
-        <div class="signup-perk"><span>✓</span> Support par email inclus</div>
+        <div class="signup-perk"><span>✓</span> Paiement 100% sécurisé par Stripe</div>
+        <div class="signup-perk"><span>✓</span> Satisfait ou remboursé 7 jours</div>
       </div>
     </div>
     <div>
@@ -444,7 +409,7 @@
           <div class="plan-selector">
             <button class="plan-btn" id="plan-solo" onclick="selectPlan('solo')"><span class="plan-btn-price">15€</span>/mois · Solo</button>
             <button class="plan-btn selected" id="plan-duo" onclick="selectPlan('duo')"><span class="plan-btn-price">29€</span>/mois · Duo</button>
-            <button class="plan-btn" id="plan-pack" onclick="selectPlan('pack')"><span class="plan-btn-price">39€</span>/mois · Pack</button>
+            <button class="plan-btn" id="plan-pro" onclick="selectPlan('pro')"><span class="plan-btn-price">39€</span>/mois · Pro</button>
           </div>
         </div>
         <div class="field" id="modules-field">
@@ -465,7 +430,7 @@
         </div>
         <div class="form-error" id="form-error"></div>
         <div class="form-success" id="form-success"></div>
-        <button class="btn-signup" id="btn-signup" onclick="handleSignup()">Créer mon compte →</button>
+        <button class="btn-signup" id="btn-signup" onclick="handleSignup()">Créer mon compte et payer →</button>
         <p class="form-note">Déjà un compte ? <a href="https://bailo-chantier.netlify.app" style="color:var(--accent)">Se connecter →</a></p>
         <p class="form-note">En créant votre compte, vous acceptez nos <a href="/legal.html#cgv" style="color:var(--accent)">CGV</a> et notre <a href="/legal.html#rgpd" style="color:var(--accent)">politique de confidentialité</a>.</p>
       </div>
@@ -495,7 +460,9 @@
 <script>
 const { createClient } = supabase
 const db = createClient('https://hvkguyddmhqbvarujlyr.supabase.co','sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W')
+
 let selectedPlan = 'duo'
+
 function selectPlan(plan) {
   selectedPlan = plan
   document.querySelectorAll('.plan-btn').forEach(b => b.classList.remove('selected'))
@@ -505,59 +472,89 @@ function selectPlan(plan) {
   const modulesSelect = document.getElementById('modules-select')
   if (plan === 'solo') {
     modulesField.style.display = 'block'
-    modulesSelect.innerHTML = `<option value="chantier">Chantier uniquement</option><option value="finance">Finance uniquement</option><option value="gestion">Gestion uniquement</option>`
+    modulesSelect.innerHTML = `
+      <option value="chantier">Chantier uniquement</option>
+      <option value="finance">Finance uniquement</option>
+      <option value="gestion">Gestion uniquement</option>`
   } else if (plan === 'duo') {
     modulesField.style.display = 'block'
-    modulesSelect.innerHTML = `<option value="chantier,finance">Chantier + Finance</option><option value="chantier,gestion">Chantier + Gestion</option><option value="finance,gestion">Finance + Gestion</option>`
+    modulesSelect.innerHTML = `
+      <option value="chantier,finance">Chantier + Finance</option>
+      <option value="chantier,gestion">Chantier + Gestion</option>
+      <option value="finance,gestion">Finance + Gestion</option>`
   } else {
     modulesField.style.display = 'none'
   }
 }
 selectPlan('duo')
+
 async function handleSignup() {
-  const email = document.getElementById('signup-email').value.trim()
+  const email    = document.getElementById('signup-email').value.trim()
   const password = document.getElementById('signup-password').value
-  const errEl = document.getElementById('form-error')
-  const successEl = document.getElementById('form-success')
-  const btn = document.getElementById('btn-signup')
+  const errEl    = document.getElementById('form-error')
+  const successEl= document.getElementById('form-success')
+  const btn      = document.getElementById('btn-signup')
+
   errEl.style.display = 'none'
   successEl.style.display = 'none'
-  if (!email) { showError('Votre email est requis.'); return }
-  if (!password || password.length < 8) { showError('Le mot de passe doit faire au moins 8 caractères.'); return }
+
+  if (!email)                          { showError('Votre email est requis.'); return }
+  if (!password || password.length < 8){ showError('Le mot de passe doit faire au moins 8 caractères.'); return }
+
   btn.disabled = true
   btn.textContent = 'Création du compte...'
+
   try {
+    // 1. Créer le compte Supabase
     const { data, error } = await db.auth.signUp({ email, password })
     if (error) throw new Error(error.message)
     const user = data.user
     if (!user) throw new Error('Erreur lors de la création du compte.')
+
+    // 2. Déterminer les modules
     let modules
-    if (selectedPlan === 'pack') {
+    if (selectedPlan === 'pro') {
       modules = ['chantier','finance','gestion']
     } else {
       const val = document.getElementById('modules-select').value
       modules = val.split(',')
     }
-    const expiresAt = new Date()
-    expiresAt.setMonth(expiresAt.getMonth() + 1)
-    const { error: subError } = await db.from('subscriptions').insert({ user_id: user.id, modules, plan: selectedPlan, active: true, expires_at: expiresAt.toISOString() })
-    if (subError) console.warn('Subscription insert:', subError.message)
-    const firstModule = modules[0]
-    const URLS = { chantier: 'https://bailo-chantier.netlify.app', finance: 'https://finance.bailo.pro', gestion: 'https://gestion.bailo.pro' }
-    successEl.innerHTML = `✅ Compte créé ! Redirection vers ${firstModule === 'chantier' ? 'Bailo Chantier' : firstModule === 'finance' ? 'Bailo Finance' : 'Bailo Gestion'}...`
+
+    btn.textContent = 'Redirection vers le paiement...'
+
+    // 3. Appeler la Netlify function pour créer la session Stripe
+    const resp = await fetch('/.netlify/functions/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan: selectedPlan,
+        modules: modules,
+        email: email,
+        userId: user.id
+      })
+    })
+
+    const result = await resp.json()
+    if (!resp.ok || !result.url) throw new Error(result.error || 'Erreur paiement')
+
+    // 4. Rediriger vers Stripe Checkout
+    successEl.innerHTML = '✅ Compte créé ! Redirection vers le paiement sécurisé...'
     successEl.style.display = 'block'
-    setTimeout(() => { window.location.href = URLS[firstModule] || URLS.chantier }, 1800)
+    setTimeout(() => { window.location.href = result.url }, 1200)
+
   } catch(e) {
     showError(e.message || 'Une erreur est survenue. Réessayez.')
     btn.disabled = false
-    btn.textContent = 'Créer mon compte →'
+    btn.textContent = 'Créer mon compte et payer →'
   }
 }
+
 function showError(msg) {
   const el = document.getElementById('form-error')
   el.textContent = msg
   el.style.display = 'block'
 }
+
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.target.id === 'signup-email' || e.target.id === 'signup-password')) handleSignup()
 })
