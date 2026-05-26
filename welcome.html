@@ -490,12 +490,12 @@
       </div>
       <div style="text-align:center">
         <h1 style="margin-bottom:0.75rem">Tout est prêt</h1>
-        <p class="subtitle" style="margin-bottom:1.75rem">Commencez par Bailo Finance — l'étude de faisabilité est le point de départ de tout projet.</p>
+        <p class="subtitle" style="margin-bottom:1.75rem" id="launch-subtitle">Accédez à votre espace et commencez à gérer vos projets.</p>
 
         <div class="modules-grid" id="modules-grid"></div>
 
         <button class="btn" id="btn-launch" onclick="launchApp()">
-          Ouvrir Bailo Finance
+          Ouvrir mon espace
           <svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9,4 13,8 9,12"/></svg>
         </button>
       </div>
@@ -506,8 +506,8 @@
 
 <script>
   // ---- CONFIG ----
-  const SUPABASE_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
+  const SUPABASE_URL = window.ENV_SUPABASE_URL || '';
+  const SUPABASE_ANON_KEY = window.ENV_SUPABASE_ANON_KEY || '';
 
   const MODULE_URLS = {
     finance:  'https://finance.bailo.pro',
@@ -597,6 +597,13 @@
       div.innerHTML = '<div class="m-icon">' + meta.icon + '</div><div class="m-name">' + meta.name + '</div><div class="m-desc">' + meta.desc + '</div>';
       grid.appendChild(div);
     });
+    const subtitles = {
+      finance:  'Commencez par Bailo Finance pour évaluer la faisabilité de votre projet.',
+      chantier: 'Commencez par Bailo Chantier pour suivre vos travaux et artisans.',
+      gestion:  'Commencez par Bailo Gestion pour gérer vos locataires et contrats.'
+    };
+    const sub = document.getElementById('launch-subtitle');
+    if (sub && mods[0] && subtitles[mods[0]]) sub.textContent = subtitles[mods[0]];
   }
 
   // ---- NAVIGATION ----
@@ -676,7 +683,13 @@
   }
 
   function launchApp() {
-    window.location.href = MODULE_URLS.finance;
+    var mods = document.querySelectorAll("#modules-grid .module-card");
+    var firstUrl = MODULE_URLS.finance;
+    if (mods.length > 0) {
+      var firstName = mods[0].querySelector(".m-name").textContent.replace("Bailo ","").toLowerCase();
+      if (MODULE_URLS[firstName]) firstUrl = MODULE_URLS[firstName];
+    }
+    window.location.href = firstUrl;
   }
 </script>
 </body>
