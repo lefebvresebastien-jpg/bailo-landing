@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — Bailo Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0c0b;
+      --bg2:       #141210;
+      --border:    rgba(255,255,255,0.08);
+      --orange:    #f4622a;
+      --orange-dk: #d4531f;
+      --white:     #f5f0eb;
+      --muted:     rgba(245,240,235,0.45);
+      --radius:    12px;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Noise grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* ── Glow ambiance ── */
+    body::after {
+      content: '';
+      position: fixed;
+      width: 600px; height: 600px;
+      top: -150px; left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(244,98,42,0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(13,12,11,0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      display: flex; align-items: baseline; gap: 5px;
+      text-decoration: none;
+    }
+    .logo-main {
+      font-family: var(--font-head);
+      font-size: 22px; font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.5px;
+    }
+    .logo-badge {
+      font-family: var(--font-body);
+      font-size: 11px; font-weight: 600;
+      color: var(--white);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      padding: 1px 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-cta {
+      font-size: 13px; font-weight: 600;
+      color: var(--white);
+      background: var(--orange);
+      border: none; border-radius: 8px;
+      padding: 9px 18px;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--orange-dk); }
+
+    /* ── Main layout ── */
+    main {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 100px 24px 60px;
+    }
+
+    /* ── Card ── */
+    .card {
+      width: 100%; max-width: 420px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 40px 44px;
+      position: relative;
+      animation: fadeUp 0.5s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* top accent line */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 24px; right: 24px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      border-radius: 1px;
+    }
+
+    .card-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      color: var(--orange);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-family: var(--font-head);
+      font-size: 36px; font-weight: 900;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: var(--white);
+    }
+
+    .card-sub {
+      font-size: 14px; color: var(--muted);
+      margin-bottom: 36px;
+      line-height: 1.5;
+    }
+
+    /* ── Form ── */
+    .field { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 15px;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    input::placeholder { color: rgba(255,255,255,0.2); }
+    input:focus {
+      border-color: rgba(244,98,42,0.5);
+      background: rgba(244,98,42,0.04);
+    }
+    input.error-field { border-color: #e05555; }
+
+    /* ── Submit button ── */
+    .btn-submit {
+      width: 100%;
+      background: var(--orange);
+      color: #fff;
+      border: none; border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 700;
+      padding: 15px;
+      cursor: pointer; margin-top: 8px;
+      transition: background 0.2s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      position: relative; overflow: hidden;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--orange-dk); }
+    .btn-submit:active:not(:disabled) { transform: scale(0.99); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* spinner */
+    .spinner {
+      width: 17px; height: 17px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Messages ── */
+    .msg {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px; font-weight: 500;
+      margin-top: 18px;
+      display: none;
+    }
+    .msg.error {
+      background: rgba(224,85,85,0.1);
+      border: 1px solid rgba(224,85,85,0.25);
+      color: #f08080;
+    }
+    .msg.success {
+      background: rgba(80,200,120,0.1);
+      border: 1px solid rgba(80,200,120,0.25);
+      color: #7ecfa0;
+    }
+
+    /* ── Footer link ── */
+    .card-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 13px; color: var(--muted);
+    }
+    .card-footer a {
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .card-footer a:hover { text-decoration: underline; }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 28px 0 24px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1;
+      height: 1px; background: var(--border);
+    }
+    .divider span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    /* ── "Forgot password" link ── */
+    .forgot {
+      text-align: right;
+      margin-top: -10px; margin-bottom: 20px;
+    }
+    .forgot a {
+      font-size: 12px; color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .forgot a:hover { color: var(--orange); }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <a href="https://bailo.pro" class="logo">
+      <span class="logo-main">Bailo</span>
+      <span class="logo-badge">Pro</span>
+    </a>
+    <a href="https://bailo.pro/#inscription" class="nav-cta">Commencer — 15€/mois</a>
+  </nav>
+
+  <!-- Main -->
+  <main>
+    <div class="card">
+      <p class="card-eyebrow">Espace client</p>
+      <h1 class="card-title">Connexion</h1>
+      <p class="card-sub">Accédez à votre espace de gestion locative.</p>
+
+      <div class="field">
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" placeholder="vous@exemple.fr" autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+
+      <div class="forgot">
+        <a href="#" id="forgot-link">Mot de passe oublié ?</a>
+      </div>
+
+      <button class="btn-submit" id="btn-login">
+        <span id="btn-text">Se connecter →</span>
+        <span class="spinner" id="spinner"></span>
+      </button>
+
+      <div class="msg error" id="msg-error"></div>
+      <div class="msg success" id="msg-success"></div>
+
+      <div class="card-footer">
+        Pas encore client ?
+        <a href="https://bailo.pro/#inscription">Découvrir Bailo Pro</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
+    const REDIRECT_URL = 'https://gestion.bailo.pro';
+
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ── Elements
+    const emailEl    = document.getElementById('email');
+    const passEl     = document.getElementById('password');
+    const btnLogin   = document.getElementById('btn-login');
+    const btnText    = document.getElementById('btn-text');
+    const spinnerEl  = document.getElementById('spinner');
+    const msgError   = document.getElementById('msg-error');
+    const msgSuccess = document.getElementById('msg-success');
+    const forgotLink = document.getElementById('forgot-link');
+
+    function setLoading(on) {
+      btnLogin.disabled = on;
+      btnText.style.display  = on ? 'none' : 'inline';
+      spinnerEl.style.display = on ? 'block' : 'none';
+    }
+
+    function showError(msg) {
+      msgError.textContent = msg;
+      msgError.style.display = 'block';
+      msgSuccess.style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      msgSuccess.textContent = msg;
+      msgSuccess.style.display = 'block';
+      msgError.style.display = 'none';
+    }
+
+    // ── Login
+    btnLogin.addEventListener('click', async () => {
+      const email = emailEl.value.trim();
+      const pass  = passEl.value;
+
+      emailEl.classList.remove('error-field');
+      passEl.classList.remove('error-field');
+      msgError.style.display = 'none';
+
+      if (!email) { emailEl.classList.add('error-field'); showError('Veuillez saisir votre adresse e-mail.'); return; }
+      if (!pass)  { passEl.classList.add('error-field');  showError('Veuillez saisir votre mot de passe.'); return; }
+
+      setLoading(true);
+
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+
+      setLoading(false);
+
+      if (error) {
+        const msgs = {
+          'Invalid login credentials': 'E-mail ou mot de passe incorrect.',
+          'Email not confirmed': 'Votre e-mail n\'est pas encore confirmé. Vérifiez votre boîte mail.',
+          'Too many requests': 'Trop de tentatives. Réessayez dans quelques minutes.',
+        };
+        showError(msgs[error.message] || 'Erreur de connexion. Réessayez.');
+        return;
+      }
+
+      showSuccess('Connexion réussie ! Redirection en cours…');
+      setTimeout(() => { window.location.href = REDIRECT_URL; }, 900);
+    });
+
+    // ── Enter key
+    [emailEl, passEl].forEach(el => {
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') btnLogin.click(); });
+    });
+
+    // ── Forgot password
+    forgotLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = emailEl.value.trim();
+      if (!email) {
+        emailEl.classList.add('error-field');
+        showError('Saisissez votre e-mail pour recevoir un lien de réinitialisation.');
+        return;
+      }
+      setLoading(true);
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://gestion.bailo.pro/reset-password'
+      });
+      setLoading(false);
+      if (error) { showError('Impossible d\'envoyer l\'e-mail. Réessayez.'); }
+      else { showSuccess('E-mail de réinitialisation envoyé ! Vérifiez votre boîte.'); }
+    });
+
+    // ── Already logged in? redirect
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session) window.location.href = REDIRECT_URL;
+    });
+  </script>
+
+</body>
+</html>
