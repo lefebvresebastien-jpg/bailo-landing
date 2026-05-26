@@ -144,6 +144,7 @@ exports.handler = async function(event) {
           .from('subscriptions')
           .upsert({
             user_id:            userId,
+            email,
             plan:               plan,
             modules:            modules,
             active:             true,
