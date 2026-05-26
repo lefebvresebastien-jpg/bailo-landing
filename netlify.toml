@@ -1,6 +1,7 @@
 [build]
   functions = "netlify/functions"
-  environment = { SECRETS_SCAN_OMIT_PATHS = "index.html,netlify/functions/stripe-webhook.js" }
+  environment = { SECRETS_SCAN_OMIT_PATHS = "index.html,netlify/functions/stripe-webhook.js,login.html" }
+
 
 [[headers]]
   for = "/.netlify/functions/*"
