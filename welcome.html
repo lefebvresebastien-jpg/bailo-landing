@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bienvenue — Bailo Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #f97316;
+    --orange-dark: #c2530a;
+    --orange-dim: rgba(249,115,22,0.12);
+    --bg: #0a0a0a;
+    --bg2: #141414;
+    --bg3: #1c1c1c;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(249,115,22,0.4);
+    --text: #f0ede8;
+    --muted: #6b6560;
+    --muted2: #9c9790;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* background grid subtle */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(249,115,22,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(249,115,22,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* NAV */
+  nav {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .logo em { color: var(--orange); font-style: normal; }
+  .logo sup {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--orange);
+    letter-spacing: 1px;
+    margin-left: 2px;
+    vertical-align: super;
+  }
+
+  /* PROGRESS */
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .prog-seg {
+    height: 3px;
+    width: 28px;
+    border-radius: 2px;
+    background: var(--bg3);
+    transition: background 0.4s, width 0.4s;
+  }
+  .prog-seg.active { background: var(--orange); width: 44px; }
+  .prog-seg.done { background: var(--orange-dark); }
+
+  /* CARD */
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem 2.5rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* STEP LABEL */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted2);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  /* PLAN BADGE */
+  .plan-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--orange-dim);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .plan-modules {
+    font-size: 13px;
+    color: var(--muted2);
+  }
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--orange);
+    white-space: nowrap;
+  }
+  .plan-price span {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .checklist li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--muted2);
+  }
+  .check-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--orange-dim);
+    border: 1px solid rgba(249,115,22,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .check-dot svg { width: 10px; height: 10px; stroke: var(--orange); stroke-width: 2.5; fill: none; }
+
+  /* CHOICES */
+  .section-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .choices.three { grid-template-columns: 1fr 1fr; }
+
+  .choice {
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .choice:hover { border-color: rgba(249,115,22,0.3); }
+  .choice.selected {
+    border-color: var(--orange);
+    background: var(--orange-dim);
+  }
+  .choice-icon {
+    font-size: 18px;
+    margin-bottom: 4px;
+    color: var(--muted2);
+    transition: color 0.2s;
+  }
+  .choice.selected .choice-icon { color: var(--orange); }
+  .choice-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .choice-sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .choice.wide { grid-column: span 2; flex-direction: row; align-items: center; gap: 12px; }
+  .choice.wide .choice-icon { margin-bottom: 0; }
+
+  /* BUTTON */
+  .btn {
+    width: 100%;
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn:hover { background: #ea6a10; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled {
+    background: #2a1a0a;
+    color: #5a4030;
+    cursor: not-allowed;
+  }
+  .btn svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+  /* STEP VISIBILITY */
+  .step { display: none; }
+  .step.active { display: block; animation: fadeUp 0.35s ease both; }
+
+  /* FINAL SCREEN */
+  .final-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--orange-dim);
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .final-icon svg { width: 24px; height: 24px; stroke: var(--orange); stroke-width: 2; fill: none; }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .module-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .module-card .m-icon {
+    font-size: 20px;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+  .module-card .m-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .module-card .m-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav>
+    <div class="logo">Bailo<em>.</em><sup>PRO</sup></div>
+    <div class="progress">
+      <div class="prog-seg active" id="p1"></div>
+      <div class="prog-seg" id="p2"></div>
+      <div class="prog-seg" id="p3"></div>
+      <div class="prog-seg" id="p4"></div>
+    </div>
+  </nav>
+
+  <div class="card">
+
+    <!-- STEP 1 : Bienvenue -->
+    <div class="step active" id="step1">
+      <div class="eyebrow">Étape 1 sur 3</div>
+      <h1>Votre accès<br>est activé</h1>
+      <p class="subtitle">Configurons votre expérience en 2 minutes.</p>
+
+      <div class="plan-badge" id="plan-badge">
+        <div>
+          <div class="plan-name" id="plan-name">Plan Pro</div>
+          <div class="plan-modules" id="plan-modules-label">Chantier · Finance · Gestion</div>
+        </div>
+        <div class="plan-price" id="plan-price">39€<span>/mois</span></div>
+      </div>
+
+      <ul class="checklist">
+        <li>
+          <div class="check-dot"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          Accès immédiat à vos modules
+        </li>
+        <li>
+          <div class="check-dot"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          Données hébergées en France
+        </li>
+        <li>
+          <div class="check-dot"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          Résiliable à tout moment
+        </li>
+      </ul>
+
+      <button class="btn" onclick="goTo(2)">
+        Configurer mon profil
+        <svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9,4 13,8 9,12"/></svg>
+      </button>
+    </div>
+
+    <!-- STEP 2 : Profil investisseur -->
+    <div class="step" id="step2">
+      <div class="eyebrow">Étape 2 sur 3</div>
+      <h1>Votre profil<br>investisseur</h1>
+      <p class="subtitle">Pour personnaliser votre expérience.</p>
+
+      <div class="section-label">Votre niveau</div>
+      <div class="choices">
+        <div class="choice" onclick="select(this,'niveau','debutant')" id="n-debutant">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </div>
+          <div class="choice-label">Débutant</div>
+          <div class="choice-sub">Mon premier investissement</div>
+        </div>
+        <div class="choice" onclick="select(this,'niveau','confirme')" id="n-confirme">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div class="choice-label">Confirmé</div>
+          <div class="choice-sub">J'ai déjà des biens</div>
+        </div>
+      </div>
+
+      <div class="section-label">Vos travaux</div>
+      <div class="choices three">
+        <div class="choice" onclick="select(this,'travaux','moi')" id="t-moi">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div class="choice-label">Moi-même</div>
+          <div class="choice-sub">Je gère tout</div>
+        </div>
+        <div class="choice" onclick="select(this,'travaux','artisans')" id="t-artisans">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="choice-label">Artisans</div>
+          <div class="choice-sub">Je délègue</div>
+        </div>
+        <div class="choice wide" onclick="select(this,'travaux','mixte')" id="t-mixte">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          </div>
+          <div>
+            <div class="choice-label">Les deux</div>
+            <div class="choice-sub">Selon les projets</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="btn2" disabled onclick="goTo(3)">
+        Continuer
+        <svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9,4 13,8 9,12"/></svg>
+      </button>
+    </div>
+
+    <!-- STEP 3 : Type d'investissement -->
+    <div class="step" id="step3">
+      <div class="eyebrow">Étape 3 sur 3</div>
+      <h1>Votre stratégie<br>d'investissement</h1>
+      <p class="subtitle">Quel type de projet vous correspond ?</p>
+
+      <div class="choices">
+        <div class="choice" onclick="select(this,'type','residentiel')" id="ty-residentiel">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+          </div>
+          <div class="choice-label">Résidentiel</div>
+          <div class="choice-sub">Maison, appartement</div>
+        </div>
+        <div class="choice" onclick="select(this,'type','locatif')" id="ty-locatif">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="choice-label">Locatif</div>
+          <div class="choice-sub">Mise en location</div>
+        </div>
+        <div class="choice" onclick="select(this,'type','renovation')" id="ty-renovation">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="choice-label">Rénovation</div>
+          <div class="choice-sub">Achat + travaux</div>
+        </div>
+        <div class="choice" onclick="select(this,'type','mixte')" id="ty-mixte">
+          <div class="choice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="choice-label">Mixte</div>
+          <div class="choice-sub">Plusieurs stratégies</div>
+        </div>
+      </div>
+
+      <button class="btn" id="btn3" disabled onclick="saveAndFinish()">
+        Accéder à Bailo Pro
+        <svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9,4 13,8 9,12"/></svg>
+      </button>
+    </div>
+
+    <!-- STEP 4 : Final -->
+    <div class="step" id="step4">
+      <div class="final-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div style="text-align:center">
+        <h1 style="margin-bottom:0.75rem">Tout est prêt</h1>
+        <p class="subtitle" style="margin-bottom:1.75rem">Commencez par Bailo Finance — l'étude de faisabilité est le point de départ de tout projet.</p>
+
+        <div class="modules-grid" id="modules-grid"></div>
+
+        <button class="btn" id="btn-launch" onclick="launchApp()">
+          Ouvrir Bailo Finance
+          <svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9,4 13,8 9,12"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ---- CONFIG ----
+  const SUPABASE_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
+
+  const MODULE_URLS = {
+    finance:  'https://finance.bailo.pro',
+    chantier: 'https://bailo-chantier.netlify.app',
+    gestion:  'https://gestion.bailo.pro'
+  };
+
+  const PLAN_CONFIG = {
+    solo:  { label: 'Plan Solo', price: '15€', modules: ['finance'] },
+    duo:   { label: 'Plan Duo',  price: '29€', modules: ['finance','chantier'] },
+    pro:   { label: 'Plan Pro',  price: '39€', modules: ['finance','chantier','gestion'] }
+  };
+
+  const MODULE_META = {
+    finance:  { name: 'Bailo Finance',  desc: 'Faisabilité & banque',   icon: '<svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+    chantier: { name: 'Bailo Chantier', desc: 'Suivi travaux',          icon: '<svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>' },
+    gestion:  { name: 'Bailo Gestion',  desc: 'Gestion locative',       icon: '<svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' }
+  };
+
+  var selections = {};
+  var userPlan = 'pro'; // sera récupéré depuis Supabase
+
+  // ---- INIT ----
+  window.addEventListener('DOMContentLoaded', function() {
+    loadUserPlan();
+  });
+
+  async function loadUserPlan() {
+    try {
+      // Récupérer session Supabase
+      const hash = window.location.hash;
+      const params = new URLSearchParams(window.location.search);
+
+      // Lire le JWT depuis localStorage (Supabase le stocke automatiquement)
+      const keys = Object.keys(localStorage);
+      let token = null;
+      for (const k of keys) {
+        if (k.includes('supabase') && k.includes('auth')) {
+          try {
+            const val = JSON.parse(localStorage.getItem(k));
+            if (val && val.access_token) { token = val.access_token; break; }
+          } catch(e) {}
+        }
+      }
+
+      if (!token || !SUPABASE_ANON_KEY) {
+        setPlan('pro'); // fallback
+        return;
+      }
+
+      const res = await fetch(SUPABASE_URL + '/rest/v1/subscriptions?select=plan,modules&limit=1', {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await res.json();
+      if (data && data[0]) {
+        setPlan(data[0].plan, data[0].modules);
+      }
+    } catch(e) {
+      setPlan('pro');
+    }
+  }
+
+  function setPlan(plan, modules) {
+    userPlan = plan;
+    const cfg = PLAN_CONFIG[plan] || PLAN_CONFIG['pro'];
+    document.getElementById('plan-name').textContent = cfg.label;
+    document.getElementById('plan-price').innerHTML = cfg.price + '<span>/mois</span>';
+    const mods = modules || cfg.modules;
+    document.getElementById('plan-modules-label').textContent = mods.map(function(m) {
+      return MODULE_META[m] ? MODULE_META[m].name.replace('Bailo ','') : m;
+    }).join(' · ');
+    buildModulesGrid(mods);
+  }
+
+  function buildModulesGrid(mods) {
+    const grid = document.getElementById('modules-grid');
+    grid.innerHTML = '';
+    mods.forEach(function(m) {
+      const meta = MODULE_META[m];
+      if (!meta) return;
+      const div = document.createElement('div');
+      div.className = 'module-card';
+      div.innerHTML = '<div class="m-icon">' + meta.icon + '</div><div class="m-name">' + meta.name + '</div><div class="m-desc">' + meta.desc + '</div>';
+      grid.appendChild(div);
+    });
+  }
+
+  // ---- NAVIGATION ----
+  function goTo(n) {
+    document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('step' + n).classList.add('active');
+    ['p1','p2','p3','p4'].forEach(function(id, i) {
+      var d = document.getElementById(id);
+      d.classList.remove('active','done');
+      if (i + 1 === n) d.classList.add('active');
+      else if (i + 1 < n) d.classList.add('done');
+    });
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  // ---- SELECTION ----
+  function select(el, group, val) {
+    document.querySelectorAll('[id^="' + group.charAt(0) + '-"], [id^="ty-"], [id^="n-"], [id^="t-"]').forEach(function(c){
+      if (c.getAttribute('onclick') && c.getAttribute('onclick').includes("'" + group + "'")) {
+        c.classList.remove('selected');
+      }
+    });
+    el.classList.add('selected');
+    selections[group] = val;
+    if (group === 'niveau' || group === 'travaux') {
+      if (selections['niveau'] && selections['travaux']) {
+        document.getElementById('btn2').disabled = false;
+      }
+    }
+    if (group === 'type') {
+      document.getElementById('btn3').disabled = false;
+    }
+  }
+
+  // ---- SAVE ----
+  async function saveAndFinish() {
+    goTo(4);
+
+    try {
+      const keys = Object.keys(localStorage);
+      let token = null;
+      let userId = null;
+      for (const k of keys) {
+        if (k.includes('supabase') && k.includes('auth')) {
+          try {
+            const val = JSON.parse(localStorage.getItem(k));
+            if (val && val.access_token) {
+              token = val.access_token;
+              userId = val.user && val.user.id;
+              break;
+            }
+          } catch(e) {}
+        }
+      }
+
+      if (!token || !userId || !SUPABASE_ANON_KEY) return;
+
+      await fetch(SUPABASE_URL + '/rest/v1/profiles', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          niveau: selections['niveau'] || null,
+          travaux: selections['travaux'] || null,
+          type_investissement: selections['type'] || null,
+          onboarding_done: true
+        })
+      });
+    } catch(e) {
+      console.error('Save profile error:', e);
+    }
+  }
+
+  function launchApp() {
+    window.location.href = MODULE_URLS.finance;
+  }
+</script>
+</body>
+</html>
