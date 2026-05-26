@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bailo Pro — La suite immobilière pour investisseurs</title>
   <meta name="description" content="Bailo Pro centralise la gestion de votre patrimoine immobilier : chantiers, finances et location. Déductible comme charge de gestion.">
+  <!-- SEO complémentaire -->
+  <link rel="canonical" href="https://bailo.pro/" />
+  <meta name="robots" content="index, follow" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bailo.pro/" />
+  <meta property="og:title" content="Bailo Pro — La suite immobilière pour investisseurs" />
+  <meta property="og:description" content="Bailo Pro centralise la gestion de votre patrimoine immobilier : chantiers, finances et location. Déductible comme charge de gestion." />
+  <meta property="og:locale" content="fr_FR" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bailo Pro — La suite immobilière pour investisseurs" />
+  <meta name="twitter:description" content="Bailo Pro centralise la gestion de votre patrimoine immobilier : chantiers, finances et location." />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -505,13 +518,11 @@ async function handleSignup() {
   btn.textContent = 'Création du compte...'
 
   try {
-    // 1. Créer le compte Supabase
     const { data, error } = await db.auth.signUp({ email, password })
     if (error) throw new Error(error.message)
     const user = data.user
     if (!user) throw new Error('Erreur lors de la création du compte.')
 
-    // 2. Déterminer les modules
     let modules
     if (selectedPlan === 'pro') {
       modules = ['chantier','finance','gestion']
@@ -522,22 +533,15 @@ async function handleSignup() {
 
     btn.textContent = 'Redirection vers le paiement...'
 
-    // 3. Appeler la Netlify function pour créer la session Stripe
     const resp = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        plan: selectedPlan,
-        modules: modules,
-        email: email,
-        userId: user.id
-      })
+      body: JSON.stringify({ plan: selectedPlan, modules: modules, email: email, userId: user.id })
     })
 
     const result = await resp.json()
     if (!resp.ok || !result.url) throw new Error(result.error || 'Erreur paiement')
 
-    // 4. Rediriger vers Stripe Checkout
     successEl.innerHTML = '✅ Compte créé ! Redirection vers le paiement sécurisé...'
     successEl.style.display = 'block'
     setTimeout(() => { window.location.href = result.url }, 1200)
