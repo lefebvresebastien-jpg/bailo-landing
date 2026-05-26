@@ -9,21 +9,19 @@ const supabase = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ── Noms lisibles des plans ──
 const PLAN_LABELS = {
   solo: 'Solo — 15€/mois',
   duo:  'Duo — 29€/mois',
   pro:  'Pro — 39€/mois',
 };
 
-// ── Email de confirmation ──
 async function sendConfirmationEmail(email, plan) {
   const planLabel = PLAN_LABELS[plan] || plan;
 
   await resend.emails.send({
     from: 'Bailo Pro <contact@bailo.pro>',
     to:   email,
-    subject: '✅ Votre abonnement Bailo Pro est actif',
+    subject: 'Votre abonnement Bailo Pro est actif',
     html: `
 <!DOCTYPE html>
 <html lang="fr">
@@ -37,12 +35,10 @@ async function sendConfirmationEmail(email, plan) {
       <td align="center">
         <table width="560" cellpadding="0" cellspacing="0" style="background:#141210;border-radius:16px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;max-width:560px;width:100%;">
 
-          <!-- Header orange bar -->
           <tr>
             <td style="background:linear-gradient(90deg,#f4622a,#d4531f);height:4px;"></td>
           </tr>
 
-          <!-- Logo -->
           <tr>
             <td style="padding:32px 40px 0;">
               <span style="font-size:22px;font-weight:900;color:#f5f0eb;letter-spacing:-0.5px;">Bailo</span>
@@ -50,16 +46,14 @@ async function sendConfirmationEmail(email, plan) {
             </td>
           </tr>
 
-          <!-- Body -->
           <tr>
             <td style="padding:28px 40px 16px;">
               <p style="font-size:11px;font-weight:600;letter-spacing:2px;color:#f4622a;text-transform:uppercase;margin:0 0 10px;">Confirmation de paiement</p>
-              <h1 style="font-size:28px;font-weight:900;color:#f5f0eb;margin:0 0 16px;line-height:1.1;">Votre abonnement est actif 🎉</h1>
+              <h1 style="font-size:28px;font-weight:900;color:#f5f0eb;margin:0 0 16px;line-height:1.1;">Votre abonnement est actif</h1>
               <p style="font-size:15px;color:rgba(245,240,235,0.7);line-height:1.6;margin:0 0 24px;">
                 Merci pour votre confiance. Votre accès à <strong style="color:#f5f0eb;">Bailo Pro</strong> est maintenant activé.
               </p>
 
-              <!-- Plan badge -->
               <table cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
                 <tr>
                   <td style="background:rgba(244,98,42,0.1);border:1px solid rgba(244,98,42,0.25);border-radius:10px;padding:14px 20px;">
@@ -69,12 +63,11 @@ async function sendConfirmationEmail(email, plan) {
                 </tr>
               </table>
 
-              <!-- CTA -->
               <table cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="background:#f4622a;border-radius:10px;">
-                    <a href="https://bailo.pro/login" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">
-                      Accéder à mon espace →
+                    <a href="https://bailo.pro/welcome" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">
+                      Configurer mon espace →
                     </a>
                   </td>
                 </tr>
@@ -82,14 +75,12 @@ async function sendConfirmationEmail(email, plan) {
             </td>
           </tr>
 
-          <!-- Divider -->
           <tr>
             <td style="padding:0 40px;">
               <hr style="border:none;border-top:1px solid rgba(255,255,255,0.07);margin:24px 0;" />
             </td>
           </tr>
 
-          <!-- Footer -->
           <tr>
             <td style="padding:0 40px 32px;">
               <p style="font-size:13px;color:rgba(245,240,235,0.35);line-height:1.6;margin:0;">
@@ -126,7 +117,6 @@ exports.handler = async function(event) {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
-  // ── Paiement réussi ──────────────────────────────────────
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     const meta    = session.metadata || {};
@@ -154,7 +144,7 @@ exports.handler = async function(event) {
             updated_at:         new Date().toISOString()
           }, { onConflict: 'user_id' });
         if (error) console.error('Supabase upsert error:', error);
-        else console.log(`✅ Abonnement activé pour user ${userId} — plan ${plan}`);
+        else console.log(`Abonnement activé pour user ${userId} — plan ${plan}`);
       } else if (email) {
         const { error } = await supabase
           .from('subscriptions')
@@ -169,25 +159,22 @@ exports.handler = async function(event) {
             updated_at:         new Date().toISOString()
           }, { onConflict: 'email' });
         if (error) console.error('Supabase upsert by email error:', error);
-        else console.log(`✅ Abonnement activé pour email ${email} — plan ${plan}`);
+        else console.log(`Abonnement activé pour email ${email} — plan ${plan}`);
       }
     } catch (e) {
       console.error('Supabase error:', e);
     }
 
-    // ── Email de confirmation ──
     if (email) {
       try {
         await sendConfirmationEmail(email, plan);
-        console.log(`📧 Email de confirmation envoyé à ${email}`);
+        console.log(`Email de confirmation envoyé à ${email}`);
       } catch (e) {
         console.error('Resend error:', e);
-        // On ne bloque pas le webhook si l'email échoue
       }
     }
   }
 
-  // ── Abonnement annulé ────────────────────────────────────
   if (stripeEvent.type === 'customer.subscription.deleted') {
     const sub = stripeEvent.data.object;
     const { error } = await supabase
@@ -195,7 +182,7 @@ exports.handler = async function(event) {
       .update({ active: false, updated_at: new Date().toISOString() })
       .eq('stripe_sub_id', sub.id);
     if (error) console.error('Supabase deactivate error:', error);
-    else console.log(`🔴 Abonnement désactivé: ${sub.id}`);
+    else console.log(`Abonnement désactivé: ${sub.id}`);
   }
 
   return { statusCode: 200, body: JSON.stringify({ received: true }) };
