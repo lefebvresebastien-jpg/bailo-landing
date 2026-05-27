@@ -1,6 +1,12 @@
 (function() {
-  const SUPABASE_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
+  const SUPABASE_CHANTIER = {
+    url: 'https://hvkguyddmhqbvarujlyr.supabase.co',
+    key: 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W'
+  };
+  const SUPABASE_GESTION = {
+    url: 'https://nltuysmnxsomlhgvbtwz.supabase.co',
+    key: 'sb_publishable_UtH7OZskOMab-vCsoKKRsQ_rVkm5mRC'
+  };
 
   const MODULES = [
     { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
@@ -16,21 +22,18 @@
     return null;
   }
 
-  async function getSession() {
-    try {
-      const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + await getToken()
-        }
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch(e) { return null; }
+  function getSupabaseConfig() {
+    const mod = getCurrentModule();
+    return mod === 'gestion' ? SUPABASE_GESTION : SUPABASE_CHANTIER;
   }
 
   async function getToken() {
-    // Cherche dans toutes les clés localStorage
+    if (window.db && window.db.auth) {
+      try {
+        const { data } = await window.db.auth.getSession();
+        if (data && data.session) return data.session.access_token;
+      } catch(e) {}
+    }
     for (const k of Object.keys(localStorage)) {
       try {
         const val = JSON.parse(localStorage.getItem(k));
@@ -38,7 +41,6 @@
         if (val && val.session && val.session.access_token) return val.session.access_token;
       } catch(e) {}
     }
-    // Cherche dans sessionStorage
     for (const k of Object.keys(sessionStorage)) {
       try {
         const val = JSON.parse(sessionStorage.getItem(k));
@@ -46,28 +48,16 @@
         if (val && val.session && val.session.access_token) return val.session.access_token;
       } catch(e) {}
     }
-    // Essaie de récupérer via le client Supabase existant sur la page
-    if (window.db && window.db.auth) {
-      const { data } = await window.db.auth.getSession();
-      if (data && data.session) return data.session.access_token;
-    }
-    // Essaie supabase global
-    if (window.supabase && window.supabase.createClient) {
-      try {
-        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const { data } = await client.auth.getSession();
-        if (data && data.session) return data.session.access_token;
-      } catch(e) {}
-    }
     return null;
   }
 
   async function getUserModules(token) {
     if (!token) return [];
+    // Toujours chercher les subscriptions dans bailo-chantier (source de vérité)
     try {
-      const res = await fetch(SUPABASE_URL + '/rest/v1/subscriptions?select=modules,active&limit=1', {
+      const res = await fetch(SUPABASE_CHANTIER.url + '/rest/v1/subscriptions?select=modules,active&limit=1', {
         headers: {
-          'apikey': SUPABASE_KEY,
+          'apikey': SUPABASE_CHANTIER.key,
           'Authorization': 'Bearer ' + token
         }
       });
@@ -146,8 +136,7 @@
 
       if (!hasAccess) {
         const lock = document.createElement('span');
-        lock.style.fontSize = '11px';
-        lock.style.opacity = '0.5';
+        lock.style.cssText = 'font-size:11px;opacity:0.5;margin-left:2px';
         lock.textContent = '↗';
         btn.appendChild(lock);
         btn.addEventListener('click', function(e) {
@@ -162,12 +151,7 @@
 
     const tooltip = document.createElement('div');
     tooltip.id = 'bailo-nav-tooltip';
-    tooltip.innerHTML = `
-      <button class="bnt-close" onclick="document.getElementById('bailo-nav-tooltip').style.display='none'">×</button>
-      <div class="bnt-title" id="bnt-title"></div>
-      <div class="bnt-desc" id="bnt-desc"></div>
-      <a class="bnt-cta" href="https://bailo.pro/#inscription">Compléter mon Bailo</a>
-    `;
+    tooltip.innerHTML = '<button class="bnt-close" onclick="document.getElementById(\'bailo-nav-tooltip\').style.display=\'none\'">×</button><div class="bnt-title" id="bnt-title"></div><div class="bnt-desc" id="bnt-desc"></div><a class="bnt-cta" href="https://bailo.pro/#inscription">Compléter mon Bailo</a>';
     document.body.appendChild(tooltip);
 
     document.addEventListener('click', function(e) {
@@ -179,18 +163,17 @@
   function showUpsellTooltip(mod) {
     const tooltip = document.getElementById('bailo-nav-tooltip');
     document.getElementById('bnt-title').textContent = 'Bailo ' + mod.label + ' non activé';
-    document.getElementById('bnt-desc').textContent = 'Ce module ne fait pas partie de votre plan. Complétez votre Bailo pour accéder à ' + mod.desc.toLowerCase() + '.';
+    document.getElementById('bnt-desc').textContent = 'Ce module ne fait pas partie de votre plan. Complétez votre Bailo pour y accéder.';
     tooltip.style.display = 'block';
   }
 
   async function init() {
     injectStyles();
-    // Attendre que le client Supabase soit chargé sur la page
     let attempts = 0;
     const tryInit = async function() {
       attempts++;
-      let token = await getToken();
-      if (!token && attempts < 10) {
+      const token = await getToken();
+      if (!token && attempts < 15) {
         setTimeout(tryInit, 500);
         return;
       }
