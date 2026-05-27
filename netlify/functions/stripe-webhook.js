@@ -121,7 +121,12 @@ exports.handler = async function(event) {
     const session = stripeEvent.data.object;
     const meta    = session.metadata || {};
     const plan    = meta.plan || 'solo';
-    const modules = meta.modules ? meta.modules.split(',') : ['chantier'];
+    const PLAN_MODULES = {
+  solo: ['chantier', 'finance'],
+  duo:  ['chantier', 'gestion'],
+  pro:  ['chantier', 'finance', 'gestion'],
+};
+const modules = PLAN_MODULES[plan] || (meta.modules ? meta.modules.split(',') : ['chantier']);
     const userId  = meta.user_id || null;
     const email   = session.customer_email || null;
 
