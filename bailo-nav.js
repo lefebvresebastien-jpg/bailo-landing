@@ -2,6 +2,7 @@
   const SUPABASE_CHANTIER_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
   const SUPABASE_CHANTIER_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
   const AUTH_KEY = 'sb-hvkguyddmhqbvarujlyr-auth-token';
+  const ADMIN_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c';
 
   const MODULES = [
     { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
@@ -47,6 +48,14 @@
     return null;
   }
 
+  function getTokenData() {
+    try {
+      const raw = localStorage.getItem(AUTH_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return {};
+  }
+
   async function getUserModules(token) {
     if (!token) return [];
     try {
@@ -60,6 +69,12 @@
       if (data && data[0] && data[0].active) return data[0].modules || [];
       return [];
     } catch(e) { return []; }
+  }
+
+  function getUserId(token) {
+    try {
+      return JSON.parse(atob(token.split('.')[1])).sub;
+    } catch(e) { return null; }
   }
 
   function injectStyles() {
@@ -143,18 +158,19 @@
     });
 
     // Bouton admin uniquement pour Sébastien
-    var ADMIN_ID = "d762ecb9-c06d-49b6-b058-f0aacfa7952c";
     if (userId === ADMIN_ID) {
-      var adminBtn = document.createElement("a");
-      var t = localStorage.getItem("sb-hvkguyddmhqbvarujlyr-auth-token");
-      var tok = t ? JSON.parse(t).access_token : "";
-      adminBtn.href = "https://bailo.pro/admin?token=" + tok;
-      adminBtn.className = "bn-btn";
-      adminBtn.style.cssText = "color:#f97316;opacity:0.6;font-size:11px;padding:7px 10px";
-      adminBtn.title = "Admin";
-      adminBtn.textContent = "⚙";
+      var tokenData = getTokenData();
+      var accessToken = tokenData.access_token || '';
+      var refreshToken = tokenData.refresh_token || '';
+      var adminBtn = document.createElement('a');
+      adminBtn.href = 'https://bailo.pro/admin?token=' + accessToken + '&refresh=' + refreshToken;
+      adminBtn.className = 'bn-btn';
+      adminBtn.style.cssText = 'color:#f97316;opacity:0.6;font-size:11px;padding:7px 10px';
+      adminBtn.title = 'Admin';
+      adminBtn.textContent = '⚙';
       nav.appendChild(adminBtn);
     }
+
     document.body.appendChild(nav);
 
     const tooltip = document.createElement('div');
@@ -186,7 +202,8 @@
         return;
       }
       const modules = await getUserModules(token);
-      buildNav(modules, token ? JSON.parse(atob(token.split(".")[1])).sub : null);
+      const userId = token ? getUserId(token) : null;
+      buildNav(modules, userId);
     };
     tryInit();
   }
