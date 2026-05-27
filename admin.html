@@ -8,217 +8,78 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #0d0c0b;
-      --bg2:       #141210;
-      --bg3:       #1a1815;
-      --border:    rgba(255,255,255,0.08);
-      --orange:    #f4622a;
-      --orange-dk: #d4531f;
-      --white:     #f5f0eb;
-      --muted:     rgba(245,240,235,0.45);
-      --green:     #4ade80;
-      --red:       #f87171;
-      --radius:    12px;
-      --font-head: 'Barlow Condensed', sans-serif;
-      --font-body: 'Barlow', sans-serif;
+      --bg: #0d0c0b; --bg2: #141210; --bg3: #1a1815;
+      --border: rgba(255,255,255,0.08); --orange: #f4622a; --orange-dk: #d4531f;
+      --white: #f5f0eb; --muted: rgba(245,240,235,0.45);
+      --green: #4ade80; --red: #f87171; --radius: 12px;
+      --font-head: 'Barlow Condensed', sans-serif; --font-body: 'Barlow', sans-serif;
     }
-
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--white);
-      font-family: var(--font-body);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-    }
-
-    /* ── Nav ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 32px; height: 64px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(13,12,11,0.9);
-      backdrop-filter: blur(12px);
-    }
-
+    html, body { min-height: 100%; background: var(--bg); color: var(--white); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+    body::before { content: ''; position: fixed; inset: 0; z-index: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; }
+    nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 64px; border-bottom: 1px solid var(--border); background: rgba(13,12,11,0.9); backdrop-filter: blur(12px); }
     .logo { display: flex; align-items: baseline; gap: 5px; text-decoration: none; }
     .logo-main { font-family: var(--font-head); font-size: 22px; font-weight: 900; color: var(--white); }
-    .logo-badge {
-      font-size: 11px; font-weight: 600; color: var(--white);
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 4px; padding: 1px 6px; letter-spacing: 0.5px;
-    }
-    .nav-tag {
-      font-size: 11px; font-weight: 700; letter-spacing: 2px;
-      color: var(--orange); text-transform: uppercase;
-      background: rgba(244,98,42,0.1); border: 1px solid rgba(244,98,42,0.2);
-      border-radius: 6px; padding: 4px 10px;
-    }
-    .btn-logout {
-      font-size: 13px; font-weight: 600; color: var(--muted);
-      background: none; border: 1px solid var(--border);
-      border-radius: 8px; padding: 7px 14px; cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
-    }
+    .logo-badge { font-size: 11px; font-weight: 600; color: var(--white); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 1px 6px; letter-spacing: 0.5px; }
+    .nav-tag { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--orange); text-transform: uppercase; background: rgba(244,98,42,0.1); border: 1px solid rgba(244,98,42,0.2); border-radius: 6px; padding: 4px 10px; }
+    .btn-logout { font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
     .btn-logout:hover { color: var(--white); border-color: rgba(255,255,255,0.2); }
-
     .nav-right { display: flex; align-items: center; gap: 12px; }
-
-    /* ── Layout ── */
-    main {
-      position: relative; z-index: 1;
-      max-width: 1100px; margin: 0 auto;
-      padding: 40px 24px 80px;
-      animation: fadeUp 0.4s ease both;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Header ── */
+    main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; animation: fadeUp 0.4s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     .page-header { margin-bottom: 36px; }
-    .page-eyebrow {
-      font-size: 11px; font-weight: 600; letter-spacing: 2px;
-      color: var(--orange); text-transform: uppercase; margin-bottom: 8px;
-    }
-    .page-title {
-      font-family: var(--font-head);
-      font-size: 42px; font-weight: 900; line-height: 1;
-      color: var(--white);
-    }
-
-    /* ── Stats cards ── */
-    .stats {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px; margin-bottom: 36px;
-    }
-    .stat-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px 24px;
-      position: relative; overflow: hidden;
-    }
-    .stat-card::before {
-      content: ''; position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--orange), transparent);
-    }
+    .page-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: var(--orange); text-transform: uppercase; margin-bottom: 8px; }
+    .page-title { font-family: var(--font-head); font-size: 42px; font-weight: 900; line-height: 1; color: var(--white); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 36px; }
+    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; position: relative; overflow: hidden; }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--orange), transparent); }
     .stat-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
     .stat-value { font-family: var(--font-head); font-size: 36px; font-weight: 900; color: var(--white); line-height: 1; }
     .stat-value.orange { color: var(--orange); }
-
-    /* ── Table ── */
-    .table-wrap {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden;
-    }
-    .table-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 24px; border-bottom: 1px solid var(--border);
-    }
+    .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .table-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
     .table-title { font-size: 15px; font-weight: 700; color: var(--white); }
     .table-count { font-size: 13px; color: var(--muted); }
-
-    /* search */
     .search-wrap { padding: 16px 24px; border-bottom: 1px solid var(--border); }
-    .search-input {
-      width: 100%; max-width: 320px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--white);
-      font-family: var(--font-body); font-size: 14px;
-      padding: 9px 14px; outline: none;
-      transition: border-color 0.2s;
-    }
+    .search-input { width: 100%; max-width: 320px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; color: var(--white); font-family: var(--font-body); font-size: 14px; padding: 9px 14px; outline: none; transition: border-color 0.2s; }
     .search-input::placeholder { color: rgba(255,255,255,0.2); }
     .search-input:focus { border-color: rgba(244,98,42,0.4); }
-
     table { width: 100%; border-collapse: collapse; }
     thead tr { border-bottom: 1px solid var(--border); }
-    th {
-      text-align: left; padding: 12px 24px;
-      font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      color: var(--muted); text-transform: uppercase;
-    }
-    tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: background 0.15s;
-    }
+    th { text-align: left; padding: 12px 24px; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+    tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: rgba(255,255,255,0.02); }
     td { padding: 14px 24px; font-size: 14px; color: var(--white); }
-
-    /* badges */
-    .badge {
-      display: inline-block; font-size: 11px; font-weight: 700;
-      letter-spacing: 0.5px; text-transform: uppercase;
-      border-radius: 6px; padding: 3px 9px;
-    }
-    .badge-solo  { background: rgba(255,255,255,0.07); color: rgba(245,240,235,0.7); }
-    .badge-duo   { background: rgba(244,98,42,0.15);  color: #f4622a; }
-    .badge-pro   { background: rgba(244,98,42,0.25);  color: #f4622a; border: 1px solid rgba(244,98,42,0.3); }
-    .badge-active   { background: rgba(74,222,128,0.1); color: var(--green); }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; border-radius: 6px; padding: 3px 9px; }
+    .badge-solo { background: rgba(255,255,255,0.07); color: rgba(245,240,235,0.7); }
+    .badge-duo { background: rgba(244,98,42,0.15); color: #f4622a; }
+    .badge-pro { background: rgba(244,98,42,0.25); color: #f4622a; border: 1px solid rgba(244,98,42,0.3); }
+    .badge-active { background: rgba(74,222,128,0.1); color: var(--green); }
     .badge-inactive { background: rgba(248,113,113,0.1); color: var(--red); }
-    .badge-expired  { background: rgba(248,113,113,0.1); color: var(--red); }
-
-    /* empty / loading */
-    .empty {
-      text-align: center; padding: 60px 24px;
-      color: var(--muted); font-size: 14px;
-    }
+    .badge-expired { background: rgba(248,113,113,0.1); color: var(--red); }
+    .empty { text-align: center; padding: 60px 24px; color: var(--muted); font-size: 14px; }
     .spinner-wrap { text-align: center; padding: 60px; }
-    .spinner {
-      width: 28px; height: 28px; margin: 0 auto;
-      border: 2px solid rgba(255,255,255,0.1);
-      border-top-color: var(--orange);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
+    .spinner { width: 28px; height: 28px; margin: 0 auto; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Access denied ── */
-    #access-denied {
-      display: none;
-      position: fixed; inset: 0; z-index: 200;
-      background: var(--bg);
-      align-items: center; justify-content: center;
-      flex-direction: column; gap: 16px; text-align: center;
-    }
+    #access-denied { display: none; position: fixed; inset: 0; z-index: 200; background: var(--bg); align-items: center; justify-content: center; flex-direction: column; gap: 16px; text-align: center; }
     #access-denied.show { display: flex; }
     #access-denied h2 { font-family: var(--font-head); font-size: 32px; color: var(--red); }
-    #access-denied p  { color: var(--muted); font-size: 15px; }
-    #access-denied a  { color: var(--orange); text-decoration: none; font-weight: 600; }
-
-    @media (max-width: 640px) {
-      nav { padding: 0 16px; }
-      main { padding: 24px 16px 60px; }
-      .page-title { font-size: 32px; }
-      th, td { padding: 10px 14px; }
-      .search-input { max-width: 100%; }
-    }
+    #access-denied p { color: var(--muted); font-size: 15px; }
+    #access-denied a { color: var(--orange); text-decoration: none; font-weight: 600; }
+    @media (max-width: 640px) { nav { padding: 0 16px; } main { padding: 24px 16px 60px; } .page-title { font-size: 32px; } th, td { padding: 10px 14px; } .search-input { max-width: 100%; } }
   </style>
 </head>
 <body>
 
-<!-- Access denied overlay -->
 <div id="access-denied">
   <h2>Accès refusé</h2>
   <p>Cette page est réservée à l'administrateur.</p>
   <a href="https://bailo.pro/login">← Retour à la connexion</a>
 </div>
 
-<!-- Nav -->
 <nav>
   <a href="https://bailo.pro" class="logo">
     <span class="logo-main">Bailo</span>
@@ -230,39 +91,18 @@
   </div>
 </nav>
 
-<!-- Main -->
 <main id="main-content" style="display:none;">
-
   <div class="page-header">
     <p class="page-eyebrow">Dashboard</p>
     <h1 class="page-title">Abonnés actifs</h1>
   </div>
-
-  <!-- Stats -->
   <div class="stats">
-    <div class="stat-card">
-      <p class="stat-label">Total abonnés</p>
-      <p class="stat-value orange" id="stat-total">—</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Actifs</p>
-      <p class="stat-value" id="stat-active">—</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Plan Solo</p>
-      <p class="stat-value" id="stat-solo">—</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Plan Duo</p>
-      <p class="stat-value" id="stat-duo">—</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Plan Pro</p>
-      <p class="stat-value" id="stat-pro">—</p>
-    </div>
+    <div class="stat-card"><p class="stat-label">Total abonnés</p><p class="stat-value orange" id="stat-total">—</p></div>
+    <div class="stat-card"><p class="stat-label">Actifs</p><p class="stat-value" id="stat-active">—</p></div>
+    <div class="stat-card"><p class="stat-label">Plan Solo</p><p class="stat-value" id="stat-solo">—</p></div>
+    <div class="stat-card"><p class="stat-label">Plan Duo</p><p class="stat-value" id="stat-duo">—</p></div>
+    <div class="stat-card"><p class="stat-label">Plan Pro</p><p class="stat-value" id="stat-pro">—</p></div>
   </div>
-
-  <!-- Table -->
   <div class="table-wrap">
     <div class="table-header">
       <span class="table-title">Liste des abonnements</span>
@@ -275,7 +115,6 @@
       <div class="spinner-wrap"><div class="spinner"></div></div>
     </div>
   </div>
-
 </main>
 
 <script>
@@ -284,42 +123,54 @@
   const ADMIN_ID     = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c';
 
   const { createClient } = supabase;
-  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+  let sb = createClient(SUPABASE_URL, SUPABASE_KEY);
   let allRows = [];
 
-  // ── Auth check ──
- async function init() {
-  // Chercher le token depuis bailo-chantier (stocké en cross-domain)
-  let session = null;
-  const { data } = await sb.auth.getSession();
-  session = data?.session;
-
-  // Fallback : lire le token depuis l'URL (passé par login)
-  if (!session) {
+  async function init() {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+    const token   = params.get('token');
+    const refresh = params.get('refresh');
+
+    // Si token dans l'URL, créer un client avec ce token
     if (token) {
-      const refresh = params.get('refresh') || token;
-const { data: d2 } = await sb.auth.setSession({ access_token: token, refresh_token: refresh });
-      session = d2?.session;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.sub !== ADMIN_ID) {
+          document.getElementById('access-denied').classList.add('show');
+          return;
+        }
+        // Recréer le client avec le token
+        sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+          global: { headers: { Authorization: 'Bearer ' + token } }
+        });
+        // Aussi setter la session pour les requêtes auth
+        if (refresh) {
+          await sb.auth.setSession({ access_token: token, refresh_token: refresh });
+        }
+        document.getElementById('main-content').style.display = 'block';
+        loadSubscriptions();
+        return;
+      } catch(e) {
+        document.getElementById('access-denied').classList.add('show');
+        return;
+      }
     }
+
+    // Sinon vérifier session locale
+    const { data } = await sb.auth.getSession();
+    const session = data?.session;
+    if (!session) {
+      document.getElementById('access-denied').classList.add('show');
+      return;
+    }
+    if (session.user.id !== ADMIN_ID) {
+      document.getElementById('access-denied').classList.add('show');
+      return;
+    }
+    document.getElementById('main-content').style.display = 'block';
+    loadSubscriptions();
   }
 
-  if (!session) {
-    window.location.href = 'https://bailo-chantier.netlify.app';
-    return;
-  }
-
-  if (session.user.id !== ADMIN_ID) {
-    document.getElementById('access-denied').classList.add('show');
-    return;
-  }
-loadSubscriptions();
-}
-
-init();
-  // ── Load data ──
   async function loadSubscriptions() {
     const { data, error } = await sb
       .from('subscriptions')
@@ -328,16 +179,14 @@ init();
 
     if (error) {
       document.getElementById('table-body').innerHTML =
-        `<div class="empty">Erreur de chargement : ${error.message}</div>`;
+        '<div class="empty">Erreur de chargement : ' + error.message + '</div>';
       return;
     }
-
     allRows = data || [];
     updateStats(allRows);
     renderTable(allRows);
   }
 
-  // ── Stats ──
   function updateStats(rows) {
     const active = rows.filter(r => r.active);
     document.getElementById('stat-total').textContent  = rows.length;
@@ -347,72 +196,42 @@ init();
     document.getElementById('stat-pro').textContent    = rows.filter(r => r.plan === 'pro').length;
   }
 
-  // ── Render table ──
   function renderTable(rows) {
-    document.getElementById('table-count').textContent = `${rows.length} résultat${rows.length !== 1 ? 's' : ''}`;
-
+    document.getElementById('table-count').textContent = rows.length + ' résultat' + (rows.length !== 1 ? 's' : '');
     if (rows.length === 0) {
-      document.getElementById('table-body').innerHTML =
-        '<div class="empty">Aucun abonnement trouvé.</div>';
+      document.getElementById('table-body').innerHTML = '<div class="empty">Aucun abonnement trouvé.</div>';
       return;
     }
-
-    const tbody = rows.map(r => {
-      const email     = r.email || '—';
-      const plan      = r.plan  || '—';
-      const status    = getStatus(r);
-      const expires   = r.expires_at ? formatDate(r.expires_at) : '—';
-      const created   = r.updated_at ? formatDate(r.updated_at) : '—';
-
-      return `<tr>
-        <td>${email}</td>
-        <td><span class="badge badge-${plan}">${plan}</span></td>
-        <td><span class="badge ${status.cls}">${status.label}</span></td>
-        <td>${expires}</td>
-        <td style="color:var(--muted)">${created}</td>
-      </tr>`;
+    const tbody = rows.map(function(r) {
+      const email   = r.email || '—';
+      const plan    = r.plan  || '—';
+      const status  = getStatus(r);
+      const expires = r.expires_at ? formatDate(r.expires_at) : '—';
+      const created = r.updated_at ? formatDate(r.updated_at) : '—';
+      return '<tr><td>' + email + '</td><td><span class="badge badge-' + plan + '">' + plan + '</span></td><td><span class="badge ' + status.cls + '">' + status.label + '</span></td><td>' + expires + '</td><td style="color:var(--muted)">' + created + '</td></tr>';
     }).join('');
-
-    document.getElementById('table-body').innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Plan</th>
-            <th>Statut</th>
-            <th>Expire le</th>
-            <th>Mis à jour</th>
-          </tr>
-        </thead>
-        <tbody>${tbody}</tbody>
-      </table>`;
+    document.getElementById('table-body').innerHTML = '<table><thead><tr><th>Email</th><th>Plan</th><th>Statut</th><th>Expire le</th><th>Mis à jour</th></tr></thead><tbody>' + tbody + '</tbody></table>';
   }
 
   function getStatus(r) {
     if (!r.active) return { cls: 'badge-inactive', label: 'Inactif' };
-    if (r.expires_at && new Date(r.expires_at) < new Date())
-      return { cls: 'badge-expired', label: 'Expiré' };
+    if (r.expires_at && new Date(r.expires_at) < new Date()) return { cls: 'badge-expired', label: 'Expiré' };
     return { cls: 'badge-active', label: 'Actif' };
   }
 
   function formatDate(iso) {
-    return new Date(iso).toLocaleDateString('fr-FR', {
-      day: '2-digit', month: '2-digit', year: 'numeric'
-    });
+    return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
-  // ── Search ──
-  document.getElementById('search').addEventListener('input', e => {
+  document.getElementById('search').addEventListener('input', function(e) {
     const q = e.target.value.toLowerCase();
-    const filtered = allRows.filter(r =>
-      (r.email || '').toLowerCase().includes(q) ||
-      (r.plan  || '').toLowerCase().includes(q)
-    );
+    const filtered = allRows.filter(function(r) {
+      return (r.email || '').toLowerCase().includes(q) || (r.plan || '').toLowerCase().includes(q);
+    });
     renderTable(filtered);
   });
 
-  // ── Logout ──
-  document.getElementById('btn-logout').addEventListener('click', async () => {
+  document.getElementById('btn-logout').addEventListener('click', async function() {
     await sb.auth.signOut();
     window.location.href = '/login';
   });
