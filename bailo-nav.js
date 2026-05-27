@@ -146,7 +146,9 @@
     var ADMIN_ID = "d762ecb9-c06d-49b6-b058-f0aacfa7952c";
     if (userId === ADMIN_ID) {
       var adminBtn = document.createElement("a");
-      adminBtn.href = "https://bailo.pro/admin";
+      var t = localStorage.getItem("sb-hvkguyddmhqbvarujlyr-auth-token");
+      var tok = t ? JSON.parse(t).access_token : "";
+      adminBtn.href = "https://bailo.pro/admin?token=" + tok;
       adminBtn.className = "bn-btn";
       adminBtn.style.cssText = "color:#f97316;opacity:0.6;font-size:11px;padding:7px 10px";
       adminBtn.title = "Admin";
