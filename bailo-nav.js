@@ -1,0 +1,208 @@
+(function() {
+  const SUPABASE_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
+
+  const MODULES = [
+    { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
+    { id: 'chantier', label: 'Chantier', desc: 'Suivi travaux',        url: 'https://bailo-chantier.netlify.app' },
+    { id: 'gestion',  label: 'Gestion',  desc: 'Locataires',           url: 'https://gestion.bailo.pro' }
+  ];
+
+  function getCurrentModule() {
+    const host = window.location.hostname;
+    if (host.includes('finance')) return 'finance';
+    if (host.includes('chantier')) return 'chantier';
+    if (host.includes('gestion')) return 'gestion';
+    return null;
+  }
+
+  async function getSession() {
+    try {
+      const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + await getToken()
+        }
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch(e) { return null; }
+  }
+
+  async function getToken() {
+    // Cherche dans toutes les clés localStorage
+    for (const k of Object.keys(localStorage)) {
+      try {
+        const val = JSON.parse(localStorage.getItem(k));
+        if (val && val.access_token) return val.access_token;
+        if (val && val.session && val.session.access_token) return val.session.access_token;
+      } catch(e) {}
+    }
+    // Cherche dans sessionStorage
+    for (const k of Object.keys(sessionStorage)) {
+      try {
+        const val = JSON.parse(sessionStorage.getItem(k));
+        if (val && val.access_token) return val.access_token;
+        if (val && val.session && val.session.access_token) return val.session.access_token;
+      } catch(e) {}
+    }
+    // Essaie de récupérer via le client Supabase existant sur la page
+    if (window.db && window.db.auth) {
+      const { data } = await window.db.auth.getSession();
+      if (data && data.session) return data.session.access_token;
+    }
+    // Essaie supabase global
+    if (window.supabase && window.supabase.createClient) {
+      try {
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const { data } = await client.auth.getSession();
+        if (data && data.session) return data.session.access_token;
+      } catch(e) {}
+    }
+    return null;
+  }
+
+  async function getUserModules(token) {
+    if (!token) return [];
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/subscriptions?select=modules,active&limit=1', {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + token
+        }
+      });
+      const data = await res.json();
+      if (data && data[0] && data[0].active) return data[0].modules || [];
+      return [];
+    } catch(e) { return []; }
+  }
+
+  function injectStyles() {
+    if (document.getElementById('bailo-nav-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'bailo-nav-styles';
+    style.textContent = `
+      #bailo-nav {
+        position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+        z-index: 9999; display: flex; align-items: center; gap: 4px;
+        background: rgba(15,15,13,0.92); border: 1px solid rgba(255,255,255,0.09);
+        border-radius: 99px; padding: 6px 8px;
+        backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      #bailo-nav .bn-logo {
+        font-size: 13px; font-weight: 700; color: #f97316;
+        padding: 0 10px 0 6px; letter-spacing: -0.3px;
+        border-right: 1px solid rgba(255,255,255,0.08); margin-right: 2px; white-space: nowrap;
+      }
+      #bailo-nav .bn-btn {
+        display: flex; align-items: center; gap: 6px; padding: 7px 14px;
+        border-radius: 99px; border: none; background: transparent;
+        color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 500;
+        cursor: pointer; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+      }
+      #bailo-nav .bn-btn:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+      #bailo-nav .bn-btn.active { background: rgba(249,115,22,0.15); color: #f97316; }
+      #bailo-nav .bn-btn.locked { color: rgba(255,255,255,0.25); }
+      #bailo-nav .bn-btn.locked:hover { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4); }
+      #bailo-nav .bn-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
+      #bailo-nav-tooltip {
+        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+        z-index: 10000; background: rgba(15,15,13,0.97);
+        border: 1px solid rgba(249,115,22,0.3); border-radius: 14px;
+        padding: 16px 20px; width: 280px; font-family: system-ui, sans-serif;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.6); display: none;
+      }
+      #bailo-nav-tooltip .bnt-title { font-size: 14px; font-weight: 700; color: #f0ede8; margin-bottom: 6px; }
+      #bailo-nav-tooltip .bnt-desc { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 14px; }
+      #bailo-nav-tooltip .bnt-cta { display: block; background: #f97316; color: white; text-decoration: none; text-align: center; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; }
+      #bailo-nav-tooltip .bnt-close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: rgba(255,255,255,0.3); cursor: pointer; font-size: 16px; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function buildNav(userModules) {
+    if (document.getElementById('bailo-nav')) return;
+    const currentMod = getCurrentModule();
+    const nav = document.createElement('div');
+    nav.id = 'bailo-nav';
+
+    const logo = document.createElement('div');
+    logo.className = 'bn-logo';
+    logo.textContent = 'Bailo';
+    nav.appendChild(logo);
+
+    MODULES.forEach(function(mod) {
+      const hasAccess = userModules.includes(mod.id);
+      const isActive = mod.id === currentMod;
+      const btn = document.createElement('a');
+      btn.className = 'bn-btn' + (isActive ? ' active' : '') + (!hasAccess ? ' locked' : '');
+      btn.href = hasAccess ? mod.url : '#';
+
+      const dot = document.createElement('span');
+      dot.className = 'bn-dot';
+      btn.appendChild(dot);
+      btn.appendChild(document.createTextNode(mod.label));
+
+      if (!hasAccess) {
+        const lock = document.createElement('span');
+        lock.style.fontSize = '11px';
+        lock.style.opacity = '0.5';
+        lock.textContent = '↗';
+        btn.appendChild(lock);
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          showUpsellTooltip(mod);
+        });
+      }
+      nav.appendChild(btn);
+    });
+
+    document.body.appendChild(nav);
+
+    const tooltip = document.createElement('div');
+    tooltip.id = 'bailo-nav-tooltip';
+    tooltip.innerHTML = `
+      <button class="bnt-close" onclick="document.getElementById('bailo-nav-tooltip').style.display='none'">×</button>
+      <div class="bnt-title" id="bnt-title"></div>
+      <div class="bnt-desc" id="bnt-desc"></div>
+      <a class="bnt-cta" href="https://bailo.pro/#inscription">Compléter mon Bailo</a>
+    `;
+    document.body.appendChild(tooltip);
+
+    document.addEventListener('click', function(e) {
+      const t = document.getElementById('bailo-nav-tooltip');
+      if (t && !t.contains(e.target) && !nav.contains(e.target)) t.style.display = 'none';
+    });
+  }
+
+  function showUpsellTooltip(mod) {
+    const tooltip = document.getElementById('bailo-nav-tooltip');
+    document.getElementById('bnt-title').textContent = 'Bailo ' + mod.label + ' non activé';
+    document.getElementById('bnt-desc').textContent = 'Ce module ne fait pas partie de votre plan. Complétez votre Bailo pour accéder à ' + mod.desc.toLowerCase() + '.';
+    tooltip.style.display = 'block';
+  }
+
+  async function init() {
+    injectStyles();
+    // Attendre que le client Supabase soit chargé sur la page
+    let attempts = 0;
+    const tryInit = async function() {
+      attempts++;
+      let token = await getToken();
+      if (!token && attempts < 10) {
+        setTimeout(tryInit, 500);
+        return;
+      }
+      const modules = await getUserModules(token);
+      buildNav(modules);
+    };
+    tryInit();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
