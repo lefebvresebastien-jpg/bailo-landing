@@ -106,7 +106,7 @@
     document.head.appendChild(style);
   }
 
-  function buildNav(userModules) {
+  function buildNav(userModules, userId) {
     if (document.getElementById('bailo-nav')) return;
     const currentMod = getCurrentModule();
     const nav = document.createElement('div');
@@ -142,6 +142,17 @@
       nav.appendChild(btn);
     });
 
+    // Bouton admin uniquement pour Sébastien
+    var ADMIN_ID = "d762ecb9-c06d-49b6-b058-f0aacfa7952c";
+    if (userId === ADMIN_ID) {
+      var adminBtn = document.createElement("a");
+      adminBtn.href = "https://bailo.pro/admin";
+      adminBtn.className = "bn-btn";
+      adminBtn.style.cssText = "color:#f97316;opacity:0.6;font-size:11px;padding:7px 10px";
+      adminBtn.title = "Admin";
+      adminBtn.textContent = "⚙";
+      nav.appendChild(adminBtn);
+    }
     document.body.appendChild(nav);
 
     const tooltip = document.createElement('div');
@@ -173,7 +184,7 @@
         return;
       }
       const modules = await getUserModules(token);
-      buildNav(modules);
+      buildNav(modules, token ? JSON.parse(atob(token.split(".")[1])).sub : null);
     };
     tryInit();
   }
