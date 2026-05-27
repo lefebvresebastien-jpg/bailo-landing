@@ -1,12 +1,7 @@
 (function() {
-  const SUPABASE_CHANTIER = {
-    url: 'https://hvkguyddmhqbvarujlyr.supabase.co',
-    key: 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W'
-  };
-  const SUPABASE_GESTION = {
-    url: 'https://nltuysmnxsomlhgvbtwz.supabase.co',
-    key: 'sb_publishable_UtH7OZskOMab-vCsoKKRsQ_rVkm5mRC'
-  };
+  const SUPABASE_CHANTIER_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
+  const SUPABASE_CHANTIER_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
+  const AUTH_KEY = 'sb-hvkguyddmhqbvarujlyr-auth-token';
 
   const MODULES = [
     { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
@@ -22,18 +17,25 @@
     return null;
   }
 
-  function getSupabaseConfig() {
-    const mod = getCurrentModule();
-    return mod === 'gestion' ? SUPABASE_GESTION : SUPABASE_CHANTIER;
-  }
-
   async function getToken() {
+    // 1. Clé connue
+    try {
+      const raw = localStorage.getItem(AUTH_KEY);
+      if (raw) {
+        const val = JSON.parse(raw);
+        if (val && val.access_token) return val.access_token;
+      }
+    } catch(e) {}
+
+    // 2. Via le client db existant sur la page
     if (window.db && window.db.auth) {
       try {
         const { data } = await window.db.auth.getSession();
         if (data && data.session) return data.session.access_token;
       } catch(e) {}
     }
+
+    // 3. Scan localStorage
     for (const k of Object.keys(localStorage)) {
       try {
         const val = JSON.parse(localStorage.getItem(k));
@@ -41,23 +43,16 @@
         if (val && val.session && val.session.access_token) return val.session.access_token;
       } catch(e) {}
     }
-    for (const k of Object.keys(sessionStorage)) {
-      try {
-        const val = JSON.parse(sessionStorage.getItem(k));
-        if (val && val.access_token) return val.access_token;
-        if (val && val.session && val.session.access_token) return val.session.access_token;
-      } catch(e) {}
-    }
+
     return null;
   }
 
   async function getUserModules(token) {
     if (!token) return [];
-    // Toujours chercher les subscriptions dans bailo-chantier (source de vérité)
     try {
-      const res = await fetch(SUPABASE_CHANTIER.url + '/rest/v1/subscriptions?select=modules,active&limit=1', {
+      const res = await fetch(SUPABASE_CHANTIER_URL + '/rest/v1/subscriptions?select=modules,active&limit=1', {
         headers: {
-          'apikey': SUPABASE_CHANTIER.key,
+          'apikey': SUPABASE_CHANTIER_KEY,
           'Authorization': 'Bearer ' + token
         }
       });
