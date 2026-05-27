@@ -314,7 +314,10 @@
     document.getElementById('access-denied').classList.add('show');
     return;
   }
+loadSubscriptions();
+}
 
+init();
   // ── Load data ──
   async function loadSubscriptions() {
     const { data, error } = await sb
