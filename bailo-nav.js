@@ -8,7 +8,7 @@
     { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
     { id: 'chantier', label: 'Chantier', desc: 'Suivi travaux',        url: 'https://bailo-chantier.netlify.app' },
     { id: 'gestion',  label: 'Gestion',  desc: 'Locataires',           url: 'https://gestion.bailo.pro' }
-  ];
+  ]; 
 
   function getCurrentModule() {
     const host = window.location.hostname;
