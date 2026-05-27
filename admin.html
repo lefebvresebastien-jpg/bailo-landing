@@ -289,21 +289,30 @@
   let allRows = [];
 
   // ── Auth check ──
-  async function init() {
-    const { data: { session } } = await sb.auth.getSession();
+ async function init() {
+  // Chercher le token depuis bailo-chantier (stocké en cross-domain)
+  let session = null;
+  const { data } = await sb.auth.getSession();
+  session = data?.session;
 
-    if (!session) {
-      window.location.href = '/login';
-      return;
+  // Fallback : lire le token depuis l'URL (passé par login)
+  if (!session) {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      const { data: d2 } = await sb.auth.setSession({ access_token: token, refresh_token: token });
+      session = d2?.session;
     }
+  }
 
-    if (session.user.id !== ADMIN_ID) {
-      document.getElementById('access-denied').classList.add('show');
-      return;
-    }
+  if (!session) {
+    window.location.href = 'https://bailo-chantier.netlify.app';
+    return;
+  }
 
-    document.getElementById('main-content').style.display = 'block';
-    loadSubscriptions();
+  if (session.user.id !== ADMIN_ID) {
+    document.getElementById('access-denied').classList.add('show');
+    return;
   }
 
   // ── Load data ──
