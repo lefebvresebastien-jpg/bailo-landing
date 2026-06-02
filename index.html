@@ -589,6 +589,99 @@ function showError(msg) {
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.target.id === 'signup-email' || e.target.id === 'signup-password')) handleSignup()
 })
+
+
+// ====== ONBOARDING MASCOTTE LANDING ======
+var LANDING_ONB_KEY = 'bailo_landing_onboarding_v1';
+var landingOnbStep = 0;
+var LANDING_ONB_STEPS = [
+  {
+    text: '👋 Bienvenue sur <strong>Bailo Pro</strong> ! Je suis votre assistant immobilier. Ensemble, gérons votre patrimoine de la rénovation jusqu'à la location.',
+    mascot: 'https://bailo.pro/bailo_gestion_mascotte.png'
+  },
+  {
+    text: '🏗 <strong>Bailo Chantier</strong> — Pilotez vos travaux, gérez vos artisans et suivez chaque jalon de votre rénovation.',
+    mascot: 'https://bailo.pro/bailo_chantier_mascotte.png'
+  },
+  {
+    text: '📊 <strong>Bailo Finance</strong> — Analysez votre rentabilité, préparez vos dossiers banque et exportez vos données comptables.',
+    mascot: 'https://bailo.pro/bailo_finance_mascotte.png'
+  },
+  {
+    text: '🏠 <strong>Bailo Gestion</strong> — Rédigez vos baux, générez vos quittances et gérez vos locataires en toute sérénité.',
+    mascot: 'https://bailo.pro/bailo_gestion_mascotte.png',
+    last: true
+  }
+];
+
+function bailoLandingOnbRender() {
+  var step = LANDING_ONB_STEPS[landingOnbStep];
+  if (!step) { bailoLandingOnbSkip(); return; }
+  var t = document.getElementById('bailo-onb-text');
+  var m = document.getElementById('bailo-onb-mascot');
+  var btn = document.getElementById('bailo-onb-next');
+  var dots = document.getElementById('bailo-onb-dots');
+  if (t) { t.style.opacity = '0'; setTimeout(function() { t.innerHTML = step.text; t.style.opacity = '1'; }, 200); }
+  if (m && step.mascot) { m.style.opacity = '0'; setTimeout(function() { m.src = step.mascot; m.style.opacity = '1'; }, 200); }
+  if (btn) btn.textContent = step.last ? '✓ Découvrir Bailo Pro' : 'Suivant →';
+  if (dots) dots.innerHTML = LANDING_ONB_STEPS.map(function(_, i) {
+    return '<div style="width:' + (i === landingOnbStep ? '20px' : '6px') + ';height:6px;border-radius:99px;background:' + (i === landingOnbStep ? '#e8793a' : 'rgba(255,255,255,.2)') + ';transition:all .3s"></div>';
+  }).join('');
+}
+
+function bailoLandingOnbNext() {
+  landingOnbStep++;
+  if (landingOnbStep >= LANDING_ONB_STEPS.length) { bailoLandingOnbSkip(); return; }
+  bailoLandingOnbRender();
+}
+
+function bailoLandingOnbSkip() {
+  var el = document.getElementById('bailo-landing-onb');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(function() { el.style.display = 'none'; }, 400); }
+  localStorage.setItem(LANDING_ONB_KEY, '1');
+  // Scroll vers les modules
+  var modules = document.getElementById('modules');
+  if (modules) setTimeout(function() { modules.scrollIntoView({ behavior: 'smooth' }); }, 500);
+}
+
+// Lancer au chargement si pas déjà vu
+if (!localStorage.getItem(LANDING_ONB_KEY)) {
+  window.addEventListener('load', function() {
+    var el = document.getElementById('bailo-landing-onb');
+    if (el) {
+      el.style.display = 'flex';
+      bailoLandingOnbRender();
+    }
+  });
+}
+
 </script>
+
+<!-- ====== ONBOARDING MASCOTTE LANDING ====== -->
+<div id="bailo-landing-onb" style="display:none;position:fixed;inset:0;z-index:9999;background:#09090b;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:'DM Sans',system-ui,sans-serif">
+
+  <!-- Logo -->
+  <div style="position:absolute;top:24px;left:50%;transform:translateX(-50%);font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#e8793a;letter-spacing:-.02em;white-space:nowrap">
+    Bailo <span style="color:#f4f3ef;font-weight:400">Pro</span>
+  </div>
+
+  <!-- Mascotte -->
+  <img id="bailo-onb-mascot" src="https://bailo.pro/bailo_gestion_mascotte.png"
+    style="width:220px;max-width:50vw;margin-bottom:20px;filter:drop-shadow(0 20px 40px rgba(232,121,58,.4));transition:opacity .3s">
+
+  <!-- Carte message -->
+  <div style="background:#111113;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 32px;max-width:460px;width:100%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.5);margin-bottom:24px">
+    <div id="bailo-onb-text" style="font-size:1rem;color:#f4f3ef;line-height:1.7;min-height:56px;transition:opacity .3s"></div>
+  </div>
+
+  <!-- Dots -->
+  <div style="display:flex;gap:8px;margin-bottom:24px" id="bailo-onb-dots"></div>
+
+  <!-- Boutons -->
+  <div style="display:flex;gap:12px">
+    <button onclick="bailoLandingOnbSkip()" style="background:transparent;border:1px solid rgba(255,255,255,.15);color:#8a8880;border-radius:10px;padding:12px 24px;font-size:.88rem;cursor:pointer;font-family:inherit">Passer</button>
+    <button id="bailo-onb-next" onclick="bailoLandingOnbNext()" style="background:#e8793a;border:none;color:#fff;border-radius:10px;padding:12px 28px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Suivant →</button>
+  </div>
+</div>
 </body>
 </html>
