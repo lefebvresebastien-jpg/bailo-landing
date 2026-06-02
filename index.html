@@ -34,7 +34,23 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { background: #07080a; color: #f4f3ef; font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+    body {
+      background: #07080a url('https://bailo.pro/img_bg_full.jpg') center top / cover fixed;
+      color: #f4f3ef;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: rgba(7,8,10,0.82);
+      pointer-events: none;
+    }
+    nav, section, footer, .hero { position: relative; z-index: 1; }
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; padding: 0 40px; height: 60px; background: rgba(9,9,11,.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
     .nav-brand { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--accent); letter-spacing: -.02em; text-decoration: none; }
     .nav-brand span { color: rgba(244,243,239,.5); font-weight: 400; font-size: 13px; margin-left: 6px; }
