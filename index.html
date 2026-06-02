@@ -23,12 +23,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #09090b; --surface: #111113; --surface-2: #18181c; --surface-3: #1f1f25;
-      --border: rgba(255,255,255,.07); --border-2: rgba(255,255,255,.12);
-      --ink: #f4f3ef; --ink-2: #8a8880; --ink-3: #4a4845;
-      --accent: #e8793a; --accent-2: #f09050; --accent-dim: rgba(232,121,58,.1);
+      --bg: #07080a; --surface: #0d0f12; --surface-2: #111316; --surface-3: #141720;
+      --border: rgba(255,255,255,.07); --border-2: rgba(255,255,255,.14);
+      --ink: #f4f3ef; --ink-2: rgba(244,243,239,.55); --ink-3: rgba(244,243,239,.3);
+      --accent: #e8793a; --accent-2: #ff8c42; --accent-dim: rgba(232,121,58,.12);
       --green: #3ecf8e; --green-dim: rgba(62,207,142,.1); --blue: #5b8ef0;
       --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+      --r-xl: 22px; --r-lg: 18px; --r-md: 12px; --r-sm: 8px;
+      --shadow: 0 4px 24px rgba(0,0,0,.6); --shadow-lg: 0 16px 48px rgba(0,0,0,.7);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -90,9 +92,9 @@
     .collab-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(244,243,239,.5); }
     .collab-feature span:first-child { font-size: 14px; }
     .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-    .plan-card { background: #0d0f12; border: 1px solid rgba(255,255,255,.07); border-radius: 22px; padding: 28px; display: flex; flex-direction: column; transition: border-color .2s,transform .3s,box-shadow .3s; }
-    .plan-card:hover { border-color: rgba(255,255,255,.18); transform: translateY(-4px); box-shadow: 0 24px 48px rgba(0,0,0,.5); }
-    .plan-card.featured { border-color: rgba(232,121,58,.55); background: linear-gradient(135deg, rgba(232,121,58,.12) 0%, #0d0f12 60%); box-shadow: 0 0 40px rgba(232,121,58,.15); }
+    .plan-card { background: #0d0f12; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 28px; display: flex; flex-direction: column; position: relative; transition: transform .2s; }
+    .plan-card:hover { transform: translateY(-2px); }
+    .plan-card.featured { border-color: var(--accent); background: linear-gradient(160deg, rgba(232,121,58,.08) 0%, var(--surface) 60%); }
     .plan-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: .05em; }
     .plan-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(244,243,239,.5); margin-bottom: 14px; }
     .plan-card.featured .plan-name { color: var(--accent); }
@@ -321,7 +323,7 @@
 
 <section style="padding-top:0">
   <div class="section-label">Espaces collaborateurs</div>
-  <h2>Vos artisans et locataires ont leur espace</h2>
+  <h2 style="color:#f4f3ef">Vos artisans et locataires ont leur espace</h2>
   <p class="section-sub">Inclus dans tous les plans. Accès via lien sécurisé, sans compte ni application à installer.</p>
   <div class="collab-grid">
     <div class="collab-card">
@@ -349,7 +351,7 @@
 
 <section id="tarifs">
   <div class="section-label">Tarifs</div>
-  <h2>Simple. Transparent. Sans surprise.</h2>
+  <h2 style="color:#f4f3ef">Simple. Transparent. Sans surprise.</h2>
   <p class="section-sub">Choisissez les modules dont vous avez besoin. Changez de plan à tout moment.</p>
   <div class="pricing-grid">
     <div class="plan-card">
@@ -404,7 +406,7 @@
   <div class="invest-grid">
     <div>
       <div class="section-label">Pour l'investisseur</div>
-      <h2>Conçu pour votre stratégie patrimoniale</h2>
+      <h2 style="color:#f4f3ef">Conçu pour votre stratégie patrimoniale</h2>
       <p class="section-sub">Bailo Pro s'intègre à votre cycle d'investissement, de l'acquisition jusqu'à la gestion locative.</p>
       <div class="invest-points">
         <div class="invest-point">
