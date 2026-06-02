@@ -375,7 +375,19 @@
       }
 
       showSuccess('Connexion réussie ! Redirection en cours…');
-      setTimeout(() => { window.location.href = REDIRECT_URL; }, 900);
+      // Lire les modules actifs pour rediriger vers le bon endroit
+      try {
+        const userId = data.user.id;
+        const { data: sub } = await sb.from('subscriptions').select('modules, plan').eq('user_id', userId).single();
+        const MODULE_URLS = { gestion: 'https://gestion.bailo.pro', finance: 'https://finance.bailo.pro', chantier: 'https://chantier.bailo.pro' };
+        const modules = sub && sub.modules ? sub.modules : ['gestion'];
+        // Priorité : gestion > finance > chantier
+        const priority = ['gestion', 'finance', 'chantier'];
+        const target = priority.find(m => modules.includes(m));
+        setTimeout(() => { window.location.href = MODULE_URLS[target] || 'https://gestion.bailo.pro'; }, 900);
+      } catch(e) {
+        setTimeout(() => { window.location.href = 'https://gestion.bailo.pro'; }, 900);
+      }
     });
 
     // ── Enter key
