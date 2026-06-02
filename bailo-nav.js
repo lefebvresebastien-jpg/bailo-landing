@@ -6,7 +6,7 @@
 
   const MODULES = [
     { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
-    { id: 'chantier', label: 'Chantier', desc: 'Suivi travaux',        url: 'https://bailo-chantier.netlify.app' },
+    { id: 'chantier', label: 'Chantier', desc: 'Suivi travaux',        url: 'https://chantier.bailo.pro' },
     { id: 'gestion',  label: 'Gestion',  desc: 'Locataires',           url: 'https://gestion.bailo.pro' }
   ]; 
 
