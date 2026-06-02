@@ -39,7 +39,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: #07080a url('https://bailo.pro/img_bg_full.jpg') center top / cover fixed;
+      background: #07080a url('https://bailo.pro/img_bg_full.jpg') center center / cover fixed;
       color: #f4f3ef;
       font-family: 'DM Sans', sans-serif;
       font-size: 15px;
@@ -178,6 +178,12 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .footer-legal a:hover { color: var(--accent); }
     .footer-copy { font-size: 12px; color: rgba(244,243,239,.3); text-align: center; }
     @media (max-width: 768px) {
+      /* Fix background-attachment: fixed broken on iOS Safari */
+      body {
+        background-attachment: scroll;
+        background-position: center center;
+        background-size: cover;
+      }
       /* Stats grid 2x2 */
       .stats-grid { grid-template-columns: repeat(2,1fr) !important; gap: 24px 16px !important; }
       .stat-val { font-size: 1.9rem !important; }
@@ -347,12 +353,6 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     </div>
   </div>
 </section>
-
-  <div class="trust-item"><span>🔒</span> Chiffrement SSL</div>
-  <div class="trust-item"><span>📋</span> Conforme Factur-X 2026</div>
-  <div class="trust-item"><span>💼</span> Déductible comme charge de gestion</div>
-  <div class="trust-item"><span>⚡</span> Sans installation</div>
-</div>
 
 <section id="modules">
 
