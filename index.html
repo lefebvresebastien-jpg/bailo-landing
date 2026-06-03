@@ -844,11 +844,14 @@ if (!localStorage.getItem(LANDING_ONB_KEY)) {
 <!-- ====== ONBOARDING MASCOTTE LANDING ====== -->
 <div id="bailo-landing-onb" style="display:none;position:fixed;inset:0;z-index:9999;background:#09090b;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:'DM Sans',system-ui,sans-serif;overflow:hidden">
   <!-- Fond dynamique -->
-  <div id="bailo-onb-bg" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s ease"></div>
-  <div style="position:absolute;inset:0;background:rgba(7,8,10,.72)"></div>
+  <div id="bailo-onb-bg" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s ease;z-index:0"></div>
+  <div style="position:absolute;inset:0;background:rgba(7,8,10,.72);z-index:1"></div>
+
+  <!-- Contenu au-dessus de l'overlay -->
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%">
 
   <!-- Logo -->
-  <div style="position:absolute;top:24px;left:50%;transform:translateX(-50%);font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#e8793a;letter-spacing:-.02em;white-space:nowrap">
+  <div style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#e8793a;letter-spacing:-.02em;white-space:nowrap">
     Bailo <span style="color:#f4f3ef;font-weight:400">Pro</span>
   </div>
 
@@ -868,6 +871,8 @@ if (!localStorage.getItem(LANDING_ONB_KEY)) {
   <div style="display:flex;gap:12px">
     <button onclick="bailoLandingOnbSkip()" style="background:transparent;border:1px solid rgba(255,255,255,.15);color:#8a8880;border-radius:10px;padding:12px 24px;font-size:.88rem;cursor:pointer;font-family:inherit">Passer</button>
     <button id="bailo-onb-next" onclick="bailoLandingOnbNext()" style="background:#e8793a;border:none;color:#fff;border-radius:10px;padding:12px 28px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Suivant →</button>
+  </div>
+
   </div>
 </div>
 </body>
