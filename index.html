@@ -133,7 +133,8 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .invest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
     .invest-points { display: flex; flex-direction: column; gap: 20px; }
     .invest-point { display: flex; gap: 16px; align-items: flex-start; }
-    .invest-point-icon { width: 40px; height: 40px; border-radius: 10px; background: #111316; border: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .invest-point-icon { width: 52px; height: 52px; border-radius: 12px; background: #111316; border: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+    .invest-point-icon img { width: 44px; height: 44px; object-fit: contain; }
     .invest-point-title { font-weight: 600; color: #f4f3ef; font-size: 14px; margin-bottom: 3px; }
     .invest-point-desc { font-size: 13px; color: rgba(244,243,239,.5); line-height: 1.55; }
     .invest-visual { background: #0d0f12; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 28px; }
@@ -539,21 +540,21 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
       <p class="section-sub">Bailo Pro s'intègre à votre cycle d'investissement, de l'acquisition jusqu'à la gestion locative.</p>
       <div class="invest-points">
         <div class="invest-point">
-          <div class="invest-point-icon">💰</div>
+          <div class="invest-point-icon"><img src="https://bailo.pro/icon_coins.png" alt="Déductible"></div>
           <div>
             <div class="invest-point-title">Déductible comme charge de gestion</div>
             <div class="invest-point-desc">Selon votre régime fiscal (réel, LMNP, SCI), Bailo Pro est déductible de vos revenus fonciers.</div>
           </div>
         </div>
         <div class="invest-point">
-          <div class="invest-point-icon">📋</div>
+          <div class="invest-point-icon"><img src="https://bailo.pro/icon_doc.png" alt="Réforme"></div>
           <div>
             <div class="invest-point-title">Conforme réforme 2026</div>
             <div class="invest-point-desc">Export Factur-X natif, compatible Sage, Cegid, EBP et Pennylane.</div>
           </div>
         </div>
         <div class="invest-point">
-          <div class="invest-point-icon">🏦</div>
+          <div class="invest-point-icon"><img src="https://bailo.pro/icon_bank.png" alt="Banque"></div>
           <div>
             <div class="invest-point-title">Dossier banquier clé en main</div>
             <div class="invest-point-desc">Générez un dossier PDF professionnel pour convaincre votre banque.</div>
