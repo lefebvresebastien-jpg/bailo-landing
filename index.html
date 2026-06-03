@@ -57,9 +57,9 @@
     nav, section, footer, .hero { position: relative; z-index: 1; }
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; padding: 0 40px; height: 60px; background: rgba(9,9,11,.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
     .nav-brand { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--accent); letter-spacing: -.02em; text-decoration: none; }
-    .nav-brand span { color: rgba(244,243,239,.5); font-weight: 400; font-size: 13px; margin-left: 6px; }
+    .nav-brand span { color: rgba(244,243,239,.85); font-weight: 400; font-size: 13px; margin-left: 6px; }
     .nav-links { display: flex; gap: 28px; margin-left: 40px; }
-    .nav-links a { color: rgba(244,243,239,.5); text-decoration: none; font-size: 13px; font-weight: 500; transition: color .15s; }
+    .nav-links a { color: rgba(244,243,239,.85); text-decoration: none; font-size: 13px; font-weight: 500; transition: color .15s; }
     .nav-links a:hover { color: #f4f3ef; }
     .nav-cta { margin-left: auto; }
     .btn-nav { background: var(--accent); color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); text-decoration: none; transition: opacity .15s; }
@@ -77,17 +77,17 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .hero-actions { display: flex; gap: 12px; margin-top: 40px; flex-wrap: wrap; justify-content: center; animation: fadeUp .6s .3s ease both; }
     .btn-primary { background: var(--accent); color: white; border: none; padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: var(--font-body); box-shadow: 0 8px 32px rgba(232,121,58,.35); transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
     .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 40px rgba(232,121,58,.45); }
-    .btn-ghost { background: transparent; color: rgba(244,243,239,.5); border: 1px solid var(--border-2); padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: var(--font-body); transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-ghost { background: transparent; color: rgba(244,243,239,.85); border: 1px solid var(--border-2); padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: var(--font-body); transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
     .btn-ghost:hover { color: #f4f3ef; border-color: rgba(255,255,255,.25); }
     .hero-price-hint { margin-top: 16px; font-size: 13px; color: rgba(244,243,239,.3); animation: fadeUp .6s .4s ease both; }
-    .hero-price-hint strong { color: rgba(244,243,239,.5); }
+    .hero-price-hint strong { color: rgba(244,243,239,.85); }
     .trust-bar { padding: 24px 20px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; overflow: hidden; }
     .trust-item { display: flex; align-items: center; gap: 8px; color: rgba(244,243,239,.3); font-size: 13px; font-weight: 500; }
     .trust-item span:first-child { font-size: 18px; }
     section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
     .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--accent); margin-bottom: 14px; }
     h2 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 46px); font-weight: 700; line-height: 1.1; letter-spacing: -.025em; color: #f4f3ef; max-width: 640px; margin-bottom: 16px; }
-    .section-sub { font-size: 16px; color: rgba(244,243,239,.5); max-width: 520px; line-height: 1.65; margin-bottom: 60px; }
+    .section-sub { font-size: 16px; color: rgba(244,243,239,.85); max-width: 520px; line-height: 1.65; margin-bottom: 60px; }
     .modules-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
     .module-card { background: #0d0f12; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 28px; transition: border-color .2s, transform .2s; position: relative; overflow: hidden; }
     .module-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); opacity: 0; transition: opacity .2s; }
@@ -95,9 +95,9 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .module-card:hover::before { opacity: 1; }
     .module-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 18px; }
     .module-name { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: #f4f3ef; margin-bottom: 8px; }
-    .module-desc { font-size: 13px; color: rgba(244,243,239,.5); line-height: 1.6; margin-bottom: 20px; }
+    .module-desc { font-size: 13px; color: rgba(244,243,239,.85); line-height: 1.6; margin-bottom: 20px; }
     .module-features { display: flex; flex-direction: column; gap: 7px; }
-    .module-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(244,243,239,.5); }
+    .module-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(244,243,239,.85); }
     .module-feature::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
     .module-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; transition: gap .15s; }
     .module-link:hover { gap: 10px; }
@@ -119,14 +119,14 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .plan-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 12px; color: #f4f3ef; }
     .plan-card.featured .plan-name { color: #ff8c42; }
     .plan-price { font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800; color: #ffffff; letter-spacing: -.04em; line-height: 1; margin-bottom: 4px; }
-    .plan-price span { font-size: 16px; font-weight: 400; color: rgba(244,243,239,.5); }
-    .plan-sub { font-size: .88rem; color: rgba(244,243,239,.4); margin-bottom: 20px; }
+    .plan-price span { font-size: 16px; font-weight: 400; color: rgba(244,243,239,.85); }
+    .plan-sub { font-size: .88rem; color: rgba(244,243,239,.75); margin-bottom: 20px; }
     .plan-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
     .plan-features { display: flex; flex-direction: column; gap: 9px; flex: 1; margin-bottom: 24px; }
     .plan-feature { display: flex; align-items: flex-start; gap: 10px; font-size: .88rem; color: rgba(244,243,239,.6); padding: 6px 0; }
     .plan-feature .check { color: var(--green); font-size: 14px; }
     .btn-plan { display: block; text-align: center; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; text-decoration: none; font-family: var(--font-body); }
-    .btn-plan-ghost { background: transparent; border: 1px solid var(--border-2); color: rgba(244,243,239,.5); }
+    .btn-plan-ghost { background: transparent; border: 1px solid var(--border-2); color: rgba(244,243,239,.85); }
     .btn-plan-ghost:hover { border-color: rgba(255,255,255,.25); color: #f4f3ef; }
     .btn-plan-accent { background: var(--accent); border: none; color: white; box-shadow: 0 4px 20px rgba(232,121,58,.3); }
     .btn-plan-accent:hover { opacity: .9; }
@@ -136,12 +136,12 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .invest-point-icon { width: 52px; height: 52px; border-radius: 12px; background: #111316; border: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
     .invest-point-icon img { width: 44px; height: 44px; object-fit: contain; }
     .invest-point-title { font-weight: 600; color: #f4f3ef; font-size: 14px; margin-bottom: 3px; }
-    .invest-point-desc { font-size: 13px; color: rgba(244,243,239,.5); line-height: 1.55; }
+    .invest-point-desc { font-size: 13px; color: rgba(244,243,239,.85); line-height: 1.55; }
     .invest-visual { background: #0d0f12; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 28px; }
     .invest-stat { margin-bottom: 20px; }
     .invest-stat-label { font-size: 11px; color: rgba(244,243,239,.3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
     .invest-stat-val { font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--accent); }
-    .invest-stat-sub { font-size: 12px; color: rgba(244,243,239,.5); margin-top: 3px; }
+    .invest-stat-sub { font-size: 12px; color: rgba(244,243,239,.85); margin-top: 3px; }
     .upsell-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
     .upsell-item { background: #0d0f12; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 18px; }
     .upsell-trigger { font-size: 11px; color: #e8793a; margin-bottom: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
@@ -149,13 +149,13 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .upsell-pill { display: inline-block; background: var(--accent-dim); border: 1px solid rgba(232,121,58,.2); color: var(--accent); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
     .signup-wrap { background: linear-gradient(135deg, var(--surface) 0%, rgba(232,121,58,.05) 100%); border: 1px solid rgba(255,255,255,.07); border-radius: 24px; padding: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
     .signup-left h2 { max-width: 100%; margin-bottom: 12px; }
-    .signup-left p { font-size: 15px; color: rgba(244,243,239,.5); line-height: 1.65; margin-bottom: 28px; }
+    .signup-left p { font-size: 15px; color: rgba(244,243,239,.85); line-height: 1.65; margin-bottom: 28px; }
     .signup-perks { display: flex; flex-direction: column; gap: 12px; }
-    .signup-perk { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(244,243,239,.5); }
+    .signup-perk { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(244,243,239,.85); }
     .signup-perk span:first-child { color: var(--green); font-size: 16px; }
     .signup-form { display: flex; flex-direction: column; gap: 14px; }
     .plan-selector { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 4px; }
-    .plan-btn { padding: 10px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.07); background: #111316; color: rgba(244,243,239,.5); cursor: pointer; font-family: var(--font-body); font-size: 12px; font-weight: 600; text-align: center; transition: all .15s; }
+    .plan-btn { padding: 10px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.07); background: #111316; color: rgba(244,243,239,.85); cursor: pointer; font-family: var(--font-body); font-size: 12px; font-weight: 600; text-align: center; transition: all .15s; }
     .plan-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
     .plan-btn-price { font-size: 16px; font-weight: 700; color: inherit; display: block; margin-bottom: 2px; }
     .field label { display: block; font-size: 11px; font-weight: 600; color: rgba(244,243,239,.3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
@@ -173,7 +173,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .footer-brand { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--accent); }
     .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
     .footer-links a { color: rgba(244,243,239,.3); font-size: 13px; text-decoration: none; transition: color .15s; }
-    .footer-links a:hover { color: rgba(244,243,239,.5); }
+    .footer-links a:hover { color: rgba(244,243,239,.85); }
     .footer-legal { width: 100%; display: flex; justify-content: center; gap: 24px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
     .footer-legal a { color: rgba(244,243,239,.3); font-size: 12px; text-decoration: none; transition: color .15s; }
     .footer-legal a:hover { color: var(--accent); }
@@ -333,23 +333,23 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     <div style="display:flex;flex-direction:column;gap:0;border-top:1px solid rgba(255,255,255,.07)">
       <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05)">
         <div style="width:34px;height:34px;border-radius:10px;background:rgba(200,150,42,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://bailo.pro/icon_pin.png" style="width:26px;height:26px;object-fit:contain"></div>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.65);font-weight:500">Données hébergées en France</span>
+        <span style="font-size:.83rem;color:rgba(255,255,255,.92);font-weight:500">Données hébergées en France</span>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05)">
         <div style="width:34px;height:34px;border-radius:10px;background:rgba(200,150,42,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://bailo.pro/icon_lock.png" style="width:26px;height:26px;object-fit:contain"></div>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.65);font-weight:500">Chiffrement SSL bout en bout</span>
+        <span style="font-size:.83rem;color:rgba(255,255,255,.92);font-weight:500">Chiffrement SSL bout en bout</span>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05)">
         <div style="width:34px;height:34px;border-radius:10px;background:rgba(200,150,42,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://bailo.pro/icon_doc.png" style="width:26px;height:26px;object-fit:contain"></div>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.65);font-weight:500">Conforme Factur-X 2026</span>
+        <span style="font-size:.83rem;color:rgba(255,255,255,.92);font-weight:500">Conforme Factur-X 2026</span>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05)">
         <div style="width:34px;height:34px;border-radius:10px;background:rgba(200,150,42,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://bailo.pro/icon_briefcase.png" style="width:26px;height:26px;object-fit:contain"></div>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.65);font-weight:500">Déductible comme charge de gestion</span>
+        <span style="font-size:.83rem;color:rgba(255,255,255,.92);font-weight:500">Déductible comme charge de gestion</span>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:14px 0">
         <div style="width:34px;height:34px;border-radius:10px;background:rgba(200,150,42,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="https://bailo.pro/icon_bolt.png" style="width:26px;height:26px;object-fit:contain"></div>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.65);font-weight:500">Sans installation — 100% navigateur</span>
+        <span style="font-size:.83rem;color:rgba(255,255,255,.92);font-weight:500">Sans installation — 100% navigateur</span>
       </div>
     </div>
   </div>
