@@ -2,7 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
 
 const supabase = createClient(
-  process.env.SUPABASE_URL || 'https://hvkguyddmhqbvarujlyr.supabase.co',
+  process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 );
 const resend = new Resend(process.env.RESEND_API_KEY);
