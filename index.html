@@ -774,6 +774,25 @@ async function handleSignup() {
       modules = val.split(',')
     }
 
+    btn.textContent = 'Vérification de votre offre...'
+
+    // Vérifier éligibilité offre lancement
+    const trialResp = await fetch('/.netlify/functions/create-trial', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: selectedPlan, modules: modules, email: email, userId: user.id })
+    })
+    const trialResult = await trialResp.json()
+
+    if (trialResult.eligible) {
+      const expiresDate = new Date(trialResult.expires_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+      successEl.innerHTML = '🎉 Vous faites partie des 10 premiers ! Accès gratuit activé jusqu\'au ' + expiresDate + '. Vérifiez votre email.'
+      successEl.style.display = 'block'
+      btn.textContent = 'Accès activé !'
+      return
+    }
+
+    // Sinon flow Stripe normal
     btn.textContent = 'Redirection vers le paiement...'
 
     const resp = await fetch('/.netlify/functions/create-checkout', {
