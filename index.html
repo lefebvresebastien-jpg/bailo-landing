@@ -827,6 +827,22 @@ async function handleSignup() {
       successEl.innerHTML = '🎉 Vous faites partie des 10 premiers ! Accès gratuit activé jusqu\'au ' + expiresDate + '. Vérifiez votre email.'
       successEl.style.display = 'block'
       btn.textContent = 'Accès activé !'
+      // Parrainage
+      const refCode = sessionStorage.getItem('bailo_ref');
+      if (refCode) {
+        fetch('/.netlify/functions/referral', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'apply', userId: user.id, email: email, refCode })
+        }).catch(console.error);
+        sessionStorage.removeItem('bailo_ref');
+      }
+      // Générer le lien de parrainage pour ce nouvel abonné
+      fetch('/.netlify/functions/referral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generate', userId: user.id, email: email })
+      }).catch(console.error);
       // Séquence email J+0
       fetch('/.netlify/functions/email-sequence', {
         method: 'POST',
