@@ -827,6 +827,12 @@ async function handleSignup() {
       successEl.innerHTML = '🎉 Vous faites partie des 10 premiers ! Accès gratuit activé jusqu\'au ' + expiresDate + '. Vérifiez votre email.'
       successEl.style.display = 'block'
       btn.textContent = 'Accès activé !'
+      // Séquence email J+0
+      fetch('/.netlify/functions/email-sequence', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'welcome', email: email })
+      }).catch(console.error)
       return
     }
 
