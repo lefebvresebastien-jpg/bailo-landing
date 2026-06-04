@@ -4,14 +4,12 @@ const Anthropic = require('@anthropic-ai/sdk');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 const PROMPTS = [
-  // Semaine 1 — Conseil immo
   `Tu es un expert en investissement immobilier. Écris un post LinkedIn percutant en français de 150-200 mots sur un conseil pratique pour les investisseurs particuliers (1-5 biens). 
   Thèmes possibles: rentabilité, gestion locative, travaux, fiscalité, financement.
   Format: accroche forte, 3-4 points clés, call-to-action vers bailo.pro
   Ton: professionnel mais accessible, pas de jargon excessif.
   Termine par: "Gérez votre patrimoine avec Bailo Pro → bailo.pro #investissementimmobilier #gestionlocative #patrimoine"`,
   
-  // Semaine 2 — Coulisses Bailo
   `Tu es Sébastien, fondateur de Bailo Pro, un SaaS immobilier pour investisseurs particuliers.
   Écris un post LinkedIn authentique en français de 150-200 mots sur les coulisses du développement de Bailo Pro.
   Thèmes: nouvelles fonctionnalités, apprentissages, vision produit, feedback utilisateurs.
@@ -35,17 +33,15 @@ exports.handler = async function(event) {
     if (tokenError || !tokenData) throw new Error('Token LinkedIn non trouvé');
     const linkedinToken = tokenData.value;
 
-    // 2. Récupérer le person ID depuis Supabase
-    const { data: personData } = await supabase
-      .from('settings')
-      .select('value')
-      .eq('key', 'linkedin_person_id')
-      .single();
+    // 2. Récupérer le person ID via userinfo LinkedIn (à la volée)
+    const profileResp = await fetch('https://api.linkedin.com/v2/userinfo', {
+      headers: { 'Authorization': `Bearer ${linkedinToken}` }
+    });
+    const profile = await profileResp.json();
+    const personId = profile.sub;
+    if (!personId) throw new Error('Person ID LinkedIn introuvable: ' + JSON.stringify(profile));
 
-    if (!personData) throw new Error('LinkedIn person ID non trouvé');
-    const personId = personData.value;
-
-    // 3. Déterminer le type de post (alternance semaine paire/impaire)
+    // 3. Déterminer le type de post
     const weekNumber = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
     const promptIndex = weekNumber % 2;
     const prompt = PROMPTS[promptIndex];
