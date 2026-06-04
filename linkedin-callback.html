@@ -16,18 +16,18 @@
 <body>
 <div class="card">
   <h1>LinkedIn Token</h1>
-  <p>Autorisez Bailo Pro à publier sur LinkedIn</p>
+  <p>Autorisez Bailo Pro à publier sur votre profil LinkedIn</p>
   
   <div id="step1">
-    <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=785wpwp22qbyaa&redirect_uri=https://bailo.pro/linkedin-callback&scope=w_organization_social%20r_organization_social&state=bailo123" class="btn">
+    <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=785wpwp22qbyaa&redirect_uri=https://bailo.pro/linkedin-callback&scope=w_member_social%20r_liteprofile&state=bailo123" class="btn">
       🔗 Connecter LinkedIn
     </a>
   </div>
 
   <div id="step2" style="display:none">
-    <p>Token récupéré avec succès !</p>
+    <p>Connexion en cours...</p>
     <div class="token-box" id="token-display"></div>
-    <p class="success" id="success-msg">✅ Sauvegardé dans Supabase</p>
+    <p class="success" id="success-msg">✅ Token sauvegardé dans Supabase</p>
   </div>
 </div>
 
@@ -46,18 +46,20 @@
     })
     .then(r => r.json())
     .then(data => {
+      const box = document.getElementById('token-display');
+      box.style.display = 'block';
       if (data.success) {
-        document.getElementById('token-display').style.display = 'block';
-        document.getElementById('token-display').textContent = '✅ Token sauvegardé dans Supabase';
+        box.textContent = '✅ Token sauvegardé ! Vous pouvez fermer cette page.';
         document.getElementById('success-msg').style.display = 'block';
+        document.querySelector('p').textContent = 'LinkedIn connecté avec succès !';
       } else {
-        document.getElementById('token-display').style.display = 'block';
-        document.getElementById('token-display').textContent = 'Erreur: ' + JSON.stringify(data);
+        box.textContent = 'Erreur: ' + JSON.stringify(data);
       }
     })
     .catch(err => {
-      document.getElementById('token-display').style.display = 'block';
-      document.getElementById('token-display').textContent = 'Erreur: ' + err.message;
+      const box = document.getElementById('token-display');
+      box.style.display = 'block';
+      box.textContent = 'Erreur: ' + err.message;
     });
   }
 </script>
