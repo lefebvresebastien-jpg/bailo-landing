@@ -19,7 +19,7 @@
   <p>Autorisez Bailo Pro à publier sur LinkedIn</p>
   
   <div id="step1">
-    <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=785wpwp22qbyaa&redirect_uri=https://bailo.pro/linkedin-callback&scope=w_member_social&state=bailo123" class="btn">
+    <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=785wpwp22qbyaa&redirect_uri=https://bailo.pro/linkedin-callback&scope=w_organization_social%20r_organization_social&state=bailo123" class="btn">
       🔗 Connecter LinkedIn
     </a>
   </div>
@@ -27,12 +27,11 @@
   <div id="step2" style="display:none">
     <p>Token récupéré avec succès !</p>
     <div class="token-box" id="token-display"></div>
-    <p class="success" id="success-msg">✅ Sauvegardé dans Netlify</p>
+    <p class="success" id="success-msg">✅ Sauvegardé dans Supabase</p>
   </div>
 </div>
 
 <script>
-  // Vérifier si on est sur le callback avec un code
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
   
@@ -40,7 +39,6 @@
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     
-    // Échanger le code contre un token via notre fonction Netlify
     fetch('/.netlify/functions/linkedin-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -48,10 +46,13 @@
     })
     .then(r => r.json())
     .then(data => {
-      if (data.access_token) {
+      if (data.success) {
         document.getElementById('token-display').style.display = 'block';
-        document.getElementById('token-display').textContent = 'Token: ' + data.access_token.substring(0, 30) + '...';
+        document.getElementById('token-display').textContent = '✅ Token sauvegardé dans Supabase';
         document.getElementById('success-msg').style.display = 'block';
+      } else {
+        document.getElementById('token-display').style.display = 'block';
+        document.getElementById('token-display').textContent = 'Erreur: ' + JSON.stringify(data);
       }
     })
     .catch(err => {
