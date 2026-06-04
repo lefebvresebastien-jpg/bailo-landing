@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Bailo Pro — LinkedIn Auth</title>
+<style>
+  body { font-family: sans-serif; background: #1a1a2e; color: #f5f0eb; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+  .card { background: #141210; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 40px; max-width: 500px; width: 100%; text-align: center; }
+  h1 { color: #e8793a; margin-bottom: 8px; }
+  p { color: rgba(245,240,235,.6); margin-bottom: 24px; }
+  .btn { display: inline-block; background: #e8793a; color: #fff; padding: 14px 28px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 15px; cursor: pointer; border: none; }
+  .token-box { background: #0d0c0b; border: 1px solid rgba(232,121,58,.3); border-radius: 8px; padding: 16px; margin-top: 24px; word-break: break-all; font-size: 12px; color: #e8793a; display: none; }
+  .success { color: #057a55; font-weight: 700; margin-top: 16px; display: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>LinkedIn Token</h1>
+  <p>Autorisez Bailo Pro à publier sur LinkedIn</p>
+  
+  <div id="step1">
+    <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=785wpwp22qbyaa&redirect_uri=https://bailo.pro/linkedin-callback&scope=w_member_social&state=bailo123" class="btn">
+      🔗 Connecter LinkedIn
+    </a>
+  </div>
+
+  <div id="step2" style="display:none">
+    <p>Token récupéré avec succès !</p>
+    <div class="token-box" id="token-display"></div>
+    <p class="success" id="success-msg">✅ Sauvegardé dans Netlify</p>
+  </div>
+</div>
+
+<script>
+  // Vérifier si on est sur le callback avec un code
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  
+  if (code) {
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    
+    // Échanger le code contre un token via notre fonction Netlify
+    fetch('/.netlify/functions/linkedin-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.access_token) {
+        document.getElementById('token-display').style.display = 'block';
+        document.getElementById('token-display').textContent = 'Token: ' + data.access_token.substring(0, 30) + '...';
+        document.getElementById('success-msg').style.display = 'block';
+      }
+    })
+    .catch(err => {
+      document.getElementById('token-display').style.display = 'block';
+      document.getElementById('token-display').textContent = 'Erreur: ' + err.message;
+    });
+  }
+</script>
+</body>
+</html>
