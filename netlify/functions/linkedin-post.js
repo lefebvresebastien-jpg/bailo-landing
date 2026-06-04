@@ -2,6 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+const LINKEDIN_PERSON_ID = '693763296';
 
 const PROMPTS = [
   `Tu es un expert en investissement immobilier. Écris un post LinkedIn percutant en français de 150-200 mots sur un conseil pratique pour les investisseurs particuliers (1-5 biens). 
@@ -9,7 +10,6 @@ const PROMPTS = [
   Format: accroche forte, 3-4 points clés, call-to-action vers bailo.pro
   Ton: professionnel mais accessible, pas de jargon excessif.
   Termine par: "Gérez votre patrimoine avec Bailo Pro → bailo.pro #investissementimmobilier #gestionlocative #patrimoine"`,
-  
   `Tu es Sébastien, fondateur de Bailo Pro, un SaaS immobilier pour investisseurs particuliers.
   Écris un post LinkedIn authentique en français de 150-200 mots sur les coulisses du développement de Bailo Pro.
   Thèmes: nouvelles fonctionnalités, apprentissages, vision produit, feedback utilisateurs.
@@ -23,39 +23,24 @@ exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' };
 
   try {
-    // 1. Récupérer le token LinkedIn depuis Supabase
+    // 1. Token LinkedIn
     const { data: tokenData, error: tokenError } = await supabase
-      .from('settings')
-      .select('value')
-      .eq('key', 'linkedin_token')
-      .single();
-
+      .from('settings').select('value').eq('key', 'linkedin_token').single();
     if (tokenError || !tokenData) throw new Error('Token LinkedIn non trouvé');
     const linkedinToken = tokenData.value;
 
-    // 2. Récupérer le person ID via userinfo LinkedIn (à la volée)
-    const profileResp = await fetch('https://api.linkedin.com/v2/userinfo', {
-      headers: { 'Authorization': `Bearer ${linkedinToken}` }
-    });
-    const profile = await profileResp.json();
-    const personId = profile.sub;
-    if (!personId) throw new Error('Person ID LinkedIn introuvable: ' + JSON.stringify(profile));
-
-    // 3. Déterminer le type de post
+    // 2. Générer le post avec Claude
     const weekNumber = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
     const promptIndex = weekNumber % 2;
-    const prompt = PROMPTS[promptIndex];
-
-    // 4. Générer le post avec Claude
     const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 500,
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{ role: 'user', content: PROMPTS[promptIndex] }]
     });
     const postText = message.content[0].text;
 
-    // 5. Publier sur LinkedIn profil perso
+    // 3. Publier sur LinkedIn
     const liResp = await fetch('https://api.linkedin.com/v2/ugcPosts', {
       method: 'POST',
       headers: {
@@ -64,7 +49,7 @@ exports.handler = async function(event) {
         'X-Restli-Protocol-Version': '2.0.0'
       },
       body: JSON.stringify({
-        author: `urn:li:person:${personId}`,
+        author: `urn:li:person:${LINKEDIN_PERSON_ID}`,
         lifecycleState: 'PUBLISHED',
         specificContent: {
           'com.linkedin.ugc.ShareContent': {
@@ -79,7 +64,7 @@ exports.handler = async function(event) {
     const liData = await liResp.json();
     if (!liResp.ok) throw new Error(`LinkedIn API error: ${JSON.stringify(liData)}`);
 
-    // 6. Logger dans Supabase
+    // 4. Logger dans Supabase
     await supabase.from('linkedin_posts').insert({
       content: postText,
       type: promptIndex === 0 ? 'conseil_immo' : 'coulisses_bailo',
@@ -90,7 +75,7 @@ exports.handler = async function(event) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', ...cors },
-      body: JSON.stringify({ success: true, post: postText.substring(0, 100) + '...' })
+      body: JSON.stringify({ success: true, post: postText.substring(0, 150) + '...' })
     };
 
   } catch (err) {
