@@ -35,12 +35,22 @@ exports.handler = async function(event) {
     if (tokenError || !tokenData) throw new Error('Token LinkedIn non trouvé');
     const linkedinToken = tokenData.value;
 
-    // 2. Déterminer le type de post (alternance semaine paire/impaire)
+    // 2. Récupérer le person ID depuis Supabase
+    const { data: personData } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'linkedin_person_id')
+      .single();
+
+    if (!personData) throw new Error('LinkedIn person ID non trouvé');
+    const personId = personData.value;
+
+    // 3. Déterminer le type de post (alternance semaine paire/impaire)
     const weekNumber = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
     const promptIndex = weekNumber % 2;
     const prompt = PROMPTS[promptIndex];
 
-    // 3. Générer le post avec Claude
+    // 4. Générer le post avec Claude
     const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
@@ -49,7 +59,7 @@ exports.handler = async function(event) {
     });
     const postText = message.content[0].text;
 
-    // 4. Publier sur LinkedIn page Bailo Pro
+    // 5. Publier sur LinkedIn profil perso
     const liResp = await fetch('https://api.linkedin.com/v2/ugcPosts', {
       method: 'POST',
       headers: {
@@ -58,7 +68,7 @@ exports.handler = async function(event) {
         'X-Restli-Protocol-Version': '2.0.0'
       },
       body: JSON.stringify({
-        author: 'urn:li:organization:120694462',
+        author: `urn:li:person:${personId}`,
         lifecycleState: 'PUBLISHED',
         specificContent: {
           'com.linkedin.ugc.ShareContent': {
@@ -71,10 +81,9 @@ exports.handler = async function(event) {
     });
 
     const liData = await liResp.json();
-
     if (!liResp.ok) throw new Error(`LinkedIn API error: ${JSON.stringify(liData)}`);
 
-    // 5. Logger dans Supabase
+    // 6. Logger dans Supabase
     await supabase.from('linkedin_posts').insert({
       content: postText,
       type: promptIndex === 0 ? 'conseil_immo' : 'coulisses_bailo',
