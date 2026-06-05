@@ -49,7 +49,7 @@ exports.handler = async function(event) {
         'X-Restli-Protocol-Version': '2.0.0'
       },
       body: JSON.stringify({
-        author: `urn:li:person:${LINKEDIN_PERSON_ID}`,
+        author: `urn:li:member:${LINKEDIN_PERSON_ID}`,
         lifecycleState: 'PUBLISHED',
         specificContent: {
           'com.linkedin.ugc.ShareContent': {
