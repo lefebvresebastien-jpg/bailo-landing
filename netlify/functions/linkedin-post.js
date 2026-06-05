@@ -40,15 +40,7 @@ exports.handler = async function(event) {
     });
     const postText = message.content[0].text;
 
-    // 3. Récupérer le vrai person ID
-    const meResp = await fetch('https://api.linkedin.com/v2/me', {
-      headers: { 'Authorization': `Bearer ${linkedinToken}`, 'X-Restli-Protocol-Version': '2.0.0' }
-    });
-    const meData = await meResp.json();
-    console.log('LinkedIn /v2/me response:', JSON.stringify(meData));
-    const realPersonId = LINKEDIN_PERSON_ID; // ID hardcodé depuis URL profil LinkedIn
-
-    // 4. Publier sur LinkedIn
+    // 3. Publier sur LinkedIn
     const liResp = await fetch('https://api.linkedin.com/v2/ugcPosts', {
       method: 'POST',
       headers: {
