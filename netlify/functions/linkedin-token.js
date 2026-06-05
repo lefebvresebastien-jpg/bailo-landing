@@ -14,7 +14,7 @@ exports.handler = async function(event) {
       code,
       redirect_uri: 'https://bailo.pro/linkedin-callback',
       client_id: '785wpwp22qbyaa',
-      client_secret: 'WPL_AP1.BLEUWeNPKsLMU3go.SDxxNQ=='
+      client_secret: process.env.LINKEDIN_CLIENT_SECRET
     });
 
     const resp = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
