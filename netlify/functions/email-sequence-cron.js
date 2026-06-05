@@ -100,9 +100,34 @@ exports.handler = async function(event) {
       console.log(`J+7 upsell envoyé à ${u.email}`);
     }
 
+
+    // J-7 : abonnés trial qui expirent dans 7 jours
+    const exp7Start = new Date(now);
+    exp7Start.setDate(exp7Start.getDate() + 7);
+    exp7Start.setHours(0,0,0,0);
+    const exp7End = new Date(exp7Start);
+    exp7End.setHours(23,59,59,999);
+
+    const { data: expUsers } = await supabase
+      .from('subscriptions')
+      .select('email')
+      .eq('trial', true)
+      .eq('active', true)
+      .gte('expires_at', exp7Start.toISOString())
+      .lte('expires_at', exp7End.toISOString());
+
+    for (const u of (expUsers || [])) {
+      await fetch(process.env.URL + '/.netlify/functions/email-j7-conversion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: u.email })
+      });
+      console.log(`J-7 conversion envoye a ${u.email}`);
+    }
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ j3: j3Users?.length || 0, j7: j7Users?.length || 0 })
+      body: JSON.stringify({ j3: j3Users?.length || 0, j7: j7Users?.length || 0, exp7: expUsers?.length || 0 })
     };
 
   } catch (err) {
