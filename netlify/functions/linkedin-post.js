@@ -2,7 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-const LINKEDIN_PERSON_ID = '693763296';
+const LINKEDIN_PERSON_ID = '8bnOMf7pAD';
 
 const PROMPTS = [
   `Tu es un expert en investissement immobilier. Écris un post LinkedIn percutant en français de 150-200 mots sur un conseil pratique pour les investisseurs particuliers (1-5 biens). 
