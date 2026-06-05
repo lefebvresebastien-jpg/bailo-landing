@@ -41,23 +41,24 @@ exports.handler = async function(event) {
     const postText = message.content[0].text;
 
     // 3. Publier sur LinkedIn
-    const liResp = await fetch('https://api.linkedin.com/v2/ugcPosts', {
+    const liResp = await fetch('https://api.linkedin.com/rest/posts', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${linkedinToken}`,
         'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
+        'LinkedIn-Version': '202401'
       },
       body: JSON.stringify({
-        author: `urn:li:member:${LINKEDIN_PERSON_ID}`,
-        lifecycleState: 'PUBLISHED',
-        specificContent: {
-          'com.linkedin.ugc.ShareContent': {
-            shareCommentary: { text: postText },
-            shareMediaCategory: 'NONE'
-          }
+        author: `urn:li:person:${LINKEDIN_PERSON_ID}`,
+        commentary: postText,
+        visibility: 'PUBLIC',
+        distribution: {
+          feedDistribution: 'MAIN_FEED',
+          targetEntities: [],
+          thirdPartyDistributionChannels: []
         },
-        visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' }
+        lifecycleState: 'PUBLISHED',
+        isReshareDisabledByAuthor: false
       })
     });
 
