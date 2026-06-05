@@ -49,7 +49,7 @@
       const box = document.getElementById('token-display');
       box.style.display = 'block';
       if (data.success) {
-        box.textContent = '✅ Token sauvegardé ! Vous pouvez fermer cette page.';
+        box.textContent = '✅ Token OK — Person ID: ' + data.person_id;
         document.getElementById('success-msg').style.display = 'block';
         document.querySelector('p').textContent = 'LinkedIn connecté avec succès !';
       } else {
