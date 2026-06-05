@@ -27,11 +27,11 @@ exports.handler = async function(event) {
     if (!data.access_token) return { statusCode: 400, headers: cors, body: JSON.stringify(data) };
 
     // 2. Recuperer le person ID via userinfo (compatible w_member_social)
-    const profileResp = await fetch('https://api.linkedin.com/v2/userinfo', {
-      headers: { 'Authorization': `Bearer ${data.access_token}` }
+    const profileResp = await fetch('https://api.linkedin.com/v2/me', {
+      headers: { 'Authorization': `Bearer ${data.access_token}`, 'X-Restli-Protocol-Version': '2.0.0' }
     });
     const profile = await profileResp.json();
-    const personId = profile.sub; // sub = LinkedIn person ID
+    const personId = profile.id; // sub = LinkedIn person ID
 
     // 3. Sauvegarder token + person_id dans Supabase
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
