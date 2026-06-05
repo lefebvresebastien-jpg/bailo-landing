@@ -36,7 +36,7 @@ exports.handler = async function(event) {
       headers: {
         'Authorization': `Bearer ${linkedinToken}`,
         'Content-Type': 'application/json',
-        'LinkedIn-Version': '202304',
+        'LinkedIn-Version': '202501',
         'X-Restli-Protocol-Version': '2.0.0'
       },
       body: JSON.stringify({
