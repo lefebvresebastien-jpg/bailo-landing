@@ -2,20 +2,10 @@ const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-const LINKEDIN_PERSON_ID = '8bnOMf7pAD';
 
 const PROMPTS = [
-  `Tu es un expert en investissement immobilier. Écris un post LinkedIn percutant en français de 150-200 mots sur un conseil pratique pour les investisseurs particuliers (1-5 biens). 
-  Thèmes possibles: rentabilité, gestion locative, travaux, fiscalité, financement.
-  Format: accroche forte, 3-4 points clés, call-to-action vers bailo.pro
-  Ton: professionnel mais accessible, pas de jargon excessif.
-  Termine par: "Gérez votre patrimoine avec Bailo Pro → bailo.pro #investissementimmobilier #gestionlocative #patrimoine"`,
-  `Tu es Sébastien, fondateur de Bailo Pro, un SaaS immobilier pour investisseurs particuliers.
-  Écris un post LinkedIn authentique en français de 150-200 mots sur les coulisses du développement de Bailo Pro.
-  Thèmes: nouvelles fonctionnalités, apprentissages, vision produit, feedback utilisateurs.
-  Format: storytelling personnel, concret, inspirant.
-  Ton: authentique, entrepreneur solo, passionné.
-  Termine par: "Découvrez Bailo Pro → bailo.pro #SaaS #immobilier #entrepreneuriat #buildinpublic"`
+  `Tu es un expert en investissement immobilier. Écris un post LinkedIn percutant en français de 150-200 mots sur un conseil pratique pour les investisseurs particuliers (1-5 biens). Format: accroche forte, 3-4 points clés, call-to-action vers bailo.pro. Termine par: "Gérez votre patrimoine avec Bailo Pro → bailo.pro #investissementimmobilier #gestionlocative #patrimoine"`,
+  `Tu es Sébastien, fondateur de Bailo Pro, un SaaS immobilier pour investisseurs particuliers. Écris un post LinkedIn authentique en français de 150-200 mots sur les coulisses du développement. Termine par: "Découvrez Bailo Pro → bailo.pro #SaaS #immobilier #entrepreneuriat #buildinpublic"`
 ];
 
 exports.handler = async function(event) {
@@ -40,35 +30,40 @@ exports.handler = async function(event) {
     });
     const postText = message.content[0].text;
 
-    // 3. Publier sur LinkedIn
-    const liResp = await fetch('https://api.linkedin.com/v2/ugcPosts', {
+    // 3. Publier via nouvelle API LinkedIn /rest/posts
+    const liResp = await fetch('https://api.linkedin.com/rest/posts', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${linkedinToken}`,
         'Content-Type': 'application/json',
+        'LinkedIn-Version': '202304',
         'X-Restli-Protocol-Version': '2.0.0'
       },
       body: JSON.stringify({
-        author: `urn:li:member:${LINKEDIN_PERSON_ID}`,
-        lifecycleState: 'PUBLISHED',
-        specificContent: {
-          'com.linkedin.ugc.ShareContent': {
-            shareCommentary: { text: postText },
-            shareMediaCategory: 'NONE'
-          }
+        author: 'urn:li:person:8bnOMf7pAD',
+        commentary: postText,
+        visibility: 'PUBLIC',
+        distribution: {
+          feedDistribution: 'MAIN_FEED',
+          targetEntities: [],
+          thirdPartyDistributionChannels: []
         },
-        visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' }
+        lifecycleState: 'PUBLISHED',
+        isReshareDisabledByAuthor: false
       })
     });
 
-    const liData = await liResp.json();
-    if (!liResp.ok) throw new Error(`LinkedIn API error: ${JSON.stringify(liData)}`);
+    const liText = await liResp.text();
+    console.log('LinkedIn response status:', liResp.status);
+    console.log('LinkedIn response:', liText);
+
+    if (!liResp.ok) throw new Error(`LinkedIn API error: ${liText}`);
 
     // 4. Logger dans Supabase
     await supabase.from('linkedin_posts').insert({
       content: postText,
       type: promptIndex === 0 ? 'conseil_immo' : 'coulisses_bailo',
-      linkedin_id: liData.id,
+      linkedin_id: liResp.headers.get('x-restli-id') || 'unknown',
       posted_at: new Date().toISOString()
     });
 
