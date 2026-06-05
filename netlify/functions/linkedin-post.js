@@ -46,7 +46,7 @@ exports.handler = async function(event) {
     });
     const meData = await meResp.json();
     console.log('LinkedIn /v2/me response:', JSON.stringify(meData));
-    const realPersonId = meData.id || LINKEDIN_PERSON_ID;
+    const realPersonId = LINKEDIN_PERSON_ID; // ID hardcodé depuis URL profil LinkedIn
 
     // 4. Publier sur LinkedIn
     const liResp = await fetch('https://api.linkedin.com/v2/ugcPosts', {
