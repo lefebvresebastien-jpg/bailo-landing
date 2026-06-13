@@ -48,30 +48,11 @@
   }
 
   async function getUserModules(token) {
-    // Priorité : window.userModules déjà chargé par la page hôte
     if (window.userModules && window.userModules.length > 0) {
       return window.userModules;
     }
-    // Attendre jusqu'à 3 secondes que la page hôte charge les modules
-    for (var i = 0; i < 6; i++) {
-      await new Promise(function(r){ setTimeout(r, 500); });
-      if (window.userModules && window.userModules.length > 0) {
-        return window.userModules;
-      }
-    }
-    // Fallback : requête Supabase directe
-    if (!token) return [];
-    try {
-      const res = await fetch(SUPABASE_CHANTIER_URL + '/rest/v1/subscriptions?select=modules,active&limit=1', {
-        headers: {
-          'apikey': SUPABASE_CHANTIER_KEY,
-          'Authorization': 'Bearer ' + token
-        }
-      });
-      const data = await res.json();
-      if (data && data[0] && data[0].active) return data[0].modules || [];
-      return [];
-    } catch(e) { return []; }
+    // Tous les modules actifs par defaut (pas de fetch externe)
+    return ['finance', 'chantier', 'gestion'];
   }
 
   function getUserId(token) {
