@@ -19,16 +19,7 @@
   }
 
   async function getToken() {
-    // 1. Clé connue
-    try {
-      const raw = localStorage.getItem(AUTH_KEY);
-      if (raw) {
-        const val = JSON.parse(raw);
-        if (val && val.access_token) return val.access_token;
-      }
-    } catch(e) {}
-
-    // 2. Via le client db existant sur la page
+    // 1. Via le client db existant sur la page (priorite absolue)
     if (window.db && window.db.auth) {
       try {
         const { data } = await window.db.auth.getSession();
@@ -36,7 +27,7 @@
       } catch(e) {}
     }
 
-    // 3. Scan localStorage
+    // 2. Scan localStorage toutes cles
     for (const k of Object.keys(localStorage)) {
       try {
         const val = JSON.parse(localStorage.getItem(k));
