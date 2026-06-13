@@ -1,6 +1,6 @@
 (function() {
   const SUPABASE_CHANTIER_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
-  const SUPABASE_CHANTIER_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
+  const SUPABASE_CHANTIER_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2a2d1eWRkbWhxYnZhcnVqbHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTYxNzE3NzksImV4cCI6MjAxMTc0Nzc3OX0.tDMR-E5kaPJgBHxGhEJAQsIGFQZ7_8fHE_bKs8o8_bA';
   const AUTH_KEY = 'sb-hvkguyddmhqbvarujlyr-auth-token';
   const ADMIN_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c';
 
