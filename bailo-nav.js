@@ -67,11 +67,11 @@
     style.id = 'bailo-nav-styles';
     style.textContent = `
       #bailo-nav {
-        position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+        position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
         z-index: 9999; display: flex; align-items: center; gap: 4px;
         background: rgba(15,15,13,0.92); border: 1px solid rgba(255,255,255,0.09);
         border-radius: 99px; padding: 6px 8px;
-        backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        backdrop-filter: blur(16px); box-shadow: 0 4px 16px rgba(0,0,0,0.4);
         font-family: system-ui, -apple-system, sans-serif;
       }
       #bailo-nav .bn-logo {
@@ -91,7 +91,7 @@
       #bailo-nav .bn-btn.locked:hover { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4); }
       #bailo-nav .bn-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
       #bailo-nav-tooltip {
-        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+        position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
         z-index: 10000; background: rgba(15,15,13,0.97);
         border: 1px solid rgba(249,115,22,0.3); border-radius: 14px;
         padding: 16px 20px; width: 280px; font-family: system-ui, sans-serif;
