@@ -2,7 +2,7 @@
   const SUPABASE_CHANTIER_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
   const SUPABASE_CHANTIER_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2a2d1eWRkbWhxYnZhcnVqbHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTYxNzE3NzksImV4cCI6MjAxMTc0Nzc3OX0.tDMR-E5kaPJgBHxGhEJAQsIGFQZ7_8fHE_bKs8o8_bA';
   const AUTH_KEY = 'sb-hvkguyddmhqbvarujlyr-auth-token';
-  const ADMIN_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c';
+  const ADMIN_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c'; const ADMIN_ID_V2 = '543d6b8b-8dac-4597-a63b-fd83e44bd9f9';
 
   const MODULES = [
     { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
@@ -142,7 +142,7 @@
     });
 
     // Bouton admin uniquement pour Sébastien
-    if (userId === ADMIN_ID) {
+    if (userId === ADMIN_ID || userId === ADMIN_ID_V2) {
       var tokenData = getTokenData();
       var accessToken = tokenData.access_token || '';
       var refreshToken = tokenData.refresh_token || '';
