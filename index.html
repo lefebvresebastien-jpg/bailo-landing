@@ -333,9 +333,9 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     <div style="width:1px;height:36px;background:rgba(255,255,255,.3);"></div>
     <div style="text-align:left;">
       <div style="font-size:13px;font-weight:700;color:#fff;">Offre de lancement</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:2px;">3 mois offerts · 10 places seulement</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:2px;" id="trial-spots-label">3 mois offerts · 10 places seulement</div>
       <div style="margin-top:7px;background:rgba(255,255,255,.25);border-radius:3px;height:4px;width:130px;overflow:hidden">
-        <div style="background:#fff;width:10%;height:4px;border-radius:3px;"></div>
+        <div style="background:#fff;width:10%;height:4px;border-radius:3px;" id="trial-spots-bar"></div>
       </div>
     </div>
   </div>
@@ -735,6 +735,31 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
 const { createClient } = supabase
 const db = createClient('https://hvkguyddmhqbvarujlyr.supabase.co','sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W')
 
+const TRIAL_SPOTS_TOTAL = 10
+
+// Affiche le vrai nombre de places restantes sur l'offre de lancement
+// (au lieu du "9" statique précédent, jamais à jour avec les vraies inscriptions).
+async function updateTrialSpotsCounter() {
+  try {
+    const { count, error } = await db
+      .from('subscriptions')
+      .select('*', { count: 'exact', head: true })
+      .eq('active', true)
+    if (error) return
+    const remaining = Math.max(0, TRIAL_SPOTS_TOTAL - (count || 0))
+    const counterEl = document.getElementById('counter-places')
+    if (counterEl) counterEl.textContent = remaining
+    const barEl = document.getElementById('trial-spots-bar')
+    if (barEl) barEl.style.width = Math.min(100, (count || 0) / TRIAL_SPOTS_TOTAL * 100) + '%'
+    // Si plus aucune place, on adapte le message pour ne pas mentir
+    const labelEl = document.getElementById('trial-spots-label')
+    if (labelEl && remaining <= 0) {
+      labelEl.textContent = 'Offre de lancement complète — tarifs normaux'
+    }
+  } catch (e) { /* échec silencieux, le texte par défaut reste affiché */ }
+}
+updateTrialSpotsCounter()
+
 let selectedPlan = 'duo'
 
 function selectPlan(plan) {
@@ -807,6 +832,7 @@ async function handleSignup() {
       successEl.innerHTML = '🎉 Vous faites partie des 10 premiers ! Accès gratuit activé jusqu\'au ' + expiresDate + '. Vérifiez votre email.'
       successEl.style.display = 'block'
       btn.textContent = 'Accès activé !'
+      updateTrialSpotsCounter()
       // Parrainage
       const refCode = sessionStorage.getItem('bailo_ref');
       if (refCode) {
