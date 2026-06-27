@@ -18,7 +18,6 @@ exports.handler = async function(event) {
       .from('subscriptions')
       .select('email, user_id')
       .eq('trial', true)
-      .eq('active', true)
       .gte('expires_at', from)
       .lte('expires_at', to);
 
