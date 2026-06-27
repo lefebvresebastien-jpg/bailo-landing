@@ -741,12 +741,13 @@ const TRIAL_SPOTS_TOTAL = 10
 // (au lieu du "9" statique précédent, jamais à jour avec les vraies inscriptions).
 async function updateTrialSpotsCounter() {
   try {
-    const { count, error } = await db
+    const { data: subs, error } = await db
       .from('subscriptions')
-      .select('*', { count: 'exact', head: true })
-      .eq('active', true)
+      .select('user_id')
     if (error) return
-    const remaining = Math.max(0, TRIAL_SPOTS_TOTAL - (count || 0))
+    const OWNER_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c'
+    const count = (subs || []).filter(s => s.user_id !== OWNER_ID).length
+    const remaining = Math.max(0, TRIAL_SPOTS_TOTAL - count)
     const counterEl = document.getElementById('counter-places')
     if (counterEl) counterEl.textContent = remaining
     const barEl = document.getElementById('trial-spots-bar')
