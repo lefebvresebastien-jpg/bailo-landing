@@ -10,22 +10,24 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
+  const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
+
   try {
     const { plan, modules, email, userId } = JSON.parse(event.body);
 
-    // Vérifier le nombre d'abonnés actifs
-    const { count, error: countError } = await supabase
+    // Compter les abonnés actifs (tous plans confondus sauf l'user courant)
+    const { data: allSubs, error: countError } = await supabase
       .from('subscriptions')
-      .select('*', { count: 'exact', head: true })
-      .eq('active', true);
+      .select('user_id, plan');
 
     if (countError) throw new Error(countError.message);
-    if (count >= 10) {
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ eligible: false })
-      };
+
+    // Exclure l'abonné permanent (le bailleur lui-même)
+    const OWNER_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c';
+    const otherSubs = (allSubs || []).filter(s => s.user_id !== OWNER_ID && s.user_id !== userId);
+
+    if (otherSubs.length >= 10) {
+      return { statusCode: 200, headers, body: JSON.stringify({ eligible: false }) };
     }
 
     // Créer l'abonnement gratuit 3 mois
@@ -35,17 +37,16 @@ exports.handler = async function(event) {
     const { error } = await supabase.from('subscriptions').upsert({
       user_id:    userId,
       email:      email,
-      plan:       plan,
-      modules:    Array.isArray(modules) ? modules.join(',') : modules,
-      active:     true,
+      plan:       plan || 'pro',
+      modules:    Array.isArray(modules) ? modules : ['chantier', 'finance', 'gestion'],
       trial:      true,
       expires_at: trialEnds.toISOString(),
-      updated_at: new Date().toISOString()
+      started_at: new Date().toISOString()
     }, { onConflict: 'user_id' });
 
     if (error) throw new Error(error.message);
 
-    // Email de bienvenue offre lancement
+    // Email de bienvenue
     await resend.emails.send({
       from: 'Bailo Pro <contact@bailo.pro>',
       to:   email,
@@ -73,7 +74,7 @@ exports.handler = async function(event) {
               <p style="margin:0;font-size:17px;font-weight:700;color:#e8793a;">${trialEnds.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
             </td></tr>
           </table>
-          <p style="font-size:13px;color:rgba(245,240,235,0.5);margin:0;">À l'issue de la période gratuite, vous recevrez un email pour choisir de continuer avec un abonnement payant.</p>
+          <a href="https://gestion.bailo.pro" style="display:inline-block;background:#e8793a;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">Accéder à Bailo Pro →</a>
         </td></tr>
       </table>
     </td></tr>
@@ -83,12 +84,12 @@ exports.handler = async function(event) {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers,
       body: JSON.stringify({ eligible: true, expires_at: trialEnds.toISOString() })
     };
 
   } catch (err) {
     console.error('Trial error:', err);
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
