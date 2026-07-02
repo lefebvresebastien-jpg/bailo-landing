@@ -725,7 +725,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
           <div class="plan-selector">
             <button class="plan-btn" id="plan-bailleur" onclick="selectPlan('bailleur')"><span class="plan-btn-price">9,90€</span>/mois · Bailleur</button>
             <button class="plan-btn selected" id="plan-investisseur" onclick="selectPlan('investisseur')"><span class="plan-btn-price">19,90€</span>/mois · Investisseur</button>
-            <button class="plan-btn" id="plan-complet" onclick="selectPlan('complet')"><span class="plan-btn-price">39€</span>/mois · Pro</button>
+            <button class="plan-btn" id="plan-complet" onclick="selectPlan('complet')"><span class="plan-btn-price">29,90€</span>/mois · Pro</button>
           </div>
         </div>
         <div class="field" id="modules-field">
@@ -817,20 +817,15 @@ function selectPlan(plan) {
   if (btn) btn.classList.add('selected')
   const modulesField = document.getElementById('modules-field')
   const modulesSelect = document.getElementById('modules-select')
-  if (plan === 'solo') {
-    modulesField.style.display = 'block'
-    modulesSelect.innerHTML = `
-      <option value="chantier">Chantier uniquement</option>
-      <option value="finance">Finance uniquement</option>
-      <option value="gestion">Gestion uniquement</option>`
-  } else if (plan === 'duo') {
-    modulesField.style.display = 'block'
-    modulesSelect.innerHTML = `
-      <option value="chantier,finance">Chantier + Finance</option>
-      <option value="chantier,gestion">Chantier + Gestion</option>
-      <option value="finance,gestion">Finance + Gestion</option>`
+  if (plan === 'bailleur') {
+    modulesField.style.display = 'none'
+    if (modulesSelect) modulesSelect.value = 'gestion,finance'
+  } else if (plan === 'investisseur') {
+    modulesField.style.display = 'none'
+    if (modulesSelect) modulesSelect.value = 'gestion,finance,chantier'
   } else {
     modulesField.style.display = 'none'
+    if (modulesSelect) modulesSelect.value = 'gestion,finance,chantier,bnb,patrimoine'
   }
 }
 selectPlan('investisseur')
