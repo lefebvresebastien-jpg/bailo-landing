@@ -10,9 +10,9 @@ const supabase = createClient(
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const PLAN_LABELS = {
-  solo: 'Solo — 15€/mois',
-  duo:  'Duo — 29€/mois',
-  pro:  'Pro — 39€/mois',
+  bailleur:     'Bailleur — 9,90€/mois',
+  investisseur: 'Investisseur — 19,90€/mois',
+  pro:          'Pro — 29,90€/mois',
 };
 
 async function sendConfirmationEmail(email, plan) {
@@ -120,13 +120,13 @@ exports.handler = async function(event) {
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     const meta    = session.metadata || {};
-    const plan    = meta.plan || 'solo';
+    const plan    = meta.plan || 'bailleur';
     const PLAN_MODULES = {
-  solo: ['chantier', 'finance'],
-  duo:  ['chantier', 'gestion'],
-  pro:  ['chantier', 'finance', 'gestion'],
+  bailleur:     ['gestion', 'finance'],
+  investisseur: ['gestion', 'finance', 'chantier'],
+  pro:          ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'],
 };
-const modules = PLAN_MODULES[plan] || (meta.modules ? meta.modules.split(',') : ['chantier']);
+const modules = PLAN_MODULES[plan] || (meta.modules ? meta.modules.split(',') : ['gestion']);
     const userId  = meta.user_id || null;
     const email   = session.customer_email || null;
 
