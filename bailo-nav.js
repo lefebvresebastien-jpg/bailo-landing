@@ -1,20 +1,24 @@
 (function() {
   const SUPABASE_CHANTIER_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
-  const SUPABASE_CHANTIER_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2a2d1eWRkbWhxYnZhcnVqbHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTYxNzE3NzksImV4cCI6MjAxMTc0Nzc3OX0.tDMR-E5kaPJgBHxGhEJAQsIGFQZ7_8fHE_bKs8o8_bA';
+  const SUPABASE_CHANTIER_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
   const AUTH_KEY = 'sb-hvkguyddmhqbvarujlyr-auth-token';
   const ADMIN_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c'; const ADMIN_ID_V2 = '543d6b8b-8dac-4597-a63b-fd83e44bd9f9';
 
   const MODULES = [
-    { id: 'finance',  label: 'Finance',  desc: 'Faisabilité & banque', url: 'https://finance.bailo.pro' },
-    { id: 'chantier', label: 'Chantier', desc: 'Suivi travaux',        url: 'https://chantier.bailo.pro' },
-    { id: 'gestion',  label: 'Gestion',  desc: 'Locataires',           url: 'https://gestion.bailo.pro' }
+    { id: 'gestion',    label: 'Gestion',    desc: 'Locataires & baux',      url: 'https://gestion.bailo.pro' },
+    { id: 'chantier',   label: 'Chantier',   desc: 'Suivi travaux',          url: 'https://chantier.bailo.pro' },
+    { id: 'finance',    label: 'Finance',    desc: 'Faisabilité & banque',   url: 'https://finance.bailo.pro' },
+    { id: 'bnb',        label: 'Bnb',        desc: 'Location courte durée',  url: 'https://bnb.bailo.pro' },
+    { id: 'patrimoine', label: 'Patrimoine', desc: 'Vue stratégique',        url: 'https://patrimoine.bailo.pro' }
   ]; 
 
   function getCurrentModule() {
     const host = window.location.hostname;
-    if (host.includes('finance')) return 'finance';
-    if (host.includes('chantier')) return 'chantier';
     if (host.includes('gestion')) return 'gestion';
+    if (host.includes('chantier')) return 'chantier';
+    if (host.includes('finance')) return 'finance';
+    if (host.includes('bnb')) return 'bnb';
+    if (host.includes('patrimoine')) return 'patrimoine';
     return null;
   }
 
@@ -52,7 +56,7 @@
       return window.userModules;
     }
     // Tous les modules actifs par defaut (pas de fetch externe)
-    return ['finance', 'chantier', 'gestion'];
+    return ['gestion', 'chantier', 'finance', 'bnb', 'patrimoine'];
   }
 
   function getUserId(token) {
