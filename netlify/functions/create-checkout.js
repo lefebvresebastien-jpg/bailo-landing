@@ -1,13 +1,15 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const PRICE_IDS = {
-  solo: 'price_1TayxuCayy0ySKyoIu9xY4rB',
-  duo:  'price_1TayxtCayy0ySKyoRDAVwGZJ',
-  pro:  'price_1TayxtCayy0ySKyomIKPSoP0'
+  bailleur:     'price_1TomXuCayy0ySKyou002vhU',
+  investisseur: 'price_1TomfQCayy0ySKyoLxzFjWKe',
+  pro:          'price_1TomiYCayy0ySKyo7cIcfCMv'
 };
 const MODULE_URLS = {
-  chantier: 'https://bailo-chantier.netlify.app',
-  finance:  'https://finance.bailo.pro',
-  gestion:  'https://gestion.bailo.pro'
+  gestion:    'https://gestion.bailo.pro',
+  chantier:   'https://chantier.bailo.pro',
+  finance:    'https://finance.bailo.pro',
+  bnb:        'https://bnb.bailo.pro',
+  patrimoine: 'https://patrimoine.bailo.pro'
 };
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
