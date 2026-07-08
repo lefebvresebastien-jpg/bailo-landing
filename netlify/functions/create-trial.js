@@ -55,8 +55,8 @@ exports.handler = async function(event) {
     const { error: upsertError } = await supabase.from('subscriptions').upsert({
       user_id: userId,
       email: email,
-      plan: plan || 'pro',
-      modules: Array.isArray(modules) ? modules : ['chantier', 'finance', 'gestion'],
+      plan: plan || 'bailleur',
+      modules: Array.isArray(modules) ? modules : (plan === 'pro' ? ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'] : plan === 'investisseur' ? ['gestion', 'finance', 'chantier'] : ['gestion', 'finance']),
       trial: true,
       expires_at: trialEnds.toISOString(),
       started_at: new Date().toISOString()
