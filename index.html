@@ -837,6 +837,15 @@ async function updateTrialSpotsCounter() {
 }
 updateTrialSpotsCounter()
 
+// Détection URL ?essai=1 -> affiche directement le formulaire essai gratuit
+if (new URLSearchParams(window.location.search).get('essai') === '1') {
+  setTimeout(function() {
+    if (typeof showTrialForm === 'function') showTrialForm();
+    var el = document.getElementById('inscription');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }, 500);
+}
+
 let selectedPlan = 'duo'
 
 function selectPlan(plan) {
