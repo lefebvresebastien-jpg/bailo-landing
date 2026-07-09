@@ -65,6 +65,45 @@ exports.handler = async function(event) {
     console.log('upsert error:', upsertError);
     if (upsertError) console.error('Upsert error:', upsertError);
 
+    // Créer aussi le compte dans Supabase Gestion (base séparée)
+    try {
+      const GESTION_URL = 'https://nltuysmnxsomlhgvbtwz.supabase.co';
+      const GESTION_SERVICE_KEY = process.env.SUPABASE_GESTION_SERVICE_KEY;
+      
+      if (GESTION_SERVICE_KEY) {
+        const supabaseGestion = createClient(GESTION_URL, GESTION_SERVICE_KEY);
+        
+        // Créer le compte auth dans Gestion
+        const { data: gestionUser, error: gestionAuthError } = await supabaseGestion.auth.admin.createUser({
+          email: email,
+          password: Math.random().toString(36).slice(-10) + 'A1!', // mot de passe temporaire fort
+          email_confirm: true
+        });
+        
+        if (gestionAuthError && !gestionAuthError.message.includes('already been registered')) {
+          console.error('Gestion auth error:', gestionAuthError);
+        } else {
+          const gestionUserId = gestionUser?.user?.id;
+          if (gestionUserId) {
+            // Créer l'abonnement dans Gestion
+            await supabaseGestion.from('subscriptions').upsert({
+              user_id: gestionUserId,
+              email: email,
+              plan: 'pro',
+              modules: ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'],
+              trial: true,
+              expires_at: trialEnds.toISOString(),
+              started_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+            console.log('Compte Gestion créé:', email);
+          }
+        }
+      }
+    } catch(gestionErr) {
+      console.error('Erreur création compte Gestion:', gestionErr);
+      // Non bloquant — l'essai Chantier/Finance est quand même accordé
+    }
+
     // Email de bienvenue
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
