@@ -66,6 +66,11 @@ exports.handler = async function(event) {
     if (upsertError) console.error('Upsert error:', upsertError);
 
     // Créer aussi le compte dans Supabase Gestion (base séparée)
+    // + générer un vrai lien de définition de mot de passe (le mot de passe
+    // généré aléatoirement ci-dessous n'est JAMAIS communiqué à l'utilisateur,
+    // il sert uniquement à satisfaire l'API createUser — sans lien de
+    // récupération, personne ne peut jamais se connecter à Gestion).
+    let gestionPasswordLink = null;
     try {
       const GESTION_URL = 'https://nltuysmnxsomlhgvbtwz.supabase.co';
       const GESTION_SERVICE_KEY = process.env.SUPABASE_GESTION_SERVICE_KEY;
@@ -76,26 +81,48 @@ exports.handler = async function(event) {
         // Créer le compte auth dans Gestion
         const { data: gestionUser, error: gestionAuthError } = await supabaseGestion.auth.admin.createUser({
           email: email,
-          password: Math.random().toString(36).slice(-10) + 'A1!', // mot de passe temporaire fort
+          password: Math.random().toString(36).slice(-10) + 'A1!',
           email_confirm: true
         });
-        
-        if (gestionAuthError && !gestionAuthError.message.includes('already been registered')) {
-          console.error('Gestion auth error:', gestionAuthError);
-        } else {
-          const gestionUserId = gestionUser?.user?.id;
-          if (gestionUserId) {
-            // Créer l'abonnement dans Gestion
-            await supabaseGestion.from('subscriptions').upsert({
-              user_id: gestionUserId,
-              email: email,
-              plan: 'pro',
-              modules: ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'],
-              trial: true,
-              expires_at: trialEnds.toISOString(),
-              started_at: new Date().toISOString()
-            }, { onConflict: 'user_id' });
-            console.log('Compte Gestion créé:', email);
+
+        let gestionUserId = gestionUser?.user?.id;
+
+        if (gestionAuthError) {
+          if (gestionAuthError.message.includes('already been registered')) {
+            // Compte déjà existant (ex: réinscription) — on récupère son id
+            // pour quand même pouvoir lui régénérer un lien d'accès.
+            const { data: existingList } = await supabaseGestion.auth.admin.listUsers();
+            const existingUser = (existingList?.users || []).find(u => u.email === email);
+            gestionUserId = existingUser?.id || null;
+          } else {
+            console.error('Gestion auth error:', gestionAuthError);
+          }
+        }
+
+        if (gestionUserId) {
+          // Créer l'abonnement dans Gestion
+          await supabaseGestion.from('subscriptions').upsert({
+            user_id: gestionUserId,
+            email: email,
+            plan: 'pro',
+            modules: ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'],
+            trial: true,
+            expires_at: trialEnds.toISOString(),
+            started_at: new Date().toISOString()
+          }, { onConflict: 'user_id' });
+          console.log('Compte Gestion créé/mis à jour:', email);
+
+          // Lien de définition de mot de passe (même mécanisme que "mot de
+          // passe oublié", pointe vers reset-password.html déjà en place)
+          const { data: linkData, error: linkError } = await supabaseGestion.auth.admin.generateLink({
+            type: 'recovery',
+            email: email,
+            options: { redirectTo: 'https://gestion.bailo.pro/reset-password.html' }
+          });
+          if (linkError) {
+            console.error('Erreur génération lien mot de passe Gestion:', linkError);
+          } else {
+            gestionPasswordLink = linkData?.properties?.action_link || null;
           }
         }
       }
@@ -119,6 +146,12 @@ exports.handler = async function(event) {
             <p style="margin:0;font-size:13px;color:#e8793a;font-weight:600">Vos 5 modules inclus :</p>
             <p style="margin:8px 0 0;font-size:13px;color:#f5f0eb">🏠 Bailo Gestion &nbsp;·&nbsp; 💰 Bailo Finance &nbsp;·&nbsp; 🏗 Bailo Chantier &nbsp;·&nbsp; 🏖 Bailo Bnb &nbsp;·&nbsp; 📊 Bailo Patrimoine</p>
           </div>
+          ${gestionPasswordLink ? `
+          <div style="margin:20px 0;padding:16px;background:rgba(59,91,219,.1);border-radius:8px;border:1px solid rgba(59,91,219,.3)">
+            <p style="margin:0 0 10px;font-size:13px;color:#3b5bdb;font-weight:700">🔑 Dernière étape avant de commencer</p>
+            <p style="margin:0 0 12px;font-size:13px;color:#f5f0eb">Définissez votre mot de passe pour accéder à Bailo Gestion :</p>
+            <a href="${gestionPasswordLink}" style="display:inline-block;background:#3b5bdb;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px">Définir mon mot de passe Gestion →</a>
+          </div>` : ''}
           <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
             <a href="https://gestion.bailo.pro" style="display:inline-block;background:#e8793a;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700">🏠 Bailo Gestion →</a>
             <a href="https://finance.bailo.pro" style="display:inline-block;background:#3b5bdb;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700">💰 Bailo Finance →</a>
