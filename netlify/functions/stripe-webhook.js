@@ -15,7 +15,7 @@ const PLAN_LABELS = {
   pro:          'Pro — 29,90€/mois',
 };
 
-async function sendConfirmationEmail(email, plan) {
+async function sendConfirmationEmail(email, plan, gestionPasswordLink) {
   const planLabel = PLAN_LABELS[plan] || plan;
 
   await resend.emails.send({
@@ -62,6 +62,17 @@ async function sendConfirmationEmail(email, plan) {
                   </td>
                 </tr>
               </table>
+
+              ${gestionPasswordLink ? `
+              <table cellpadding="0" cellspacing="0" style="margin-bottom:20px;width:100%;">
+                <tr>
+                  <td style="background:rgba(59,91,219,.1);border:1px solid rgba(59,91,219,.3);border-radius:10px;padding:16px 20px;">
+                    <p style="margin:0 0 10px;font-size:13px;color:#3b5bdb;font-weight:700;">🔑 Dernière étape avant de commencer</p>
+                    <p style="margin:0 0 12px;font-size:13px;color:#f5f0eb;">Définissez votre mot de passe pour accéder à Bailo Gestion :</p>
+                    <a href="${gestionPasswordLink}" style="display:inline-block;background:#3b5bdb;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;">Définir mon mot de passe Gestion →</a>
+                  </td>
+                </tr>
+              </table>` : ''}
 
               <table cellpadding="0" cellspacing="0">
                 <tr>
@@ -170,9 +181,69 @@ const modules = PLAN_MODULES[plan] || (meta.modules ? meta.modules.split(',') : 
       console.error('Supabase error:', e);
     }
 
+    // Créer le compte dans Supabase Gestion (base séparée) + lien de
+    // définition de mot de passe. Sans ça, un client payant n'a AUCUN
+    // moyen de se connecter à Bailo Gestion (aucun compte n'y existe).
+    let gestionPasswordLink = null;
     if (email) {
       try {
-        await sendConfirmationEmail(email, plan);
+        const GESTION_URL = 'https://nltuysmnxsomlhgvbtwz.supabase.co';
+        const GESTION_SERVICE_KEY = process.env.SUPABASE_GESTION_SERVICE_KEY;
+
+        if (GESTION_SERVICE_KEY) {
+          const supabaseGestion = createClient(GESTION_URL, GESTION_SERVICE_KEY);
+
+          const { data: gestionUser, error: gestionAuthError } = await supabaseGestion.auth.admin.createUser({
+            email: email,
+            password: Math.random().toString(36).slice(-10) + 'A1!',
+            email_confirm: true
+          });
+
+          let gestionUserId = gestionUser?.user?.id;
+
+          if (gestionAuthError) {
+            if (gestionAuthError.message.includes('already been registered')) {
+              const { data: existingList } = await supabaseGestion.auth.admin.listUsers();
+              const existingUser = (existingList?.users || []).find(u => u.email === email);
+              gestionUserId = existingUser?.id || null;
+            } else {
+              console.error('Gestion auth error (webhook):', gestionAuthError);
+            }
+          }
+
+          if (gestionUserId) {
+            await supabaseGestion.from('subscriptions').upsert({
+              user_id: gestionUserId,
+              email: email,
+              plan: plan,
+              modules: modules,
+              active: true,
+              expires_at: expiresAt.toISOString(),
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+            console.log(`Compte Gestion créé/mis à jour (webhook): ${email}`);
+
+            const { data: linkData, error: linkError } = await supabaseGestion.auth.admin.generateLink({
+              type: 'recovery',
+              email: email,
+              options: { redirectTo: 'https://gestion.bailo.pro/reset-password.html' }
+            });
+            if (linkError) {
+              console.error('Erreur génération lien mot de passe Gestion (webhook):', linkError);
+            } else {
+              gestionPasswordLink = linkData?.properties?.action_link || null;
+            }
+          }
+        }
+      } catch (gestionErr) {
+        console.error('Erreur création compte Gestion (webhook):', gestionErr);
+        // Non bloquant — l'abonnement Chantier/Finance est déjà activé
+      }
+    }
+
+    if (email) {
+      try {
+        await sendConfirmationEmail(email, plan, gestionPasswordLink);
         console.log(`Email de confirmation envoyé à ${email}`);
       } catch (e) {
         console.error('Resend error:', e);
