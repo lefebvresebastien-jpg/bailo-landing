@@ -20,9 +20,26 @@ exports.handler = async function(event) {
 
     // Action: appliquer le parrainage quand un filleul s'inscrit
     if (action === 'apply' && refCode) {
+      if (!email) return { statusCode: 400, headers: cors, body: JSON.stringify({ error: 'Email filleul manquant' }) };
+
       // Trouver le parrain
       const { data: referrer } = await supabase.from('referrals').select('*').eq('code', refCode).single();
       if (!referrer) return { statusCode: 200, headers: cors, body: JSON.stringify({ valid: false }) };
+
+      // SÉCURITÉ (corrigé le 13/07/2026) : cette action pouvait être
+      // rejouée à l'infini avec le même refCode pour cumuler des mois
+      // gratuits sans limite. On vérifie maintenant qu'un vrai abonné
+      // existe pour l'email filleul, et qu'il n'a jamais déjà été
+      // comptabilisé sur ce code de parrainage.
+      const emailLower = (email || '').toLowerCase();
+      const already = Array.isArray(referrer.referred_emails) && referrer.referred_emails.includes(emailLower);
+      if (already) {
+        return { statusCode: 200, headers: cors, body: JSON.stringify({ valid: false, reason: 'already_applied' }) };
+      }
+      const { data: filleulSub } = await supabase.from('subscriptions').select('email').ilike('email', emailLower).limit(1).maybeSingle();
+      if (!filleulSub) {
+        return { statusCode: 200, headers: cors, body: JSON.stringify({ valid: false, reason: 'no_subscription' }) };
+      }
 
       // Ajouter 1 mois gratuit au parrain
       const { data: sub } = await supabase.from('subscriptions').select('expires_at').eq('user_id', referrer.user_id).single();
@@ -32,8 +49,12 @@ exports.handler = async function(event) {
         await supabase.from('subscriptions').update({ expires_at: newExpiry.toISOString() }).eq('user_id', referrer.user_id);
       }
 
-      // Incrémenter le compteur
-      await supabase.from('referrals').update({ referrals_count: (referrer.referrals_count || 0) + 1 }).eq('code', refCode);
+      // Incrémenter le compteur et marquer cet email comme déjà traité
+      const updatedEmails = [...(Array.isArray(referrer.referred_emails) ? referrer.referred_emails : []), emailLower];
+      await supabase.from('referrals').update({
+        referrals_count: (referrer.referrals_count || 0) + 1,
+        referred_emails: updatedEmails
+      }).eq('code', refCode);
 
       // Email au parrain
       await resend.emails.send({
