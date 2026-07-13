@@ -148,6 +148,17 @@ exports.handler = async function(event) {
     const { type, email } = JSON.parse(event.body);
 
     if (!EMAILS[type]) return { statusCode: 400, body: JSON.stringify({ error: 'Type invalide' }) };
+    if (!email) return { statusCode: 400, body: JSON.stringify({ error: 'Email manquant' }) };
+
+    // SÉCURITÉ (corrigé le 13/07/2026) : cette fonction envoyait un email
+    // marketing à N'IMPORTE QUELLE adresse fournie, sans vérification —
+    // un relais de spam potentiel utilisant la réputation du domaine Bailo.
+    // On exige maintenant qu'un vrai abonné existe pour cet email avant
+    // d'envoyer quoi que ce soit.
+    const { data: sub } = await supabase.from('subscriptions').select('email').ilike('email', email).limit(1).maybeSingle();
+    if (!sub) {
+      return { statusCode: 403, body: JSON.stringify({ error: 'Aucun abonné trouvé pour cet email' }) };
+    }
 
     const emailData = EMAILS[type](email);
     await resend.emails.send({
