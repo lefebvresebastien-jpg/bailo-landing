@@ -385,9 +385,14 @@
         // Priorité : gestion > finance > chantier
         const priority = ['gestion', 'finance', 'chantier'];
         const target = priority.find(m => modules.includes(m));
-        setTimeout(() => { window.location.href = MODULE_URLS[target] || 'https://gestion.bailo.pro'; }, 900);
+        // forcelogin=1 : le module cible doit ignorer toute session déjà en cache sur ce
+        // navigateur (ex. un autre compte resté connecté) et exiger une vraie reconnexion,
+        // car cette page utilise un projet Supabase distinct (Chantier/Finance) et ne peut
+        // pas transmettre de session réelle au module cible.
+        const url = (MODULE_URLS[target] || 'https://gestion.bailo.pro') + '?forcelogin=1';
+        setTimeout(() => { window.location.href = url; }, 900);
       } catch(e) {
-        setTimeout(() => { window.location.href = 'https://gestion.bailo.pro'; }, 900);
+        setTimeout(() => { window.location.href = 'https://gestion.bailo.pro?forcelogin=1'; }, 900);
       }
     });
 
@@ -416,7 +421,7 @@
 
     // ── Already logged in? redirect
     sb.auth.getSession().then(({ data: { session } }) => {
-      if (session) window.location.href = REDIRECT_URL;
+      if (session) window.location.href = REDIRECT_URL + '?forcelogin=1';
     });
   </script>
 
