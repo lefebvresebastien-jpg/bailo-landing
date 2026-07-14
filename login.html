@@ -385,14 +385,15 @@
         // Priorité : gestion > finance > chantier
         const priority = ['gestion', 'finance', 'chantier'];
         const target = priority.find(m => modules.includes(m));
-        // forcelogin=1 : le module cible doit ignorer toute session déjà en cache sur ce
-        // navigateur (ex. un autre compte resté connecté) et exiger une vraie reconnexion,
-        // car cette page utilise un projet Supabase distinct (Chantier/Finance) et ne peut
-        // pas transmettre de session réelle au module cible.
-        const url = (MODULE_URLS[target] || 'https://gestion.bailo.pro') + '?forcelogin=1';
+        // ?expect=<email> : le module cible compare avec sa propre session en cache
+        // (potentiellement celle d'un autre compte resté connecté sur ce navigateur)
+        // et force une vraie reconnexion en cas de désaccord, car cette page
+        // authentifie contre un projet Supabase distinct et ne peut pas transmettre
+        // de session réelle au module cible.
+        const url = (MODULE_URLS[target] || 'https://gestion.bailo.pro') + '?expect=' + encodeURIComponent(email);
         setTimeout(() => { window.location.href = url; }, 900);
       } catch(e) {
-        setTimeout(() => { window.location.href = 'https://gestion.bailo.pro?forcelogin=1'; }, 900);
+        setTimeout(() => { window.location.href = 'https://gestion.bailo.pro?expect=' + encodeURIComponent(email); }, 900);
       }
     });
 
@@ -421,7 +422,7 @@
 
     // ── Already logged in? redirect
     sb.auth.getSession().then(({ data: { session } }) => {
-      if (session) window.location.href = REDIRECT_URL + '?forcelogin=1';
+      if (session) window.location.href = REDIRECT_URL + '?expect=' + encodeURIComponent(session.user.email);
     });
   </script>
 
