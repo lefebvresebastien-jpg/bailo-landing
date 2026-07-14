@@ -43,6 +43,29 @@
     return null;
   }
 
+  // Email du compte actuellement connecté sur ce module, pour transmettre l'identité
+  // attendue au module cible lors d'une navigation croisée (chaque module a son propre
+  // stockage de session, isolé par sous-domaine : sans ça, le module cible pourrait
+  // afficher une session déjà en cache pour un AUTRE compte sur ce navigateur).
+  async function getCurrentEmail() {
+    if (window.db && window.db.auth) {
+      try {
+        const { data } = await window.db.auth.getSession();
+        if (data && data.session && data.session.user && data.session.user.email) {
+          return data.session.user.email;
+        }
+      } catch(e) {}
+    }
+    try {
+      const token = await getToken();
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.email) return payload.email;
+      }
+    } catch(e) {}
+    return null;
+  }
+
   function getTokenData() {
     try {
       const raw = localStorage.getItem(AUTH_KEY);
@@ -109,7 +132,7 @@
     document.head.appendChild(style);
   }
 
-  function buildNav(userModules, userId) {
+  function buildNav(userModules, userId, currentEmail) {
     if (document.getElementById('bailo-nav')) return;
     const currentMod = getCurrentModule();
     const nav = document.createElement('div');
@@ -125,7 +148,11 @@
       const isActive = mod.id === currentMod;
       const btn = document.createElement('a');
       btn.className = 'bn-btn' + (isActive ? ' active' : '') + (!hasAccess ? ' locked' : '');
-      btn.href = hasAccess ? mod.url : '#';
+      // ?expect=<email> : indique au module cible quel compte doit être connecté.
+      // Le module cible compare avec sa propre session en cache et force une
+      // reconnexion en cas de désaccord (ex. un autre compte resté connecté sur ce
+      // navigateur), sans imposer de reconnexion quand tout correspond déjà.
+      btn.href = hasAccess ? (mod.url + (currentEmail ? '?expect=' + encodeURIComponent(currentEmail) : '')) : '#';
 
       const dot = document.createElement('span');
       dot.className = 'bn-dot';
@@ -191,7 +218,8 @@
       }
       const modules = await getUserModules(token);
       const userId = token ? getUserId(token) : null;
-      buildNav(modules, userId);
+      const currentEmail = await getCurrentEmail();
+      buildNav(modules, userId, currentEmail);
     };
     tryInit();
   }
