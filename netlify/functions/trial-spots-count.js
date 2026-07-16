@@ -11,7 +11,7 @@
 
 const https = require('https');
 
-const SUPABASE_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const OWNER_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c';
 
@@ -30,7 +30,7 @@ function fetchJson(url, headers) {
 
 exports.handler = async () => {
   const cors = { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' };
-  if (!SERVICE_KEY) return { statusCode: 200, headers: cors, body: JSON.stringify({ count: 0 }) };
+  if (!SERVICE_KEY || !SUPABASE_URL) return { statusCode: 200, headers: cors, body: JSON.stringify({ count: 0 }) };
 
   try {
     const res = await fetchJson(
