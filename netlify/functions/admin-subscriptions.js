@@ -11,7 +11,7 @@
 
 const https = require('https');
 
-const SUPABASE_URL = 'https://hvkguyddmhqbvarujlyr.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const ANON_KEY = 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W';
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c';
@@ -33,7 +33,7 @@ exports.handler = async (event) => {
   const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Content-Type': 'application/json' };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' };
 
-  if (!SERVICE_KEY) return { statusCode: 500, headers: cors, body: JSON.stringify({ error: 'Configuration serveur incomplète' }) };
+  if (!SERVICE_KEY || !SUPABASE_URL) return { statusCode: 500, headers: cors, body: JSON.stringify({ error: 'Configuration serveur incomplète' }) };
 
   try {
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
