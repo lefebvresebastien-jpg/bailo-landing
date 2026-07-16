@@ -12,7 +12,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const PLAN_LABELS = {
   bailleur:     'Bailleur — 9,90€/mois',
   investisseur: 'Investisseur — 19,90€/mois',
-  pro:          'Pro — 29,90€/mois',
+  pro:          'Complet — 29,90€/mois',
+  // Alias "complet" corrigé le 16/07/2026, voir PLAN_MODULES plus bas.
+  complet:      'Complet — 29,90€/mois',
 };
 
 async function sendConfirmationEmail(email, plan, gestionPasswordLink) {
@@ -136,6 +138,12 @@ exports.handler = async function(event) {
   bailleur:     ['gestion', 'finance'],
   investisseur: ['gestion', 'finance', 'chantier'],
   pro:          ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'],
+  // CORRIGÉ (16/07/2026) : la page de vente envoie plan="complet" (bouton
+  // "Choisir Complet"), pas "pro" -- sans cet alias, un client payant
+  // l'offre à 29,90€ ne recevait accès qu'à Gestion (fallback ['gestion']),
+  // moins que l'offre Bailleur à 9,90€. Découvert lors d'une vérification
+  // demandée par Sébastien après le retour client de Kevin Olivier.
+  complet:      ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'],
 };
 const modules = PLAN_MODULES[plan] || (meta.modules ? meta.modules.split(',') : ['gestion']);
     const userId  = meta.user_id || null;
