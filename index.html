@@ -810,20 +810,16 @@ const TRIAL_SPOTS_TOTAL = 10
 
 // Affiche le vrai nombre de places restantes sur l'offre de lancement
 // (au lieu du "9" statique précédent, jamais à jour avec les vraies inscriptions).
+// CORRIGÉ (16/07/2026) : l'appel direct à Supabase avec la clé publique
+// était bloqué par la RLS (chaque utilisateur ne voit que sa propre ligne),
+// le compteur affichait donc toujours 10 quel que soit le nombre réel
+// d'inscriptions. Passe désormais par une fonction serveur (clé service).
 async function updateTrialSpotsCounter() {
   try {
-    // Utiliser fetch direct pour éviter les problèmes RLS
-    const resp = await fetch('https://hvkguyddmhqbvarujlyr.supabase.co/rest/v1/subscriptions?select=user_id', {
-      headers: {
-        'apikey': 'sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W',
-        'Authorization': 'Bearer sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W'
-      }
-    })
+    const resp = await fetch('/.netlify/functions/trial-spots-count')
     if (!resp.ok) return
-    const subs = await resp.json()
-    const OWNER_ID = 'd762ecb9-c06d-49b6-b058-f0aacfa7952c'
-    const count = (subs || []).filter(s => s.user_id !== OWNER_ID).length
-    const remaining = Math.max(0, TRIAL_SPOTS_TOTAL - count)
+    const { count } = await resp.json()
+    const remaining = Math.max(0, TRIAL_SPOTS_TOTAL - (count || 0))
     const counterEl = document.getElementById('counter-places')
     if (counterEl) counterEl.textContent = remaining
     const barEl = document.getElementById('trial-spots-bar')
