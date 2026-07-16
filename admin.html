@@ -131,6 +131,7 @@
   const { createClient } = supabase;
   let sb = createClient(SUPABASE_URL, SUPABASE_KEY);
   let allRows = [];
+  let currentToken = null;
 
   async function init() {
     const params = new URLSearchParams(window.location.search);
@@ -149,6 +150,7 @@
         sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
           global: { headers: { Authorization: 'Bearer ' + token } }
         });
+        currentToken = token;
         // Aussi setter la session pour les requêtes auth
         if (refresh) {
           await sb.auth.setSession({ access_token: token, refresh_token: refresh });
@@ -173,24 +175,29 @@
       document.getElementById('access-denied').classList.add('show');
       return;
     }
+    currentToken = session.access_token;
     document.getElementById('main-content').style.display = 'block';
     loadSubscriptions();
   }
 
   async function loadSubscriptions() {
-    const { data, error } = await sb
-      .from('subscriptions')
-      .select('*')
-      .order('updated_at', { ascending: false });
-
-    if (error) {
+    try {
+      const resp = await fetch('/.netlify/functions/admin-subscriptions', {
+        headers: { Authorization: 'Bearer ' + currentToken }
+      });
+      const result = await resp.json();
+      if (!resp.ok) {
+        document.getElementById('table-body').innerHTML =
+          '<div class="empty">Erreur de chargement : ' + (result.error || resp.status) + '</div>';
+        return;
+      }
+      allRows = result.data || [];
+      updateStats(allRows);
+      renderTable(allRows);
+    } catch (e) {
       document.getElementById('table-body').innerHTML =
-        '<div class="empty">Erreur de chargement : ' + error.message + '</div>';
-      return;
+        '<div class="empty">Erreur de chargement : ' + e.message + '</div>';
     }
-    allRows = data || [];
-    updateStats(allRows);
-    renderTable(allRows);
   }
 
   function updateStats(rows) {
