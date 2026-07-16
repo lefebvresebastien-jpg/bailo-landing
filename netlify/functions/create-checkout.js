@@ -2,7 +2,12 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const PRICE_IDS = {
   bailleur:     'price_1TomXuCayy0ySKyou002vhU',
   investisseur: 'price_1TomfQCayy0ySKyoLxzFjWKe',
-  pro:          'price_1TomiYCayy0ySKyo7cIcfCMv'
+  pro:          'price_1TomiYCayy0ySKyo7cIcfCMv',
+  // CORRIGÉ (16/07/2026) : la page de vente utilise "complet" (bouton
+  // "Choisir Complet") mais ce fichier ne connaissait que "pro" -- tout
+  // paiement pour l'offre à 29,90€ échouait avec "Plan invalide" avant
+  // meme d'atteindre Stripe. Alias ajouté vers le même Price ID.
+  complet:      'price_1TomiYCayy0ySKyo7cIcfCMv'
 };
 const MODULE_URLS = {
   gestion:    'https://gestion.bailo.pro',
