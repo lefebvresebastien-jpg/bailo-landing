@@ -1,7 +1,12 @@
 const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
+const { Resend } = require('resend');
+const crypto = require('crypto');
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
+const SEB_EMAIL = 'lefebvresebastien@yahoo.fr';
+const BASE_URL = 'https://bailo.pro';
 
 // CORRIGÉ (25/07/2026) — les posts précédents suivaient un schéma trop
 // reconnaissable comme "généré par IA" : seulement 2 prompts vagues en
@@ -50,14 +55,7 @@ exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' };
 
   try {
-    // 1. Token LinkedIn
-    const { data: tokenData, error: tokenError } = await supabase
-      .from('settings').select('value').eq('key', 'linkedin_token').single();
-    if (tokenError || !tokenData) throw new Error('Token LinkedIn non trouvé');
-    const linkedinToken = tokenData.value;
-
-    // 2. Choisir un fait + un angle différents à chaque fois (rotation indépendante
-    // pour multiplier les combinaisons et éviter les répétitions de structure)
+    // 1. Générer le brouillon avec Claude
     const weekNumber = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
     const fait = FAITS_REELS[weekNumber % FAITS_REELS.length];
     const angle = ANGLES[weekNumber % ANGLES.length];
@@ -79,44 +77,48 @@ ${ANTI_CLICHES}`;
     });
     const postText = message.content[0].text;
 
-    // 3. Publier via ugcPosts (compatible w_member_social)
-    const liResp = await fetch('https://api.linkedin.com/v2/ugcPosts', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${linkedinToken}`,
-        'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
-      },
-      body: JSON.stringify({
-        author: 'urn:li:person:8bnOMf7pAD',
-        lifecycleState: 'PUBLISHED',
-        specificContent: {
-          'com.linkedin.ugc.ShareContent': {
-            shareCommentary: { text: postText },
-            shareMediaCategory: 'NONE'
-          }
-        },
-        visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' }
+    // 2. CORRIGÉ (25/07/2026) — cette fonction publiait directement sur
+    // LinkedIn sans aucune relecture. Elle enregistre maintenant un
+    // brouillon en attente et envoie un email de validation à Sébastien ;
+    // la publication réelle se fait uniquement via linkedin-validate.js,
+    // quand il clique sur "Publier" dans cet email.
+    const token = crypto.randomBytes(24).toString('hex');
+    const { data: inserted, error: insertError } = await supabase
+      .from('linkedin_posts')
+      .insert({
+        content: postText,
+        type: 'anecdote_reelle',
+        status: 'pending',
+        validation_token: token,
+        posted_at: null
       })
-    });
+      .select('id')
+      .single();
+    if (insertError) throw new Error('Erreur enregistrement brouillon: ' + insertError.message);
 
-    const liText = await liResp.text();
-    console.log('LinkedIn status:', liResp.status);
-    console.log('LinkedIn response:', liText);
+    const postId = inserted.id;
+    const lienPublier = `${BASE_URL}/.netlify/functions/linkedin-validate?id=${postId}&token=${token}&action=publier`;
+    const lienRejeter = `${BASE_URL}/.netlify/functions/linkedin-validate?id=${postId}&token=${token}&action=rejeter`;
 
-    if (!liResp.ok) throw new Error(`LinkedIn error: ${liText}`);
-
-    await supabase.from('linkedin_posts').insert({
-      content: postText,
-      type: 'anecdote_reelle',
-      linkedin_id: JSON.parse(liText).id || 'unknown',
-      posted_at: new Date().toISOString()
+    await resend.emails.send({
+      from: 'Bailo Pro <hello@bailo.pro>',
+      to: SEB_EMAIL,
+      subject: '📝 Nouveau post LinkedIn à valider',
+      html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+        <h2 style="color:#1a1208">Brouillon de post LinkedIn</h2>
+        <div style="background:#f8f4ee;border-radius:10px;padding:20px;margin:16px 0;white-space:pre-line;font-size:14px;line-height:1.6;color:#1a1208">${postText}</div>
+        <div style="margin-top:24px">
+          <a href="${lienPublier}" style="display:inline-block;background:#16a34a;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin-right:10px">✅ Publier tel quel</a>
+          <a href="${lienRejeter}" style="display:inline-block;background:#dc2626;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700">❌ Ne pas publier</a>
+        </div>
+        <p style="font-size:12px;color:#9a8a70;margin-top:20px">Pas de modification possible depuis l'email — pour ajuster le texte, dis-le à Claude qui pourra régénérer un nouveau brouillon.</p>
+      </div>`
     });
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', ...cors },
-      body: JSON.stringify({ success: true, post: postText.substring(0, 150) + '...' })
+      body: JSON.stringify({ success: true, status: 'pending_validation', post: postText.substring(0, 150) + '...' })
     };
 
   } catch (err) {
