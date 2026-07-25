@@ -18,6 +18,7 @@ const ANTI_CLICHES = `Règles strictes à respecter :
 - INTERDIT : "X% des investisseurs/gens font cette erreur", "Voici pourquoi", "Vous pensez que... mais en fait", ou toute accroche basée sur une statistique inventée.
 - INTERDIT : structure "accroche choc + liste à puces + CTA générique" — ça sonne artificiel.
 - INTERDIT : les emojis en début de ligne façon liste (🏠 📊 ✅), le ton motivationnel de coach LinkedIn, les phrases qui se terminent toutes pareil.
+- INTERDIT de nommer, inventer un prénom, ou décrire un client de façon identifiable — dis "un client", "un investisseur", "un utilisateur", jamais de prénom ni de détail permettant de le reconnaître, même si le fait de départ en mentionne un.
 - Écris comme si tu racontais un truc à un ami autour d'un café, pas comme si tu vendais quelque chose. Phrases de longueur variée, parfois courtes et cash, parfois plus posées.
 - Un seul fait concret et vérifiable (donné ci-dessous) au cœur du post, pas trois généralités.
 - Le lien vers bailo.pro peut apparaître naturellement à la fin, sans "Découvrez Bailo Pro →" à chaque fois — varie la formulation ou omets-le carrément si le post n'appelle pas à l'action.`;
