@@ -70,6 +70,13 @@
   textarea { resize:vertical; min-height:44px; }
   input:focus, textarea:focus { outline:2px solid var(--accent-dim); border-color:var(--accent); }
   .hint { font-size:12px; color:var(--ink-3); margin-top:3px; }
+  .sigpad { position:relative; border:1px dashed var(--border-2); border-radius:10px; background:#fff; }
+  .sigpad canvas { display:block; width:100%; height:130px; touch-action:none; cursor:crosshair; border-radius:10px; }
+  .sigpad .ph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--ink-3); font-size:13px; pointer-events:none; }
+  .sigpad.has .ph { display:none; }
+  .sig-actions { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+  .linkbtn { background:none; border:none; color:var(--accent); font:inherit; font-size:12px; font-weight:600; cursor:pointer; padding:2px 0; }
+  .paper .sign img { height:52px; max-width:180px; object-fit:contain; margin-top:2px; }
   .sticky { position:sticky; top:76px; }
   .notice { font-size:13px; border-radius:10px; padding:10px 12px; margin-bottom:12px; display:none; }
   .notice.partial { display:block; background:var(--amber-dim); color:var(--amber); }
@@ -140,7 +147,7 @@
   <header>
     <span class="tag">100 % gratuit · sans inscription</span>
     <h1>Quittance de loyer gratuite en PDF, prête en 1 minute</h1>
-    <p>Remplissez le formulaire, vérifiez l'aperçu et téléchargez votre quittance. Loyer et charges sont séparés comme l'exige la loi, et un reçu partiel est généré si le loyer n'a pas été payé en entier.</p>
+    <p>Remplissez le formulaire, vérifiez l'aperçu et téléchargez votre quittance. Signez directement à l'écran : loyer et charges sont séparés comme l'exige la loi, et un reçu partiel est généré si le loyer n'a pas été payé en entier.</p>
   </header>
 
   <div class="tool">
@@ -173,6 +180,17 @@
       <div class="row">
         <div class="f"><label for="lieu">Fait à</label><input id="lieu" placeholder="Lille"></div>
         <div class="f"><label for="date_doc">Le</label><input id="date_doc" type="date"></div>
+      </div>
+      <div class="f">
+        <label for="sig">Votre signature (facultatif)</label>
+        <div class="sigpad" id="sigpad">
+          <canvas id="sig" width="720" height="260" aria-label="Zone de signature"></canvas>
+          <div class="ph">Signez ici avec la souris ou le doigt</div>
+        </div>
+        <div class="sig-actions">
+          <span class="hint">Mémorisée sur cet appareil uniquement, pour vos prochaines quittances.</span>
+          <button type="button" class="linkbtn" id="sig_clear">Effacer</button>
+        </div>
       </div>
     </form>
 
@@ -350,7 +368,7 @@
         (d.partial ? '<tr><td>Montant reçu</td><td>' + eur(d.paye) + '</td></tr><tr><td><b>Reste dû</b></td><td><b>' + eur(d.total - d.paye) + '</b></td></tr>' : '') +
       '</table>' +
       '<div class="txt">' + esc(bodyText(d).replace(/(\d) (\d{3},)/g, '$1\u00a0$2').replace(/ €/g, '\u00a0€')) + '</div>' +
-      '<div class="sign">Fait à ' + v(d.lieu, 'lieu') + ', le ' + v(d.dateDoc, 'date') + '<br><br>Signature du bailleur</div>' +
+      '<div class="sign">Fait à ' + v(d.lieu, 'lieu') + ', le ' + v(d.dateDoc, 'date') + '<br><br>Signature du bailleur' + (sigData ? '<br><img alt="Signature" src="' + sigData + '">' : '') + '</div>' +
       '<div class="legal">' + (d.partial
         ? 'En cas de paiement partiel, le bailleur délivre un reçu et non une quittance (art. 21, loi n° 89-462 du 6 juillet 1989).'
         : 'Quittance délivrée gratuitement (art. 21, loi n° 89-462 du 6 juillet 1989). Elle annule tous les reçus qui auraient pu être établis précédemment pour la même période.') +
@@ -363,6 +381,42 @@
     } else { n.className = 'notice'; n.textContent = ''; }
     $('dl').textContent = d.partial ? '⬇ Télécharger le reçu en PDF' : '⬇ Télécharger la quittance en PDF';
     save();
+  }
+
+  // ── Signature dessinée (reste dans le navigateur) ──
+  var sigData = '';
+  function initSig() {
+    var c = $('sig'), ctx = c.getContext('2d'), pad = $('sigpad'), drawing = false, moved = false;
+    ctx.lineWidth = 3.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#14183a';
+    function pos(e) { var r = c.getBoundingClientRect(); return { x: (e.clientX - r.left) * c.width / r.width, y: (e.clientY - r.top) * c.height / r.height }; }
+    function commit() {
+      sigData = c.toDataURL('image/png'); pad.classList.add('has');
+      try { localStorage.setItem('bailo_quittance_sig', sigData); } catch (e) {}
+      render();
+    }
+    c.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); drawing = true; moved = false;
+      try { c.setPointerCapture(e.pointerId); } catch (x) {}
+      var p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); pad.classList.add('has');
+    });
+    c.addEventListener('pointermove', function (e) {
+      if (!drawing) return; var p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); moved = true;
+    });
+    function end() { if (!drawing) return; drawing = false; if (moved) { commit(); track('signature_added'); } else if (!sigData) pad.classList.remove('has'); }
+    c.addEventListener('pointerup', end); c.addEventListener('pointercancel', end);
+    $('sig_clear').addEventListener('click', function () {
+      ctx.clearRect(0, 0, c.width, c.height); sigData = ''; pad.classList.remove('has');
+      try { localStorage.removeItem('bailo_quittance_sig'); } catch (e) {}
+      render();
+    });
+    try {
+      var saved = localStorage.getItem('bailo_quittance_sig');
+      if (saved && saved.indexOf('data:image/png') === 0) {
+        var img = new Image();
+        img.onload = function () { ctx.drawImage(img, 0, 0); sigData = saved; pad.classList.add('has'); render(); };
+        img.src = saved;
+      }
+    } catch (e) {}
   }
 
   // ── Mémorise la saisie sur cet appareil uniquement (pratique pour le mois suivant) ──
@@ -417,6 +471,7 @@
 
     doc.text('Fait à ' + (d.lieu || '') + ', le ' + (d.dateDoc || ''), R, yy, { align: 'right' }); yy += 8;
     doc.text('Signature du bailleur', R, yy, { align: 'right' });
+    if (sigData) { try { doc.addImage(sigData, 'PNG', R - 55, yy + 2, 55, 55 * 260 / 720); } catch (e) {} }
 
     doc.setFontSize(8.5); doc.setTextColor(120);
     var legal = d.partial
@@ -444,6 +499,7 @@
     $('date_paie').value = today();
     $('date_doc').value = today();
     FIELDS.forEach(function (f) { $(f).addEventListener('input', render); });
+    initSig();
     $('dl').addEventListener('click', function () {
       var miss = missing();
       if (miss) { $(miss[0]).focus(); alertInline('Il manque ' + miss[1] + '.'); return; }
