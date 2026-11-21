@@ -319,6 +319,13 @@
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // ?switch=1 : se déconnecter d'abord, pour pouvoir changer de compte
+    // (sinon cette page redirige aussitôt vers l'appli du compte déjà connecté).
+    // ?next=admin : revenir au tableau de bord admin après la connexion.
+    const _params = new URLSearchParams(window.location.search);
+    const SWITCH_ACCOUNT = _params.get('switch') === '1';
+    const NEXT_ADMIN = _params.get('next') === 'admin';
+
     // ── Elements
     const emailEl    = document.getElementById('email');
     const passEl     = document.getElementById('password');
@@ -376,6 +383,7 @@
       }
 
       showSuccess('Connexion réussie ! Redirection en cours…');
+      if (NEXT_ADMIN) { setTimeout(() => { window.location.href = '/admin'; }, 600); return; }
       // Lire les modules actifs pour rediriger vers le bon endroit
       try {
         const userId = data.user.id;
@@ -421,9 +429,15 @@
     });
 
     // ── Already logged in? redirect
-    sb.auth.getSession().then(({ data: { session } }) => {
-      if (session) window.location.href = REDIRECT_URL + '?expect=' + encodeURIComponent(session.user.email);
-    });
+    (async () => {
+      if (SWITCH_ACCOUNT) {
+        try { await sb.auth.signOut({ scope: 'local' }); } catch (e) {}
+        return;
+      }
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) return;
+      window.location.href = NEXT_ADMIN ? '/admin' : REDIRECT_URL + '?expect=' + encodeURIComponent(session.user.email);
+    })();
   </script>
 
 </body>
