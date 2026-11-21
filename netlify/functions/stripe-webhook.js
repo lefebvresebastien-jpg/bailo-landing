@@ -211,8 +211,18 @@ const modules = PLAN_MODULES[plan] || (meta.modules ? meta.modules.split(',') : 
 
           if (gestionAuthError) {
             if (gestionAuthError.message.includes('already been registered')) {
-              const { data: existingList } = await supabaseGestion.auth.admin.listUsers();
-              const existingUser = (existingList?.users || []).find(u => u.email === email);
+              // listUsers() ne renvoie que la première page (50 comptes) : on
+              // parcourt toutes les pages, sinon un compte Gratuit qui passe au
+              // payant resterait « gratuit » côté Gestion (bail supplémentaire
+              // et signature électronique refusés alors qu'il paie).
+              let existingUser = null;
+              for (let page = 1; page <= 50 && !existingUser; page++) {
+                const { data: existingList, error: listErr } = await supabaseGestion.auth.admin.listUsers({ page, perPage: 200 });
+                if (listErr) break;
+                const users = existingList?.users || [];
+                existingUser = users.find(u => (u.email || '').toLowerCase() === String(email).toLowerCase()) || null;
+                if (users.length < 200) break;
+              }
               gestionUserId = existingUser?.id || null;
             } else {
               console.error('Gestion auth error (webhook):', gestionAuthError);
@@ -226,6 +236,7 @@ const modules = PLAN_MODULES[plan] || (meta.modules ? meta.modules.split(',') : 
               plan: plan,
               modules: modules,
               active: true,
+              trial: false,
               expires_at: expiresAt.toISOString(),
               updated_at: new Date().toISOString()
             }, { onConflict: 'user_id' });

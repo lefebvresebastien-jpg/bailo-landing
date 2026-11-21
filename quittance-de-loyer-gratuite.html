@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XBNHP7PGN2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XBNHP7PGN2');
-</script>
+<!-- Mesure d'audience : chargée seulement après accord (consent.js) -->
+<script src="/consent.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quittance de loyer gratuite en PDF — Générateur en ligne | Bailo</title>
@@ -249,6 +243,7 @@
   <a href="/">Bailo Pro</a>
   <a href="/legal.html">Mentions légales</a>
   <a href="/legal.html#rgpd">Confidentialité</a>
+  <a href="#" onclick="bailoCookies.open();return false">Gérer les cookies</a>
   <a href="mailto:contact@bailo.pro">contact@bailo.pro</a>
 </footer>
 

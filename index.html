@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XBNHP7PGN2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XBNHP7PGN2');
-</script>
+<!-- Mesure d'audience : chargée seulement après accord (consent.js) -->
+<script src="/consent.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bailo Pro — Logiciel gestion locative & suivi chantier pour investisseurs immobiliers</title>
@@ -757,6 +751,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
           <input type="email" id="trial-email" placeholder="vous@email.com" autocomplete="email">
         </div>
         <p class="form-note" style="margin:0;text-align:left">Vous recevrez un email pour choisir votre mot de passe et ouvrir votre espace.</p>
+        <p class="form-note" id="quittance-prefill-note" style="display:none;margin:0;text-align:left;color:var(--green)">✓ Les informations de votre quittance (bailleur, locataire, loyer) seront reprises dans votre compte.</p>
         <div class="form-error" id="trial-error"></div>
         <div class="form-success" id="trial-success"></div>
         <button class="btn-signup" id="btn-trial" onclick="handleFree()" style="background:var(--accent)">Créer mon compte gratuit →</button>
@@ -818,6 +813,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     <a href="/legal.html#cgv">Conditions Générales de Vente</a>
     <a href="/legal.html#rgpd">Politique de confidentialité</a>
     <a href="/legal.html#cookies">Cookies</a>
+    <a href="#" onclick="bailoCookies.open();return false">Gérer les cookies</a>
   </div>
   <div class="footer-copy">© 2026 Bailo Pro — BAZIN Céline, Auto-entreprise, SIREN 104 566 609 · Données hébergées en France</div>
 </footer>
@@ -836,6 +832,7 @@ const db = createClient('https://hvkguyddmhqbvarujlyr.supabase.co','sb_publishab
   if (!wantsFree && !wantsPaid) return
   setTimeout(function () {
     if (wantsPaid) showPaidForm(); else showFreeForm()
+    if (readQuittancePrefill()) { var n = document.getElementById('quittance-prefill-note'); if (n) n.style.display = 'block' }
     if (wantsFree) { var el = document.getElementById('inscription'); if (el) el.scrollIntoView({ behavior: 'smooth' }) }
   }, 400)
 })()
@@ -882,6 +879,17 @@ function showPaidForm() {
   document.getElementById('signup-desc').textContent = 'Créez votre compte en 30 secondes. Paiement sécurisé par Stripe.'
 }
 
+// Arrivée depuis la page « quittance gratuite » : la saisie faite là-bas
+// (gardée dans ce navigateur) est reprise dans le nouveau compte.
+function readQuittancePrefill() {
+  try {
+    if (new URLSearchParams(location.search).get('src') !== 'quittance') return null
+    const q = JSON.parse(localStorage.getItem('bailo_quittance') || 'null')
+    if (!q) return null
+    return { landlordName: q.b_nom, landlordAddress: q.b_adr, signatureCity: q.lieu, tenantName: q.l_nom, propertyAddress: q.logement, rent: q.loyer, charges: q.charges }
+  } catch (e) { return null }
+}
+
 async function handleFree() {
   const email = document.getElementById('trial-email').value.trim()
   // Un seul mot de passe pour l'utilisateur : celui qu'il choisit via le lien
@@ -917,7 +925,7 @@ async function handleFree() {
     const resp = await fetch('/.netlify/functions/create-free', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, userId })
+      body: JSON.stringify({ email, userId, prefill: readQuittancePrefill() })
     })
     const result = await resp.json().catch(() => ({}))
     if (!resp.ok) return fail(result.error || 'Une erreur est survenue. Réessayez.')
@@ -1075,7 +1083,9 @@ function bailoLandingOnbSkip() {
 }
 
 // Lancer au chargement si pas déjà vu
-if (!localStorage.getItem(LANDING_ONB_KEY)) {
+// Pas de visite guidée devant le formulaire quand le visiteur arrive pour
+// s'inscrire (page quittance, lien « gratuit », passage au payant).
+if (!localStorage.getItem(LANDING_ONB_KEY) && !/[?&](src|gratuit|essai|upgrade)=/.test(location.search)) {
   window.addEventListener('load', function() {
     var el = document.getElementById('bailo-landing-onb');
     if (el) {

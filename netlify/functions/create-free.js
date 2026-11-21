@@ -25,6 +25,20 @@ const headers = {
 };
 const reply = (statusCode, body) => ({ statusCode, headers, body: JSON.stringify(body) });
 
+// Informations saisies sur /quittance-de-loyer-gratuite, transmises par le
+// navigateur au moment de l'inscription (texte simple, longueur bornée).
+function cleanPrefill(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const txt = (v, max) => (typeof v === 'string' ? v.replace(/[\u0000-\u0008\u000b-\u001f<>]/g, '').trim().slice(0, max) : '');
+  const num = (v) => { const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) && n >= 0 && n < 1000000 ? String(Math.round(n * 100) / 100) : ''; };
+  const out = {
+    landlordName: txt(raw.landlordName, 120), landlordAddress: txt(raw.landlordAddress, 240),
+    signatureCity: txt(raw.signatureCity, 80), tenantName: txt(raw.tenantName, 160),
+    propertyAddress: txt(raw.propertyAddress, 240), rent: num(raw.rent), charges: num(raw.charges)
+  };
+  return Object.values(out).some(Boolean) ? out : null;
+}
+
 // Le filtre ?email= de l'API Admin n'est pas fiable : on parcourt toutes
 // les pages et on compare l'email exact.
 async function findUserByEmail(client, email) {
@@ -47,6 +61,7 @@ exports.handler = async function (event) {
   try {
     const body = JSON.parse(event.body || '{}');
     const email = String(body.email || '').trim().toLowerCase();
+    const prefill = cleanPrefill(body.prefill);
     const userId = String(body.userId || '').trim();
     if (!email || !userId || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       return reply(400, { error: 'Email ou identifiant manquant.' });
@@ -111,6 +126,31 @@ exports.handler = async function (event) {
             });
             if (gErr) console.error('create-free subscriptions Gestion:', gErr);
           }
+          // Compte tout neuf uniquement : on prépare son profil bailleur et
+          // les éléments du futur bail à partir de la quittance saisie.
+          if (prefill && created?.user?.id) {
+            try {
+              const rows = [];
+              if (prefill.landlordName || prefill.landlordAddress) {
+                rows.push({ bailleur_id: gestionUserId, key: 'landlord_profile', value: JSON.stringify({
+                  landlordName: prefill.landlordName, landlordRepresentative: '',
+                  landlordAddress: prefill.landlordAddress.replace(/\n+/g, ', '),
+                  landlordEmail: email, signatureCity: prefill.signatureCity
+                }) });
+              }
+              if (prefill.tenantName || prefill.propertyAddress || prefill.rent) {
+                rows.push({ bailleur_id: gestionUserId, key: 'quittance_prefill', value: JSON.stringify({
+                  tenantName: prefill.tenantName, propertyAddress: prefill.propertyAddress.replace(/\n+/g, ', '),
+                  rent: prefill.rent, charges: prefill.charges
+                }) });
+              }
+              if (rows.length) {
+                const { error: pErr } = await gestion.from('settings').upsert(rows, { onConflict: 'bailleur_id,key' });
+                if (pErr) console.error('create-free reprise quittance:', pErr);
+              }
+            } catch (e) { console.error('create-free reprise quittance (non bloquant):', e.message); }
+          }
+
           const { data: linkData, error: linkErr } = await gestion.auth.admin.generateLink({
             type: 'recovery', email,
             options: { redirectTo: 'https://gestion.bailo.pro/reset-password.html' }

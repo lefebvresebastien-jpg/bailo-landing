@@ -288,6 +288,7 @@
       .nav { padding: 0 20px; }
     }
   </style>
+<script src="/consent.js"></script>
 </head>
 <body>
 
@@ -581,6 +582,12 @@
               <td>UE (Ireland)</td>
               <td>Certifié PCI-DSS niveau 1</td>
             </tr>
+            <tr>
+              <td>Google Ireland (Google Analytics 4)</td>
+              <td>Mesure d'audience du site bailo.pro, uniquement avec votre accord</td>
+              <td>UE / États-Unis</td>
+              <td>DPA + Data Privacy Framework</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -644,17 +651,30 @@
               <td>Mémorisation du plan souscrit</td>
               <td>30 jours</td>
             </tr>
+            <tr>
+              <td>bailo_cookie_consent (stockage local)</td>
+              <td>Strictement nécessaire</td>
+              <td>Mémorisation de votre choix concernant la mesure d'audience</td>
+              <td>6 mois</td>
+            </tr>
+            <tr>
+              <td>_ga, _ga_*</td>
+              <td>Mesure d'audience — soumis à votre accord</td>
+              <td>Statistiques de fréquentation du site bailo.pro (Google Analytics 4)</td>
+              <td>13 mois maximum</td>
+            </tr>
           </tbody>
         </table>
       </div>
       <div class="info-box">
-        <p>Bailo <strong>n'utilise aucun cookie publicitaire, aucun cookie de tracking tiers</strong> (Google Analytics, Facebook Pixel, etc.). Seuls des cookies strictement nécessaires au fonctionnement du service sont déposés.</p>
+        <p>Bailo <strong>n'utilise aucun cookie publicitaire</strong> (Facebook Pixel, régies, etc.). Le site vitrine bailo.pro utilise <strong>Google Analytics 4</strong> pour mesurer sa fréquentation, <strong>uniquement si vous l'acceptez</strong> : tant que vous n'avez pas donné votre accord, aucun cookie de mesure n'est déposé et aucune donnée n'est transmise à Google. Les applications Bailo (Gestion, Finance, Chantier, Bnb, Patrimoine) n'utilisent pas d'outil de mesure d'audience.</p>
       </div>
     </div>
 
     <div class="article">
       <h3>Gestion des cookies</h3>
-      <p>Vous pouvez configurer votre navigateur pour refuser les cookies. Toutefois, la désactivation des cookies strictement nécessaires empêchera l'accès au service (impossible de maintenir une session). Pour gérer vos cookies : paramètres de votre navigateur → Confidentialité → Cookies.</p>
+      <p>Lors de votre première visite, un bandeau vous permet d'accepter ou de refuser la mesure d'audience ; refuser n'a aucune conséquence sur l'accès au site. Votre choix est conservé 6 mois et vous pouvez le modifier à tout moment : <a href="#" onclick="if(window.bailoCookies)bailoCookies.open();return false" style="color:var(--accent)">modifier mon choix</a>.</p>
+      <p>Vous pouvez aussi configurer votre navigateur pour refuser les cookies. Toutefois, la désactivation des cookies strictement nécessaires empêchera l'accès au service (impossible de maintenir une session). Pour gérer vos cookies : paramètres de votre navigateur → Confidentialité → Cookies.</p>
     </div>
   </div>
 
