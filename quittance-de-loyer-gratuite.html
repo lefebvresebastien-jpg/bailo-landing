@@ -82,6 +82,7 @@
   .notice.partial { display:block; background:var(--amber-dim); color:var(--amber); }
   .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:var(--accent); color:#fff; border:none; border-radius:11px; padding:14px; font:inherit; font-weight:600; font-size:15px; cursor:pointer; box-shadow:0 4px 20px rgba(59,91,219,.25); }
   .btn:hover { opacity:.92; }
+  .btn-alt { background:#fff; color:var(--accent); border:1px solid #c9d3fb; box-shadow:none; margin-top:8px; text-decoration:none; }
   .btn:disabled { opacity:.5; cursor:not-allowed; }
   .privacy { font-size:12px; color:var(--ink-3); text-align:center; margin-top:8px; }
 
@@ -140,7 +141,7 @@
 
 <nav>
   <a href="/" class="brand">Bailo<span>Gestion locative</span></a>
-  <a href="/?src=quittance#inscription" class="btn-nav" onclick="track('cta_click',{position:'nav'})">Essayer Bailo</a>
+  <a href="/?src=quittance#inscription" class="btn-nav" onclick="track('cta_click',{position:'nav'})">Compte gratuit</a>
 </nav>
 
 <div class="wrap">
@@ -200,17 +201,19 @@
       <div class="paper" id="preview" aria-label="Aperçu de la quittance"></div>
       <div style="margin-top:14px">
         <button class="btn" id="dl" type="button">⬇ Télécharger la quittance en PDF</button>
+        <a class="btn btn-alt" href="/?src=quittance#inscription" onclick="track('cta_click',{position:'send_email'})">✉ Envoyer par mail au locataire</a>
+        <div class="hint" style="text-align:center;margin-top:4px">Avec un compte Bailo gratuit (1 logement, sans carte bancaire).</div>
         <div class="privacy">🔒 Généré dans votre navigateur. Aucune donnée n'est envoyée ni enregistrée.</div>
       </div>
       <div class="upsell" id="upsell">
         <strong>Et le mois prochain, elle part toute seule ?</strong>
-        Avec Bailo Gestion, vos quittances sont générées et envoyées automatiquement à vos locataires dès que le loyer est payé.
+        Avec un compte Bailo gratuit, la quittance est générée et envoyée par mail à votre locataire dès que le loyer est payé.
         <ul>
-          <li>Quittances et relances automatiques</li>
-          <li>Baux, états des lieux et révision IRL</li>
-          <li>Suivi des loyers pour tous vos logements</li>
+          <li>Gratuit pour 1 logement, sans carte bancaire</li>
+          <li>Quittances envoyées par mail, suivi des loyers</li>
+          <li>Bail, état des lieux et révision IRL</li>
         </ul>
-        <a href="/?src=quittance#inscription" class="btn" onclick="track('cta_click',{position:'after_download'})">Découvrir Bailo Gestion →</a>
+        <a href="/?src=quittance#inscription" class="btn" onclick="track('cta_click',{position:'after_download'})">Créer mon compte gratuit →</a>
       </div>
     </div>
   </div>
@@ -235,9 +238,9 @@
     <details><summary>Mes données sont-elles enregistrées ?</summary><p>Non. Le PDF est créé directement dans votre navigateur, rien ne transite par nos serveurs.</p></details>
 
     <div class="cta-band">
-      <h2>Plusieurs logements à gérer ?</h2>
-      <p>Bailo Gestion génère et envoie vos quittances chaque mois, suit les loyers et vous alerte en cas d'impayé.</p>
-      <a href="/?src=quittance#inscription" onclick="track('cta_click',{position:'footer_band'})">Essayer Bailo Gestion</a>
+      <h2>Vos quittances envoyées automatiquement</h2>
+      <p>Bailo Gestion génère et envoie vos quittances chaque mois, suit les loyers et vous alerte en cas d'impayé. Gratuit pour 1 logement.</p>
+      <a href="/?src=quittance#inscription" onclick="track('cta_click',{position:'footer_band'})">Créer mon compte gratuit</a>
     </div>
   </section>
 </div>

@@ -37,7 +37,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bailo.pro/" />
   <meta property="og:title" content="Bailo Pro — Logiciel gestion locative & suivi chantier pour investisseurs" />
-  <meta property="og:description" content="Logiciel tout-en-un pour investisseurs immobiliers : gestion locative, suivi de chantier, finances. Baux, quittances, TVA, dossier banquier. Essai gratuit 3 mois." />
+  <meta property="og:description" content="Logiciel tout-en-un pour investisseurs immobiliers : gestion locative, suivi de chantier, finances. Baux, quittances, TVA, dossier banquier. Gratuit pour 1 logement." />
   <meta property="og:locale" content="fr_FR" />
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
@@ -132,7 +132,8 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     .collab-features { display: flex; flex-direction: column; gap: 7px; }
     .collab-feature { font-size: .85rem; color: var(--ink-2); display: flex; align-items: center; gap: 10px; }
     .collab-feature span:first-child { font-size: 14px; }
-    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+    @media (max-width: 1080px) and (min-width: 769px) { .pricing-grid { grid-template-columns: repeat(2,1fr); } }
     .plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 28px; display: flex; flex-direction: column; position: relative; transition: transform .3s, box-shadow .3s, border-color .3s; box-shadow: var(--shadow); }
     .plan-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--border-2); }
     .plan-card.featured { border-color: rgba(59,91,219,.4); background: linear-gradient(160deg, rgba(59,91,219,.06) 0%, var(--surface) 65%); box-shadow: 0 0 50px rgba(59,91,219,.1), var(--shadow-lg); }
@@ -314,7 +315,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
     <a href="#investisseur">Investisseurs</a>
     <a href="#inscription">S'inscrire</a>
   </div>
-  <div class="nav-cta"><a href="#inscription" class="btn-nav">Commencer — 9,90€/mois</a></div>
+  <div class="nav-cta"><a href="#inscription" class="btn-nav" onclick="showFreeForm()">Commencer gratuitement</a></div>
 </nav>
 
 <div class="hero">
@@ -324,25 +325,22 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
   <h1 style="position:relative;z-index:1;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.35)">Gérez votre patrimoine<br>de la <em>rénovation</em> à la <em>location</em></h1>
   <p class="hero-sub" style="position:relative;z-index:1;color:rgba(255,255,255,.92);text-shadow:0 1px 12px rgba(0,0,0,.4);font-size:clamp(17px,2.2vw,21px);max-width:560px">Bailo Pro centralise <span style="color:#9fb4ff;font-weight:700">finances</span>, <span style="color:#9fb4ff;font-weight:700">chantiers</span> et <span style="color:#9fb4ff;font-weight:700">gestion locative</span> dans une suite conçue pour l'investisseur immobilier sérieux.</p>
   <div class="hero-actions" style="position:relative;z-index:1">
-    <a href="#inscription" class="btn-primary">Démarrer maintenant →</a>
+    <a href="#inscription" class="btn-primary" onclick="showFreeForm()">Commencer gratuitement →</a>
     <a href="#modules" class="btn-ghost" style="position:relative;z-index:1;color:var(--ink);background:rgba(255,255,255,.85);border-color:var(--border-2);backdrop-filter:blur(8px)">Découvrir les modules</a>
   </div>
-  <p class="hero-price-hint" style="position:relative;z-index:1;color:var(--ink-2)">À partir de <strong style="color:var(--ink)">9,90€/mois</strong> · Sans engagement · Résiliable à tout moment</p>
-  <a href="#inscription" onclick="showTrialForm()" class="trial-offer-cta" style="position:relative;z-index:1;margin-top:24px;display:inline-flex;align-items:center;gap:14px;background:var(--accent);border-radius:12px;padding:12px 20px;box-shadow:0 8px 24px rgba(59,91,219,.35);text-decoration:none;cursor:pointer">
+  <p class="hero-price-hint" style="position:relative;z-index:1;color:var(--ink-2)"><strong style="color:var(--ink)">Gratuit pour 1 logement</strong> · Offres complètes dès 9,90€/mois · Sans engagement</p>
+  <a href="#inscription" onclick="showFreeForm()" class="trial-offer-cta" style="position:relative;z-index:1;margin-top:24px;display:inline-flex;align-items:center;gap:14px;background:var(--accent);border-radius:12px;padding:12px 20px;box-shadow:0 8px 24px rgba(59,91,219,.35);text-decoration:none;cursor:pointer">
     <div style="text-align:center;flex-shrink:0;">
-      <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff;line-height:1;" id="counter-places">9</div>
-      <div style="font-size:10px;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;">places</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff;line-height:1;">0€</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;">gratuit</div>
     </div>
     <div style="width:1px;height:36px;background:rgba(255,255,255,.3);"></div>
     <div style="text-align:left;">
-      <div style="font-size:13px;font-weight:700;color:#fff;">Pro Complet offert</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:2px;" id="trial-spots-label">5 modules · 3 mois gratuits · 10 places</div>
-      <div style="margin-top:7px;background:rgba(255,255,255,.25);border-radius:3px;height:4px;width:130px;overflow:hidden">
-        <div style="background:#fff;width:10%;height:4px;border-radius:3px;" id="trial-spots-bar"></div>
-      </div>
+      <div style="font-size:13px;font-weight:700;color:#fff;">Gratuit pour 1 logement</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:2px;">Baux, quittances, suivi des loyers · sans carte bancaire</div>
     </div>
     <div style="flex-shrink:0;display:flex;align-items:center;gap:6px;padding-left:8px;border-left:1px solid rgba(255,255,255,.3);">
-      <span style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;">J'en profite</span>
+      <span style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;">Créer mon compte</span>
       <span style="font-size:16px;color:#fff;transition:transform .15s;" class="trial-offer-arrow">→</span>
     </div>
   </a>
@@ -587,12 +585,26 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
 <section id="tarifs">
   <div class="section-label">Tarifs</div>
   <h2 style="color:var(--ink)">Simple. Transparent. Sans surprise.</h2>
-  <p class="section-sub">Trois offres adaptées à votre profil d'investisseur. Changez de plan à tout moment.</p>
+  <p class="section-sub">Commencez gratuitement avec un logement, puis choisissez l'offre adaptée quand votre patrimoine grandit.</p>
   <div class="pricing-grid">
+    <div class="plan-card">
+      <div class="plan-name">Gratuit</div>
+      <div class="plan-price">0€<span>/mois</span></div>
+      <div class="plan-sub">1 logement · Bailo Gestion</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature"><span class="check">✓</span> 1 bail avec sa fiche locataire</div>
+        <div class="plan-feature"><span class="check">✓</span> Quittances et suivi des loyers</div>
+        <div class="plan-feature"><span class="check">✓</span> État des lieux et révision IRL</div>
+        <div class="plan-feature"><span class="check">✓</span> Espace locataire inclus</div>
+        <div class="plan-feature"><span class="check">✓</span> Sans carte bancaire, sans limite de durée</div>
+      </div>
+      <a href="#inscription" class="btn-plan btn-plan-ghost" onclick="showFreeForm()">Commencer gratuitement</a>
+    </div>
     <div class="plan-card">
       <div class="plan-name">Bailleur</div>
       <div class="plan-price">9,90€<span>/mois</span></div>
-      <div class="plan-sub">Gestion + Finance</div>
+      <div class="plan-sub">Baux illimités · Gestion + Finance</div>
       <div class="plan-divider"></div>
       <div class="plan-features">
         <div class="plan-feature"><span class="check">✓</span> Bailo Gestion — baux, quittances, EDL</div>
@@ -601,7 +613,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
         <div class="plan-feature"><span class="check">✓</span> Signature électronique des baux</div>
         <div class="plan-feature"><span class="check">✓</span> Rapports PDF illimités</div>
       </div>
-      <a href="#inscription" class="btn-plan btn-plan-ghost" onclick="selectPlan('bailleur')">Choisir Bailleur</a>
+      <a href="#inscription" class="btn-plan btn-plan-ghost" onclick="selectPlan('bailleur');showPaidForm()">Choisir Bailleur</a>
     </div>
     <div class="plan-card featured">
       <div class="plan-popular">POPULAIRE</div>
@@ -617,7 +629,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
         <div class="plan-feature"><span class="check">✓</span> IA analyses illimitées</div>
         <div class="plan-feature"><span class="check">✓</span> Export Factur-X 2026</div>
       </div>
-      <a href="#inscription" class="btn-plan btn-plan-accent" onclick="selectPlan('investisseur')">Choisir Investisseur</a>
+      <a href="#inscription" class="btn-plan btn-plan-accent" onclick="selectPlan('investisseur');showPaidForm()">Choisir Investisseur</a>
     </div>
     <div class="plan-card">
       <div class="plan-name">Complet</div>
@@ -632,7 +644,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
         <div class="plan-feature"><span class="check">✓</span> Rapport dossier banquier PDF complet</div>
         <div class="plan-feature"><span class="check">✓</span> Recommandations IA personnalisées</div>
       </div>
-      <a href="#inscription" class="btn-plan btn-plan-ghost" onclick="selectPlan('complet')">Choisir Complet</a>
+      <a href="#inscription" class="btn-plan btn-plan-ghost" onclick="selectPlan('complet');showPaidForm()">Choisir Complet</a>
     </div>
   </div>
 </section>
@@ -726,32 +738,30 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
         <div class="signup-perk"><span>✓</span> Satisfait ou remboursé 7 jours</div>
       </div>
       <div class="signup-perks" id="signup-perks-trial" style="display:none">
-        <div class="signup-perk"><span>✓</span> Pro Complet — 5 modules inclus</div>
-        <div class="signup-perk"><span>✓</span> 3 mois gratuits, sans carte bancaire</div>
-        <div class="signup-perk"><span>✓</span> Accès immédiat après inscription</div>
+        <div class="signup-perk"><span>✓</span> 1 logement géré gratuitement</div>
+        <div class="signup-perk"><span>✓</span> Baux, quittances, suivi des loyers</div>
+        <div class="signup-perk"><span>✓</span> Sans carte bancaire, sans limite de durée</div>
         <div class="signup-perk"><span>✓</span> Données hébergées en France</div>
-        <div class="signup-perk"><span>✓</span> Limité aux 10 premiers inscrits</div>
+        <div class="signup-perk"><span>✓</span> Passez à une offre payante quand vous voulez</div>
       </div>
     </div>
     <div>
-      <!-- FORMULAIRE ESSAI GRATUIT -->
+      <!-- FORMULAIRE OFFRE GRATUITE (1 logement) -->
       <div class="signup-form" id="trial-form" style="display:none">
         <div style="background:rgba(59,91,219,.08);border:1px solid rgba(59,91,219,.25);border-radius:10px;padding:14px 16px;margin-bottom:16px">
-          <div style="font-size:14px;font-weight:700;color:var(--accent)">Pro Complet offert — 3 mois gratuits</div>
-          <div style="font-size:12px;color:var(--ink-3);margin-top:4px">Gestion · Finance · Chantier · Bnb · Patrimoine</div>
+          <div style="font-size:14px;font-weight:700;color:var(--accent)">Offre Gratuite — 1 logement</div>
+          <div style="font-size:12px;color:var(--ink-3);margin-top:4px">Bailo Gestion · sans carte bancaire</div>
         </div>
         <div class="field">
           <label>Adresse email</label>
           <input type="email" id="trial-email" placeholder="vous@email.com" autocomplete="email">
         </div>
-        <div class="field">
-          <label>Mot de passe</label>
-          <input type="password" id="trial-password" placeholder="8 caractères minimum" autocomplete="new-password">
-        </div>
+        <p class="form-note" style="margin:0;text-align:left">Vous recevrez un email pour choisir votre mot de passe et ouvrir votre espace.</p>
         <div class="form-error" id="trial-error"></div>
         <div class="form-success" id="trial-success"></div>
-        <button class="btn-signup" id="btn-trial" onclick="handleTrial()" style="background:var(--accent)">Démarrer mon essai gratuit →</button>
-        <p class="form-note" style="margin-top:12px">Vous avez déjà un compte ? <a href="https://bailo.pro/login.html" style="color:var(--accent)">Se connecter →</a></p>
+        <button class="btn-signup" id="btn-trial" onclick="handleFree()" style="background:var(--accent)">Créer mon compte gratuit →</button>
+        <p class="form-note" style="margin-top:12px">Plusieurs logements ? <a href="#inscription" onclick="showPaidForm();return false" style="color:var(--accent)">Voir les offres payantes →</a></p>
+        <p class="form-note">Vous avez déjà un compte ? <a href="https://bailo.pro/login.html" style="color:var(--accent)">Se connecter →</a></p>
         <p class="form-note">En créant votre compte, vous acceptez nos <a href="/legal.html#cgv" style="color:var(--accent)">CGV</a> et notre <a href="/legal.html#rgpd" style="color:var(--accent)">politique de confidentialité</a>.</p>
       </div>
 
@@ -784,6 +794,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
         <div class="form-error" id="form-error"></div>
         <div class="form-success" id="form-success"></div>
         <button class="btn-signup" id="btn-signup" onclick="handleSignup()">Créer mon compte et payer →</button>
+        <p class="form-note" style="margin-top:12px">Un seul logement ? <a href="#inscription" onclick="showFreeForm();return false" style="color:var(--accent)">Commencer gratuitement →</a></p>
         <p class="form-note">Déjà un compte ? <a href="https://bailo.pro/login.html" style="color:var(--accent)">Se connecter →</a></p>
         <p class="form-note">En créant votre compte, vous acceptez nos <a href="/legal.html#cgv" style="color:var(--accent)">CGV</a> et notre <a href="/legal.html#rgpd" style="color:var(--accent)">politique de confidentialité</a>.</p>
       </div>
@@ -815,41 +826,19 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
 const { createClient } = supabase
 const db = createClient('https://hvkguyddmhqbvarujlyr.supabase.co','sb_publishable_BZHU49hkN70MgEypJZ7K5A_AwlIQF7W')
 
-const TRIAL_SPOTS_TOTAL = 10
-
-// Affiche le vrai nombre de places restantes sur l'offre de lancement
-// (au lieu du "9" statique précédent, jamais à jour avec les vraies inscriptions).
-// CORRIGÉ (16/07/2026) : l'appel direct à Supabase avec la clé publique
-// était bloqué par la RLS (chaque utilisateur ne voit que sa propre ligne),
-// le compteur affichait donc toujours 10 quel que soit le nombre réel
-// d'inscriptions. Passe désormais par une fonction serveur (clé service).
-async function updateTrialSpotsCounter() {
-  try {
-    const resp = await fetch('/.netlify/functions/trial-spots-count')
-    if (!resp.ok) return
-    const { count } = await resp.json()
-    const remaining = Math.max(0, TRIAL_SPOTS_TOTAL - (count || 0))
-    const counterEl = document.getElementById('counter-places')
-    if (counterEl) counterEl.textContent = remaining
-    const barEl = document.getElementById('trial-spots-bar')
-    if (barEl) barEl.style.width = Math.min(100, (count || 0) / TRIAL_SPOTS_TOTAL * 100) + '%'
-    // Si plus aucune place, on adapte le message pour ne pas mentir
-    const labelEl = document.getElementById('trial-spots-label')
-    if (labelEl && remaining <= 0) {
-      labelEl.textContent = 'Offre de lancement complète — tarifs normaux'
-    }
-  } catch (e) { /* échec silencieux, le texte par défaut reste affiché */ }
-}
-updateTrialSpotsCounter()
-
-// Détection URL ?essai=1 -> affiche directement le formulaire essai gratuit
-if (new URLSearchParams(window.location.search).get('essai') === '1') {
-  setTimeout(function() {
-    if (typeof showTrialForm === 'function') showTrialForm();
-    var el = document.getElementById('inscription');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }, 500);
-}
+// Liens directs : ?gratuit=1, ?essai=1 (anciens emails) ou ?src=quittance
+// ouvrent le formulaire de l'offre Gratuite ; ?upgrade=1 (depuis Bailo
+// Gestion) ouvre les offres payantes.
+;(function () {
+  var q = new URLSearchParams(window.location.search)
+  var wantsFree = q.get('gratuit') === '1' || q.get('essai') === '1' || q.get('src') === 'quittance'
+  var wantsPaid = q.get('upgrade') === '1'
+  if (!wantsFree && !wantsPaid) return
+  setTimeout(function () {
+    if (wantsPaid) showPaidForm(); else showFreeForm()
+    if (wantsFree) { var el = document.getElementById('inscription'); if (el) el.scrollIntoView({ behavior: 'smooth' }) }
+  }, 400)
+})()
 
 let selectedPlan = 'duo'
 
@@ -873,14 +862,16 @@ function selectPlan(plan) {
 }
 selectPlan('investisseur')
 
-function showTrialForm() {
+function showFreeForm() {
   document.getElementById('trial-form').style.display = 'block'
   document.getElementById('signup-form').style.display = 'none'
   document.getElementById('signup-perks-paid').style.display = 'none'
   document.getElementById('signup-perks-trial').style.display = 'flex'
-  document.getElementById('signup-title').textContent = 'Essai gratuit 3 mois'
-  document.getElementById('signup-desc').textContent = 'Accédez au Pro Complet gratuitement. Sans carte bancaire.'
+  document.getElementById('signup-title').textContent = 'Votre compte gratuit'
+  document.getElementById('signup-desc').textContent = 'Gérez 1 logement gratuitement avec Bailo Gestion. Sans carte bancaire, en 30 secondes.'
 }
+// Ancien nom conservé pour les liens existants
+function showTrialForm() { showFreeForm() }
 
 function showPaidForm() {
   document.getElementById('trial-form').style.display = 'none'
@@ -891,48 +882,58 @@ function showPaidForm() {
   document.getElementById('signup-desc').textContent = 'Créez votre compte en 30 secondes. Paiement sécurisé par Stripe.'
 }
 
-async function handleTrial() {
+async function handleFree() {
   const email = document.getElementById('trial-email').value.trim()
-  const password = document.getElementById('trial-password').value
+  // Un seul mot de passe pour l'utilisateur : celui qu'il choisit via le lien
+  // reçu par email (ce qui vérifie aussi son adresse). Le compte technique
+  // créé ici reçoit un mot de passe aléatoire, jamais affiché.
+  const rnd = new Uint8Array(24); crypto.getRandomValues(rnd)
+  const password = Array.from(rnd, b => b.toString(16).padStart(2, '0')).join('') + 'aA1!'
   const errEl = document.getElementById('trial-error')
   const successEl = document.getElementById('trial-success')
   const btn = document.getElementById('btn-trial')
+  const LABEL = 'Créer mon compte gratuit →'
+  const fail = (msg) => { errEl.textContent = msg; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = LABEL }
 
-  errEl.textContent = ''
-  successEl.textContent = ''
+  errEl.textContent = ''; errEl.style.display = 'none'
+  successEl.textContent = ''; successEl.style.display = 'none'
 
-  if (!email || !password) { errEl.textContent = 'Email et mot de passe requis.'; return }
-  if (password.length < 8) { errEl.textContent = 'Mot de passe trop court (8 caractères minimum).'; return }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail('Saisissez une adresse email valide.')
 
   btn.disabled = true
   btn.textContent = 'Création du compte…'
 
   try {
     const { data: authData, error: authError } = await db.auth.signUp({ email, password })
-    if (authError) { errEl.textContent = authError.message; btn.disabled = false; btn.textContent = 'Démarrer mon essai gratuit →'; return }
+    if (authError) {
+      if (/already registered|already been registered/i.test(authError.message)) {
+        return fail('Un compte existe déjà avec cet email. Connectez-vous sur gestion.bailo.pro, ou utilisez « Mot de passe oublié ».')
+      }
+      return fail(authError.message)
+    }
+    const userId = authData.user && authData.user.id
+    if (!userId) return fail('Création du compte impossible. Réessayez.')
 
-    const userId = authData.user?.id
-    const trialResp = await fetch('/.netlify/functions/create-trial', {
+    const resp = await fetch('/.netlify/functions/create-free', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, userId, plan: 'pro', modules: ['gestion', 'finance', 'chantier', 'bnb', 'patrimoine'] })
+      body: JSON.stringify({ email, userId })
     })
-    const trialResult = await trialResp.json()
+    const result = await resp.json().catch(() => ({}))
+    if (!resp.ok) return fail(result.error || 'Une erreur est survenue. Réessayez.')
 
-    if (trialResult.eligible) {
-      const expiresDate = new Date(trialResult.expires_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-      successEl.innerHTML = '<strong>Compte créé !</strong> Votre essai Pro Complet est actif jusqu\'au ' + expiresDate + '.<br><a href="https://gestion.bailo.pro" style="color:var(--accent)">Accéder à Bailo Gestion →</a>'
-      btn.textContent = 'Compte créé ✓'
-    } else {
-      errEl.textContent = 'L\'offre d\'essai est complète (10 places atteintes). Choisissez un abonnement.'
-      btn.disabled = false
-      btn.textContent = 'Démarrer mon essai gratuit →'
-      setTimeout(showPaidForm, 2000)
+    if (result.existing) {
+      return fail('Un compte existe déjà avec cet email. Connectez-vous sur gestion.bailo.pro, ou utilisez « Mot de passe oublié ».')
     }
-  } catch(e) {
-    errEl.textContent = 'Erreur : ' + e.message
-    btn.disabled = false
-    btn.textContent = 'Démarrer mon essai gratuit →'
+
+    successEl.innerHTML = result.passwordLinkSent
+      ? '<strong>Compte créé !</strong> Nous venons de vous envoyer un email : cliquez sur le lien qu\'il contient pour choisir votre mot de passe et ouvrir Bailo Gestion. Pensez à regarder dans vos indésirables.'
+      : '<strong>Compte créé !</strong> Ouvrez <a href="https://gestion.bailo.pro" style="color:var(--accent)">Bailo Gestion</a> et cliquez sur « Mot de passe oublié » pour choisir votre mot de passe.'
+    successEl.style.display = 'block'
+    btn.textContent = 'Compte créé ✓'
+    if (typeof gtag === 'function') gtag('event', 'sign_up', { method: 'gratuit', source: new URLSearchParams(location.search).get('src') || 'site' })
+  } catch (e) {
+    fail('Erreur : ' + e.message)
   }
 }
 
@@ -953,10 +954,24 @@ async function handleSignup() {
   btn.textContent = 'Création du compte...'
 
   try {
-    const { data, error } = await db.auth.signUp({ email, password })
-    if (error) throw new Error(error.message)
-    const user = data.user
-    if (!user) throw new Error('Erreur lors de la création du compte.')
+    // Compte existant (ex. offre Gratuite) : on se connecte avec les mêmes
+    // identifiants pour passer à l'offre payante, sinon on crée le compte.
+    let user = null
+    const signUpRes = await db.auth.signUp({ email, password })
+    if (signUpRes.error || !signUpRes.data.user || (signUpRes.data.user.identities && signUpRes.data.user.identities.length === 0)) {
+      const signInRes = await db.auth.signInWithPassword({ email, password })
+      if (signInRes.error && /confirm/i.test(signInRes.error.message)) {
+        throw new Error('Confirmez d\'abord votre adresse email (lien reçu par email), puis réessayez.')
+      }
+      if (signInRes.error || !signInRes.data.user) {
+        throw new Error(signUpRes.error && !/already/i.test(signUpRes.error.message)
+          ? signUpRes.error.message
+          : 'Un compte existe déjà avec cet email : saisissez son mot de passe, ou utilisez « Mot de passe oublié » sur la page de connexion.')
+      }
+      user = signInRes.data.user
+    } else {
+      user = signUpRes.data.user
+    }
 
     let modules
     if (selectedPlan === 'pro') {
@@ -964,47 +979,6 @@ async function handleSignup() {
     } else {
       const val = document.getElementById('modules-select').value
       modules = val.split(',')
-    }
-
-    btn.textContent = 'Vérification de votre offre...'
-
-    // Vérifier éligibilité offre lancement
-    const trialResp = await fetch('/.netlify/functions/create-trial', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: selectedPlan, modules: modules, email: email, userId: user.id })
-    })
-    const trialResult = await trialResp.json()
-
-    if (trialResult.eligible) {
-      const expiresDate = new Date(trialResult.expires_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-      successEl.innerHTML = '🎉 Vous faites partie des 10 premiers ! Accès gratuit activé jusqu\'au ' + expiresDate + '. Vérifiez votre email.'
-      successEl.style.display = 'block'
-      btn.textContent = 'Accès activé !'
-      updateTrialSpotsCounter()
-      // Parrainage
-      const refCode = sessionStorage.getItem('bailo_ref');
-      if (refCode) {
-        fetch('/.netlify/functions/referral', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'apply', userId: user.id, email: email, refCode })
-        }).catch(console.error);
-        sessionStorage.removeItem('bailo_ref');
-      }
-      // Générer le lien de parrainage pour ce nouvel abonné
-      fetch('/.netlify/functions/referral', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'generate', userId: user.id, email: email })
-      }).catch(console.error);
-      // Séquence email J+0
-      fetch('/.netlify/functions/email-sequence', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'welcome', email: email })
-      }).catch(console.error)
-      return
     }
 
     // Sinon flow Stripe normal
@@ -1038,6 +1012,7 @@ function showError(msg) {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.target.id === 'signup-email' || e.target.id === 'signup-password')) handleSignup()
+  if (e.key === 'Enter' && e.target.id === 'trial-email') handleFree()
 })
 
 
