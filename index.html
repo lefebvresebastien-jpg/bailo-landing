@@ -429,6 +429,8 @@ const db = createClient('https://hvkguyddmhqbvarujlyr.supabase.co','sb_publishab
 })()
 
 let selectedPlan = 'duo'
+// Prix mensuels des offres payantes (pour la mesure d'audience uniquement)
+const PLAN_PRICES = { bailleur: 9.90, investisseur: 19.90, complet: 29.90 }
 
 function selectPlan(plan) {
   selectedPlan = plan
@@ -594,6 +596,12 @@ async function handleSignup() {
 
     successEl.innerHTML = '✅ Compte créé ! Redirection vers le paiement sécurisé...'
     successEl.style.display = 'block'
+    // Mesure d'audience : début de paiement (le montant sert à l'événement « achat » au retour de Stripe)
+    try {
+      const price = PLAN_PRICES[selectedPlan] || 0
+      localStorage.setItem('bailo_checkout', JSON.stringify({ plan: selectedPlan, value: price, t: Date.now() }))
+      if (window.bailoTrack) bailoTrack('begin_checkout', { currency: 'EUR', value: price, plan: selectedPlan, items: [{ item_id: selectedPlan, item_name: 'Bailo ' + selectedPlan, price: price, quantity: 1 }] })
+    } catch (e) {}
     setTimeout(() => { window.location.href = result.url }, 1200)
 
   } catch(e) {
@@ -620,9 +628,25 @@ document.addEventListener('keydown', e => {
 // Page d'accueil : le formulaire gratuit est celui affiché par défaut
 if (new URLSearchParams(location.search).get('upgrade') !== '1') showFreeForm()
 
+// Mesure d'audience : clics sur les boutons d'inscription et sur le lien vers la quittance gratuite
+document.addEventListener('click', function (e) {
+  if (!window.bailoTrack) return
+  var a = e.target.closest ? e.target.closest('a') : null
+  if (!a) return
+  var href = a.getAttribute('href') || '', oc = a.getAttribute('onclick') || ''
+  var zone = a.closest('nav') ? 'nav' : a.closest('footer') ? 'footer' : ((a.closest('section[id]') || {}).id || 'page')
+  if (href === '#inscription') {
+    var plan = (oc.match(/selectPlan\('([a-z]+)'\)/) || [])[1]
+    bailoTrack('cta_click', { position: zone, offer: plan || (oc.indexOf('showPaidForm') >= 0 ? 'payant' : 'gratuit') })
+  } else if (href === '/quittance-de-loyer-gratuite.html') {
+    bailoTrack('cta_click', { position: zone, offer: 'quittance' })
+  }
+})
+
 // Champ email du haut de page : reprend l'adresse dans le formulaire gratuit
 function heroStart(ev) {
   ev.preventDefault()
+  if (window.bailoTrack) bailoTrack('cta_click', { position: 'hero_email', offer: 'gratuit' })
   var v = document.getElementById('hero-email').value.trim()
   showFreeForm()
   document.getElementById('trial-email').value = v

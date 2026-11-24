@@ -2,6 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<!-- Mesure d'audience : chargée seulement après accord (consent.js) -->
+<script src="/consent.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bienvenue — Bailo Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -691,6 +693,25 @@
     }
     window.location.href = firstUrl;
   }
+</script>
+<script>
+// Mesure d'audience : achat confirmé au retour de Stripe (compté une seule fois par paiement)
+(function () {
+  try {
+    var q = new URLSearchParams(location.search);
+    var sid = q.get('session_id');
+    if (q.get('payment') !== 'success' || !sid || !window.bailoTrack) return;
+    if (localStorage.getItem('bailo_purchase_sent') === sid) return;
+    var c = null;
+    try { c = JSON.parse(localStorage.getItem('bailo_checkout') || 'null'); } catch (e) {}
+    var fresh = c && c.plan && (Date.now() - c.t < 1000 * 60 * 60 * 2);
+    var ev = { transaction_id: sid, currency: 'EUR' };
+    if (fresh) { ev.value = c.value; ev.plan = c.plan; ev.items = [{ item_id: c.plan, item_name: 'Bailo ' + c.plan, price: c.value, quantity: 1 }]; }
+    bailoTrack('purchase', ev);
+    localStorage.setItem('bailo_purchase_sent', sid);
+    localStorage.removeItem('bailo_checkout');
+  } catch (e) {}
+})();
 </script>
 </body>
 </html>

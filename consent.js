@@ -23,6 +23,7 @@
   function saveChoice(c) { try { localStorage.setItem(KEY, JSON.stringify({ c: c, t: Date.now() })); } catch (e) {} }
 
   function loadGA() {
+    if (internal) return; // navigateur de l'équipe Bailo : jamais compté
     granted = true;
     window['ga-disable-' + GA_ID] = false;
     if (loaded) return;
@@ -84,6 +85,23 @@
   }
 
   window.bailoCookies = { open: show };
+
+  // Envoi d'un événement de mesure (sans effet tant que le visiteur n'a pas accepté).
+  window.bailoTrack = function (name, params) {
+    try { window.gtag('event', name, params || {}); } catch (e) {}
+  };
+
+  // Exclusion de l'équipe Bailo : ouvrir une fois n'importe quelle page avec
+  // ?notrack=1 pour que ce navigateur ne soit plus jamais compté (ni bandeau,
+  // ni Google Analytics). ?notrack=0 annule.
+  var NO_TRACK = 'bailo_no_track', internal = false;
+  try {
+    var nt = new URLSearchParams(location.search).get('notrack');
+    if (nt === '1') localStorage.setItem(NO_TRACK, '1');
+    if (nt === '0') localStorage.removeItem(NO_TRACK);
+    internal = localStorage.getItem(NO_TRACK) === '1';
+  } catch (e) {}
+  if (internal) { stopGA(); return; }
 
   var choice = readChoice();
   if (choice === 'granted') loadGA();
