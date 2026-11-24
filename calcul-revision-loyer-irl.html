@@ -5,8 +5,8 @@
 <script src="/consent.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calcul de révision de loyer IRL 2026 — Simulateur gratuit | Bailo</title>
-<meta name="description" content="Calculez la révision annuelle de votre loyer avec l'IRL : dernier indice Insee (3e trimestre 2026), nouveau loyer au centime et lettre au locataire en PDF. Gratuit, sans inscription.">
+<title>Calcul de révision de loyer IRL — Simulateur gratuit, dernier indice Insee | Bailo</title>
+<meta name="description" content="Calculez la révision annuelle de votre loyer avec l'IRL : dernier indice Insee mis à jour automatiquement, nouveau loyer au centime et lettre au locataire en PDF. Gratuit, sans inscription.">
 <link rel="canonical" href="https://bailo.pro/calcul-revision-loyer-irl">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
@@ -204,7 +204,7 @@
   <header>
     <span class="tag">100 % gratuit · sans inscription</span>
     <h1>Calcul de la révision de loyer avec l'IRL</h1>
-    <p>Indiquez votre loyer et le trimestre de référence de votre bail : le simulateur applique le dernier indice de l'Insee (3e trimestre 2026) et prépare la lettre à envoyer à votre locataire.</p>
+    <p>Indiquez votre loyer et le trimestre de référence de votre bail : le simulateur applique le dernier indice de l'Insee (<span id="last_hdr">3e trimestre 2026</span>) et prépare la lettre à envoyer à votre locataire.</p>
   </header>
 
   <div class="tool">
@@ -216,6 +216,13 @@
       </div>
 
       <h2>Indice de référence</h2>
+      <div class="f"><label for="zone">Où se situe le logement ?</label>
+        <select id="zone">
+          <option value="metropole" selected>France métropolitaine (continent)</option>
+          <option value="corse">Corse</option>
+          <option value="outremer">Outre-mer (Guadeloupe, Guyane, Martinique, La Réunion, Mayotte)</option>
+        </select>
+      </div>
       <div class="row">
         <div class="f"><label for="trim">Trimestre de référence du bail</label>
           <select id="trim">
@@ -225,8 +232,8 @@
         </div>
         <div class="f"><label for="annee">Année du nouvel indice</label><select id="annee"></select></div>
       </div>
-      <div class="hint" style="margin:-6px 0 10px">Le trimestre figure dans la clause de révision de votre bail. Valeurs pour la France métropolitaine (continent).</div>
-      <div class="check"><input type="checkbox" id="manuel"><label for="manuel">Saisir les indices moi-même (Corse, outre-mer, autre année)</label></div>
+      <div class="hint" style="margin:-6px 0 10px">Le trimestre figure dans la clause de révision de votre bail. Les indices sont mis à jour à chaque publication de l'Insee.</div>
+      <div class="check"><input type="checkbox" id="manuel"><label for="manuel">Saisir les indices moi-même</label></div>
       <div class="row" id="manuel_row" hidden>
         <div class="f"><label for="irl_new">Nouvel indice</label><input id="irl_new" type="number" min="0" step="0.01" inputmode="decimal" placeholder="148,06"></div>
         <div class="f"><label for="irl_old">Indice de l'année précédente</label><input id="irl_old" type="number" min="0" step="0.01" inputmode="decimal" placeholder="145,77"></div>
@@ -281,10 +288,10 @@
     <p>Exemple : un loyer de 600 € dont le bail se réfère au 3e trimestre passe à 600 × 148,06 ÷ 145,77 = 609,43 €.</p>
 
     <h2>Les valeurs de l'IRL</h2>
-    <p>Dernier indice publié par l'Insee : 3e trimestre 2026, paru le 15 octobre 2026. Prochaine publication : mi-janvier 2027.</p>
+    <p id="last_p">Dernier indice publié par l'Insee : 3e trimestre 2026 (148,06), paru le 15 octobre 2026. Prochaine publication : mi-janvier 2027.</p>
     <table class="irl-table">
       <thead><tr><th>Trimestre</th><th>IRL (métropole)</th><th>Variation sur un an</th></tr></thead>
-      <tbody>
+      <tbody id="irl_rows">
         <tr><td>3e trimestre 2026</td><td>148,06</td><td>+ 1,57 %</td></tr>
         <tr><td>2e trimestre 2026</td><td>148,37</td><td>+ 1,15 %</td></tr>
         <tr><td>1er trimestre 2026</td><td>146,60</td><td>+ 0,78 %</td></tr>
@@ -306,7 +313,7 @@
         <tr><td>1er trimestre 2022</td><td>133,93</td><td>+ 2,48 %</td></tr>
       </tbody>
     </table>
-    <p class="hint" style="margin-top:8px">Source : Insee. La Corse et l'outre-mer ont leurs propres valeurs, publiées sur <a href="https://www.service-public.gouv.fr/particuliers/vosdroits/F13723" rel="noopener">service-public.gouv.fr</a>.</p>
+    <p class="hint" style="margin-top:8px">Source : Insee. La Corse et l'outre-mer ont leurs propres valeurs depuis le 3e trimestre 2022 : le simulateur en tient compte, et elles sont publiées sur <a href="https://www.service-public.gouv.fr/particuliers/vosdroits/F13723" rel="noopener">service-public.gouv.fr</a>.</p>
 
     <h2>Les règles à respecter</h2>
     <ul>
@@ -347,58 +354,154 @@
 <script>
 (function () {
   'use strict';
-  // Indices Insee, France métropolitaine (continent). À compléter à chaque publication trimestrielle.
-  var IRL = {"2019": [129.38, 129.72, 129.99, 130.26], "2020": [130.57, 130.57, 130.59, 130.52], "2021": [130.69, 131.12, 131.67, 132.62], "2022": [133.93, 135.84, 136.27, 137.26], "2023": [138.61, 140.59, 141.03, 142.06], "2024": [143.46, 145.17, 144.51, 144.64], "2025": [145.47, 146.68, 145.77, 145.78], "2026": [146.6, 148.37, 148.06, null]};
+  // Indices Insee (référence 100 au 4e trimestre 1998). Table de secours : la page
+  // récupère les dernières valeurs auprès de l'Insee à chaque visite (fonction /irl).
+  // Avant le 3e trimestre 2022, la Corse et l'outre-mer ont les mêmes valeurs que la métropole.
+  var DATA = {
+    metropole: {
+      2019: [129.38, 129.72, 129.99, 130.26], 2020: [130.57, 130.57, 130.59, 130.52],
+      2021: [130.69, 131.12, 131.67, 132.62], 2022: [133.93, 135.84, 136.27, 137.26],
+      2023: [138.61, 140.59, 141.03, 142.06], 2024: [143.46, 145.17, 144.51, 144.64],
+      2025: [145.47, 146.68, 145.77, 145.78], 2026: [146.60, 148.37, 148.06, null]
+    },
+    corse: {
+      2022: [null, null, 134.30, 135.27], 2023: [136.60, 138.55, 136.98, 137.97],
+      2024: [139.33, 143.07, 140.36, 140.48], 2025: [141.28, 144.56, 141.58, 141.59],
+      2026: [142.38, null, 143.80, null]
+    },
+    outremer: {
+      2022: [null, null, 134.96, 135.93], 2023: [137.27, 139.23, 138.33, 139.32],
+      2024: [140.70, 143.77, 141.74, 141.86], 2025: [142.67, 145.27, 142.97, 142.98],
+      2026: [143.78, null, 145.21, null]
+    }
+  };
+  var ZONES = { metropole: 'métropole', corse: 'Corse', outremer: 'outre-mer' };
   var TRIM = ['1er trimestre', '2e trimestre', '3e trimestre', '4e trimestre'];
+  var PUB = ['mi-avril', 'mi-juillet', 'mi-octobre', 'mi-janvier'];
   var PREFILL = ['b_nom', 'b_adr', 'l_nom', 'logement', 'lieu'];
   var $ = function (id) { return document.getElementById(id); };
-  var sent = false;
+  var sent = false, touched = false;
 
   window.track = function (name, params) {
     try { if (typeof gtag === 'function') gtag('event', name, params || {}); } catch (e) {}
   };
 
   function num(id) { var v = parseFloat(String($(id).value).replace(',', '.')); return isNaN(v) ? 0 : v; }
-  function eur(x) { return x.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/[\u202f\u00a0]/g, ' ') + ' €'; }
+  function eur(x) { return x.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/[  ]/g, ' ') + ' €'; }
   function idx(x) { return x.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function pct(p) { return (p >= 0 ? '+ ' : '− ') + Math.abs(p).toFixed(2).replace('.', ',') + ' %'; }
   function frDate(iso) { if (!iso) return ''; var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
   function today() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
+  // Valeur de l'indice pour une zone, une année et un trimestre (0 à 3)
+  function val(zone, y, t) {
+    var v = (DATA[zone][y] || [])[t];
+    if (v == null && zone !== 'metropole' && (y < 2022 || (y === 2022 && t < 2))) v = (DATA.metropole[y] || [])[t];
+    return v == null ? null : v;
+  }
+  function years(zone) {
+    var set = {}; [zone, 'metropole'].forEach(function (z) { Object.keys(DATA[z]).forEach(function (y) { set[y] = 1; }); });
+    return Object.keys(set).map(Number).sort(function (a, b) { return b - a; });
+  }
+  // Dernier trimestre publié pour une zone : { y, t }
+  function latest(zone) {
+    var ys = years(zone);
+    for (var i = 0; i < ys.length; i++) for (var t = 3; t >= 0; t--) if (val(zone, ys[i], t) != null) return { y: ys[i], t: t };
+    return null;
+  }
+  function nextPub(l) { var n = (l.t + 1) % 4, y = l.y + (l.t === 3 ? 1 : 0); return PUB[n] + ' ' + (n === 3 ? y + 1 : y); }
+
+  function fillYears() {
+    var sel = $('annee'), zone = $('zone').value, cur = sel.value;
+    sel.innerHTML = '';
+    years(zone).forEach(function (y) {
+      var ok = false; for (var t = 0; t < 4; t++) if (val(zone, y, t) != null && val(zone, y - 1, t) != null) ok = true;
+      if (ok) { var o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); }
+    });
+    var l = latest(zone);
+    if (!touched && l) { sel.value = l.y; $('trim').value = l.t; }
+    else if (cur && sel.querySelector('option[value="' + cur + '"]')) sel.value = cur;
+  }
+
+  function renderInfo(updated) {
+    var l = latest('metropole'); if (!l) return;
+    var name = TRIM[l.t] + ' ' + l.y;
+    $('last_hdr').textContent = name;
+    $('last_p').textContent = "Dernier indice publié par l'Insee : " + name + ' (' + idx(val('metropole', l.y, l.t)) + ')' + (updated ? ', mis à jour le ' + frDate(updated) : '') + '. Prochaine publication : ' + nextPub(l) + '.';
+    var rows = '', count = 0;
+    years('metropole').forEach(function (y) {
+      for (var t = 3; t >= 0; t--) {
+        var v = val('metropole', y, t), p = val('metropole', y - 1, t);
+        if (v == null || p == null || count >= 19) continue;
+        rows += '<tr><td>' + TRIM[t] + ' ' + y + '</td><td>' + idx(v) + '</td><td>' + pct((v / p - 1) * 100) + '</td></tr>'; count++;
+      }
+    });
+    if (rows) $('irl_rows').innerHTML = rows;
+  }
+
+  // Fusionne les valeurs reçues de l'Insee. Une zone n'est acceptée que si elle
+  // concorde avec les valeurs déjà connues : on écarte ainsi une réponse erronée.
+  function merge(remote) {
+    var changed = false;
+    Object.keys(DATA).forEach(function (z) {
+      var src = remote[z]; if (!src) return;
+      var same = 0, bad = 0, add = [];
+      Object.keys(src).forEach(function (y) {
+        if (!/^\d{4}$/.test(y) || !Array.isArray(src[y])) return;
+        for (var t = 0; t < 4; t++) {
+          var v = src[y][t]; if (typeof v !== 'number' || !(v > 100 && v < 300)) continue;
+          var known = (DATA[z][y] || [])[t];
+          if (known != null) { if (Math.abs(known - v) < 0.011) same++; else bad++; }
+          else add.push([+y, t, v]);
+        }
+      });
+      if (bad || same < 4) return;
+      add.forEach(function (a) {
+        var prev = val(z, a[0] - 1, a[1]);
+        if (prev != null && (a[2] / prev < 0.95 || a[2] / prev > 1.10)) return;
+        if (!DATA[z][a[0]]) DATA[z][a[0]] = [null, null, null, null];
+        DATA[z][a[0]][a[1]] = a[2]; changed = true;
+      });
+    });
+    return changed;
+  }
+
   function compute() {
-    var loyer = num('loyer'), t = parseInt($('trim').value, 10), y = parseInt($('annee').value, 10);
+    var loyer = num('loyer'), t = parseInt($('trim').value, 10), y = parseInt($('annee').value, 10), zone = $('zone').value;
     var manuel = $('manuel').checked, nw, old, label;
     if (manuel) {
       nw = num('irl_new'); old = num('irl_old'); label = 'indices saisis';
       if (!nw || !old) return { loyer: loyer, error: 'Saisissez les deux indices.' };
     } else {
-      nw = (IRL[y] || [])[t]; old = (IRL[y - 1] || [])[t]; label = TRIM[t] + ' ' + y;
-      if (!nw) return { loyer: loyer, error: "L'indice du " + TRIM[t] + ' ' + y + " n'est pas encore publié. Choisissez une autre année ou saisissez les indices vous-même." };
-      if (!old) return { loyer: loyer, error: "L'indice de l'année précédente n'est pas dans notre table. Saisissez les indices vous-même." };
+      nw = val(zone, y, t); old = val(zone, y - 1, t);
+      label = TRIM[t] + ' ' + y + (zone === 'metropole' ? '' : ', ' + ZONES[zone]);
+      if (nw == null) return { loyer: loyer, error: "L'indice du " + TRIM[t] + ' ' + y + " n'est pas encore disponible ici. Choisissez un autre trimestre ou saisissez les indices vous-même." };
+      if (old == null) return { loyer: loyer, error: "L'indice de l'année précédente n'est pas dans notre table. Saisissez les indices vous-même." };
     }
     var neuf = Math.round(loyer * nw / old * 100) / 100;
     return { loyer: loyer, nw: nw, old: old, neuf: neuf, hausse: Math.round((neuf - loyer) * 100) / 100, pct: (nw / old - 1) * 100,
-             label: label, t: t, y: y, manuel: manuel, charges: num('charges'), dpe: $('dpe').checked };
+             label: label, manuel: manuel, charges: num('charges'), dpe: $('dpe').checked };
   }
 
   function render() {
     $('manuel_row').hidden = !$('manuel').checked;
-    $('trim').disabled = $('annee').disabled = $('manuel').checked;
+    $('trim').disabled = $('annee').disabled = $('zone').disabled = $('manuel').checked;
     var r = compute(), n = $('notice');
     n.className = 'notice'; n.textContent = '';
     if (r.error || !r.loyer) {
-      $('r_new').textContent = '—'; $('r_var').textContent = r.error ? '—' : ((r.pct >= 0 ? '+ ' : '− ') + Math.abs(r.pct).toFixed(2).replace('.', ',') + ' %');
+      $('r_new').textContent = '—'; $('r_var').textContent = r.error ? '—' : pct(r.pct);
       $('r_mois').textContent = '—'; $('r_an').textContent = '—'; $('r_total').textContent = '';
       $('r_formula').textContent = r.error || 'Saisissez votre loyer pour voir le calcul.';
       return r;
     }
     $('r_new').textContent = eur(r.neuf);
-    $('r_var').textContent = (r.pct >= 0 ? '+ ' : '− ') + Math.abs(r.pct).toFixed(2).replace('.', ',') + ' %';
+    $('r_var').textContent = pct(r.pct);
     $('r_mois').textContent = (r.hausse >= 0 ? '+ ' : '− ') + eur(Math.abs(r.hausse));
     $('r_an').textContent = (r.hausse >= 0 ? '+ ' : '− ') + eur(Math.abs(r.hausse * 12));
     $('r_formula').textContent = eur(r.loyer) + ' × ' + idx(r.nw) + ' ÷ ' + idx(r.old) + ' = ' + eur(r.neuf);
     $('r_total').textContent = r.charges ? 'Avec ' + eur(r.charges) + ' de charges, le total mensuel passe à ' + eur(r.neuf + r.charges) + '.' : '';
     if (r.dpe) { n.className = 'notice warn'; n.textContent = "Logement classé F ou G : pour un bail signé, renouvelé ou reconduit depuis le 24 août 2022 en métropole, le loyer ne peut pas être révisé. Le calcul est donné à titre indicatif."; }
-    if (!sent) { sent = true; track('irl_calculated', { manual: r.manuel, value: r.neuf }); }
+    if (!sent) { sent = true; track('irl_calculated', { manual: r.manuel, zone: $('zone').value, value: r.neuf }); }
     return r;
   }
 
@@ -424,23 +527,20 @@
     yy += 8; doc.text(bNom || 'Le bailleur', R, yy, { align: 'right' });
     doc.setFontSize(8.5); doc.setTextColor(120);
     doc.text('Document généré gratuitement sur bailo.pro', 105, 285, { align: 'center' });
-    var slug = (lNom || 'locataire').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+    var slug = (lNom || 'locataire').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
     doc.save('revision-loyer-' + slug + '.pdf');
   }
 
   function alertInline(msg) { var n = $('notice'); n.className = 'notice partial'; n.textContent = msg; setTimeout(render, 3500); }
 
   function init() {
-    var years = Object.keys(IRL).map(Number).sort(function (a, b) { return b - a; });
-    var sel = $('annee');
-    years.forEach(function (y) { if (IRL[y - 1]) { var o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); } });
-    // Par défaut : le dernier indice publié
-    var done = false;
-    years.forEach(function (y) { if (done) return; for (var t = 3; t >= 0; t--) if (IRL[y][t]) { sel.value = y; $('trim').value = t; done = true; break; } });
+    fillYears();
     $('effet').value = today();
     // Reprend les coordonnées déjà saisies sur la page quittance (gardées dans ce navigateur)
     try { var o = JSON.parse(localStorage.getItem('bailo_quittance') || 'null'); if (o) PREFILL.forEach(function (f) { if (o[f]) $(f).value = o[f]; }); } catch (e) {}
-    ['loyer', 'charges', 'trim', 'annee', 'manuel', 'irl_new', 'irl_old', 'dpe'].forEach(function (f) {
+    ['trim', 'annee'].forEach(function (f) { $(f).addEventListener('change', function () { touched = true; }); });
+    $('zone').addEventListener('change', fillYears);
+    ['loyer', 'charges', 'zone', 'trim', 'annee', 'manuel', 'irl_new', 'irl_old', 'dpe'].forEach(function (f) {
       $(f).addEventListener('input', render); $(f).addEventListener('change', render);
     });
     $('dl').addEventListener('click', function () {
@@ -454,6 +554,13 @@
       track('irl_letter_generated', { value: r.neuf });
     });
     render();
+    // Dernières valeurs de l'Insee. En cas d'échec, la table de secours ci-dessus reste utilisée.
+    try {
+      fetch('/.netlify/functions/irl').then(function (res) { return res.ok ? res.json() : null; }).then(function (j) {
+        if (!j || !j.ok || !j.zones) return;
+        if (merge(j.zones)) { fillYears(); renderInfo(j.updated); render(); }
+      }).catch(function () {});
+    } catch (e) {}
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
